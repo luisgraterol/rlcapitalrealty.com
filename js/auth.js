@@ -2,7 +2,7 @@
 // Fill these in after creating your Supabase project.
 // Project Settings → API → Project URL and publishable key (sb_publishable_...).
 // ─────────────────────────────────────────────────────────────────────────────
-const SUPABASE_URL      = 'https://bbksleeaevklroeyukprc.supabase.co';
+const SUPABASE_URL      = 'https://bbksleaevklroeyukprc.supabase.co';
 const SUPABASE_ANON_KEY = 'sb_publishable_ARe5pu9icDIILNXrVtbfVw_Yt4q_ED7';
 
 window.supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
