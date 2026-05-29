@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Owner Admin — R&L Capital Realty LLC</title>
+<meta name="robots" content="noindex, nofollow">
+
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='8' fill='%230f1f2e'/%3E%3Ctext x='50%25' y='54%25' dominant-baseline='middle' text-anchor='middle' font-family='Georgia,serif' font-size='26' font-weight='400' fill='%23c9a96e'%3ERL%3C/text%3E%3C/svg%3E">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --navy:#0f1f2e;--navy-mid:#1a2f44;--navy-light:#243a52;
+  --gold:#c9a96e;--gold-light:#dfc090;--gold-dim:#a8885a;
+  --cream:#faf8f4;--cream-dark:#f2ede4;
+  --text-body:#3d3530;--text-muted:#7a6e65;
+  --serif:'Cormorant Garamond',Georgia,serif;
+  --sans:'DM Sans',system-ui,sans-serif;
+  --t:.35s cubic-bezier(.4,0,.2,1);
+}
+html{scroll-behavior:smooth}
+body{
+  font-family:var(--sans);background:var(--navy);color:var(--cream);
+  font-size:16px;line-height:1.6;min-height:100vh;overflow-x:hidden;
+  opacity:0;transition:opacity .4s ease;
+}
+body.ready{opacity:1}
+
+/* Grid background */
+.grid-lines{
+  position:fixed;inset:0;z-index:0;pointer-events:none;
+  background-image:
+    linear-gradient(rgba(201,169,110,.03) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(201,169,110,.03) 1px,transparent 1px);
+  background-size:60px 60px;
+}
+.glow-top{
+  position:fixed;top:-200px;right:-200px;width:700px;height:700px;
+  border-radius:50%;pointer-events:none;z-index:0;
+  background:radial-gradient(circle,rgba(201,169,110,.06) 0%,transparent 70%);
+}
+.glow-bottom{
+  position:fixed;bottom:-150px;left:-100px;width:500px;height:500px;
+  border-radius:50%;pointer-events:none;z-index:0;
+  background:radial-gradient(circle,rgba(201,169,110,.04) 0%,transparent 70%);
+}
+
+/* NAV */
+nav{
+  position:fixed;top:0;left:0;right:0;z-index:100;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 5vw;height:68px;
+  background:rgba(15,31,46,.97);backdrop-filter:blur(12px);
+  border-bottom:1px solid rgba(201,169,110,.18);
+}
+.wordmark{
+  font-family:var(--serif);font-weight:400;font-size:1.2rem;
+  letter-spacing:.04em;color:var(--cream);text-decoration:none;
+  display:flex;align-items:center;gap:10px;
+}
+.wordmark-accent{color:var(--gold)}
+.wordmark-divider{width:1px;height:18px;background:rgba(201,169,110,.4)}
+.wordmark-sub{
+  font-family:var(--sans);font-size:.62rem;font-weight:300;
+  letter-spacing:.14em;color:rgba(250,248,244,.5);text-transform:uppercase;
+}
+.nav-right{display:flex;align-items:center;gap:20px}
+.nav-user{
+  font-size:.72rem;letter-spacing:.06em;color:rgba(250,248,244,.4);
+  max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+}
+.btn-logout{
+  display:inline-flex;align-items:center;gap:8px;padding:8px 18px;
+  border:1px solid rgba(201,169,110,.35);border-radius:2px;
+  font-family:var(--sans);font-size:.72rem;font-weight:400;
+  letter-spacing:.1em;text-transform:uppercase;color:rgba(250,248,244,.6);
+  background:none;cursor:pointer;transition:border-color var(--t),color var(--t);
+}
+.btn-logout:hover{border-color:var(--gold);color:var(--gold)}
+.btn-logout svg{width:13px;height:13px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+
+/* PAGE */
+.page{padding-top:68px;min-height:100vh;position:relative;z-index:1}
+
+/* HERO BAND */
+.portal-hero{
+  padding:80px 5vw 72px;
+  border-bottom:1px solid rgba(201,169,110,.1);
+  position:relative;overflow:hidden;
+}
+.portal-hero::after{
+  content:'';position:absolute;top:0;left:0;right:0;height:3px;
+  background:linear-gradient(90deg,transparent,var(--gold),transparent);
+  opacity:.5;
+}
+.portal-eyebrow{
+  font-family:var(--sans);font-size:.65rem;font-weight:500;
+  letter-spacing:.22em;text-transform:uppercase;color:var(--gold-dim);
+  display:flex;align-items:center;gap:12px;margin-bottom:16px;
+}
+.portal-eyebrow::before{content:'';display:block;width:28px;height:1px;background:var(--gold-dim)}
+.portal-headline{
+  font-family:var(--serif);font-weight:300;
+  font-size:clamp(2.4rem,5vw,4rem);
+  line-height:1.1;color:var(--cream);letter-spacing:-.01em;
+  margin-bottom:20px;
+}
+.portal-headline em{font-style:italic;color:var(--gold)}
+.portal-sub{
+  font-size:.95rem;font-weight:300;color:rgba(250,248,244,.5);
+  max-width:540px;line-height:1.75;letter-spacing:.01em;
+}
+
+/* STATUS BADGE */
+.status-badge{
+  display:inline-flex;align-items:center;gap:8px;
+  padding:6px 14px;border:1px solid rgba(201,169,110,.2);
+  border-radius:20px;margin-top:28px;
+  font-size:.72rem;font-weight:400;letter-spacing:.1em;text-transform:uppercase;
+  color:rgba(250,248,244,.45);
+}
+.status-dot{
+  width:6px;height:6px;border-radius:50%;
+  background:var(--gold);opacity:.7;
+  animation:pulse 2.5s ease-in-out infinite;
+}
+@keyframes pulse{0%,100%{opacity:.4}50%{opacity:1}}
+
+/* CONTENT */
+.portal-content{padding:60px 5vw 80px;max-width:1100px}
+
+.section-label{
+  font-family:var(--sans);font-size:.65rem;font-weight:500;
+  letter-spacing:.22em;text-transform:uppercase;color:var(--gold-dim);
+  display:flex;align-items:center;gap:12px;margin-bottom:32px;
+}
+.section-label::before{content:'';display:block;width:28px;height:1px;background:var(--gold-dim)}
+
+/* Coming-soon cards */
+.cards-grid{
+  display:grid;grid-template-columns:repeat(3,1fr);gap:2px;
+  margin-bottom:48px;
+}
+.feature-card{
+  background:rgba(250,248,244,.04);border:1px solid rgba(201,169,110,.1);
+  padding:36px 28px;position:relative;overflow:hidden;
+  transition:background var(--t),border-color var(--t);
+}
+.feature-card:hover{background:rgba(250,248,244,.07);border-color:rgba(201,169,110,.22)}
+.feature-card::after{
+  content:'';position:absolute;bottom:0;left:0;right:0;height:2px;
+  background:linear-gradient(90deg,transparent,var(--gold),transparent);
+  opacity:0;transition:opacity var(--t);
+}
+.feature-card:hover::after{opacity:1}
+.feature-icon{
+  width:40px;height:40px;border:1px solid rgba(201,169,110,.2);
+  display:flex;align-items:center;justify-content:center;margin-bottom:20px;
+}
+.feature-icon svg{width:18px;height:18px;stroke:var(--gold-dim);fill:none;stroke-width:1.4;stroke-linecap:round;stroke-linejoin:round}
+.feature-title{
+  font-family:var(--serif);font-size:1.1rem;font-weight:500;
+  color:var(--cream);margin-bottom:10px;letter-spacing:.01em;
+}
+.feature-desc{font-size:.83rem;color:rgba(250,248,244,.4);line-height:1.7;font-weight:300}
+.feature-tag{
+  display:inline-block;margin-top:16px;padding:3px 10px;
+  border:1px solid rgba(201,169,110,.18);border-radius:2px;
+  font-size:.65rem;letter-spacing:.14em;text-transform:uppercase;color:rgba(201,169,110,.5);
+}
+
+/* Info box */
+.info-box{
+  background:rgba(201,169,110,.06);border:1px solid rgba(201,169,110,.15);
+  padding:32px 36px;position:relative;
+}
+.info-box::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--gold);opacity:.6}
+.info-box-title{
+  font-family:var(--serif);font-size:1.2rem;font-weight:500;
+  color:var(--cream);margin-bottom:10px;
+}
+.info-box-body{font-size:.87rem;color:rgba(250,248,244,.5);line-height:1.75;font-weight:300}
+.info-box-body strong{color:rgba(250,248,244,.75);font-weight:400}
+
+/* FOOTER */
+footer{
+  border-top:1px solid rgba(201,169,110,.1);padding:28px 5vw;
+  display:flex;align-items:center;justify-content:space-between;gap:16px;
+  flex-wrap:wrap;position:relative;z-index:1;
+}
+.footer-brand{font-family:var(--serif);font-size:.95rem;color:rgba(250,248,244,.4);letter-spacing:.04em}
+.footer-brand span{color:var(--gold-dim)}
+.footer-meta{font-size:.72rem;color:rgba(250,248,244,.2);letter-spacing:.06em}
+
+@media(max-width:900px){
+  .cards-grid{grid-template-columns:repeat(2,1fr)}
+  .nav-user{display:none}
+}
+@media(max-width:600px){
+  .cards-grid{grid-template-columns:1fr}
+  .portal-hero{padding:56px 5vw 52px}
+  .portal-content{padding:40px 5vw 60px}
+  .info-box{padding:24px 22px}
+}
+</style>
+</head>
+<body>
+
+<div class="grid-lines"></div>
+<div class="glow-top"></div>
+<div class="glow-bottom"></div>
+
+<!-- NAV -->
+<nav>
+  <a href="/" class="wordmark">
+    <span>R<span class="wordmark-accent">&</span>L Capital Realty</span>
+    <span class="wordmark-divider"></span>
+    <span class="wordmark-sub">LLC</span>
+  </a>
+  <div class="nav-right">
+    <span class="nav-user" id="nav-email"></span>
+    <button class="btn-logout" id="logout-btn" onclick="logout()">
+      <svg viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+      Sign Out
+    </button>
+  </div>
+</nav>
+
+<div class="page">
+
+  <!-- HERO -->
+  <section class="portal-hero">
+    <div class="portal-eyebrow">Owner Portal</div>
+    <h1 class="portal-headline">Welcome back,<br><em id="greeting-name">partner</em></h1>
+    <p class="portal-sub">
+      This is your private R&amp;L Capital owner portal. As the business grows,
+      this space will become your command center for property performance,
+      bookings, financials, and operational oversight.
+    </p>
+    <div class="status-badge">
+      <div class="status-dot"></div>
+      Portal — Early Access
+    </div>
+  </section>
+
+  <!-- CONTENT -->
+  <div class="portal-content">
+    <div class="section-label">Coming Soon</div>
+
+    <div class="cards-grid">
+      <div class="feature-card">
+        <div class="feature-icon">
+          <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+        </div>
+        <div class="feature-title">Property Dashboard</div>
+        <p class="feature-desc">Live occupancy status, upcoming check-ins, and per-property revenue — all in one view.</p>
+        <span class="feature-tag">In Development</span>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">
+          <svg viewBox="0 0 24 24"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+        </div>
+        <div class="feature-title">Financial Reports</div>
+        <p class="feature-desc">Monthly revenue summaries, expense tracking, and payout history — exportable to PDF.</p>
+        <span class="feature-tag">In Development</span>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">
+          <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+        </div>
+        <div class="feature-title">Booking Calendar</div>
+        <p class="feature-desc">A unified calendar across Airbnb, VRBO, and Furnished Finder — block dates, view reservations.</p>
+        <span class="feature-tag">In Development</span>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">
+          <svg viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+        </div>
+        <div class="feature-title">Operations Log</div>
+        <p class="feature-desc">Cleaning confirmations, maintenance requests, and guest communications logged in one place.</p>
+        <span class="feature-tag">In Development</span>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">
+          <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        </div>
+        <div class="feature-title">Guest Directory</div>
+        <p class="feature-desc">Verified guest profiles, stay history, and direct contact for repeat corporate accounts.</p>
+        <span class="feature-tag">In Development</span>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">
+          <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+        </div>
+        <div class="feature-title">Lease Documents</div>
+        <p class="feature-desc">Signed sublease addenda, insurance certificates, and landlord agreements — stored and accessible.</p>
+        <span class="feature-tag">In Development</span>
+      </div>
+    </div>
+
+    <div class="info-box">
+      <div class="info-box-title">You're in early access.</div>
+      <p class="info-box-body">
+        This portal is actively being built. As R&amp;L Capital grows its portfolio and operations,
+        these tools will be rolled out one by one. <strong>Nothing will be launched until it's built right.</strong>
+        If you have a specific feature you'd like prioritized, reach out directly at
+        <strong>lgraterol@rlcapitalrealty.com</strong>.
+      </p>
+    </div>
+  </div>
+
+</div>
+
+<footer>
+  <div class="footer-brand">R<span>&amp;</span>L Capital Realty LLC</div>
+  <div class="footer-meta">&copy; 2026 &middot; Abilene, TX &middot; Owner Portal</div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="/js/auth.js"></script>
+<script>
+(async () => {
+  const session = await requireAuth();
+  if (!session) return;
+
+  const email = session.user.email || '';
+
+  // Show email in nav
+  document.getElementById('nav-email').textContent = email;
+
+  // Personalize greeting with first name from email local part
+  const firstName = email.split('@')[0].split(/[._]/)[0];
+  const greeting  = firstName.charAt(0).toUpperCase() + firstName.slice(1);
+  document.getElementById('greeting-name').textContent = greeting;
+
+  // Reveal page once ready
+  document.body.classList.add('ready');
+})();
+</script>
+</body>
+</html>
