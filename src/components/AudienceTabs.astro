@@ -1,0 +1,131 @@
+---
+---
+
+<div class="audience-tabs" role="tablist">
+  <button class="audience-tab active" data-panel="military">Military &amp; Gov</button>
+  <button class="audience-tab" data-panel="corporate">Corporate</button>
+  <button class="audience-tab" data-panel="university">University</button>
+</div>
+
+<div class="audience-panel active" id="panel-military">
+  <div class="audience-card">
+    <div class="audience-card-icon"><svg viewBox="0 0 24 24"><path d="M12 2L3 7v5c0 5.25 3.75 10.15 9 11.25C17.25 22.15 21 17.25 21 12V7l-9-5z"/></svg></div>
+    <div class="audience-card-title">TDY Personnel</div>
+    <p class="audience-card-desc">Per diem-friendly rates. Stays from 1 to 29 nights. Smart lock access means no key handoffs. We're within 15 minutes of Dyess AFB gates.</p>
+  </div>
+  <div class="audience-card">
+    <div class="audience-card-icon"><svg viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/></svg></div>
+    <div class="audience-card-title">Government Contractors</div>
+    <p class="audience-card-desc">Extended stays for project-based work near Dyess. Full kitchen, high-speed WiFi, and a dedicated workspace built for productive remote work.</p>
+  </div>
+  <div class="audience-card">
+    <div class="audience-card-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg></div>
+    <div class="audience-card-title">Short-Notice Bookings</div>
+    <p class="audience-card-desc">Orders change fast. Our properties stay available year-round with consistent quality &mdash; no surprises on arrival, no degraded units.</p>
+  </div>
+</div>
+
+<div class="audience-panel" id="panel-corporate">
+  <div class="audience-card">
+    <div class="audience-card-icon"><svg viewBox="0 0 24 24"><path d="M20 7H4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2z"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg></div>
+    <div class="audience-card-title">Project Teams</div>
+    <p class="audience-card-desc">Multi-week assignments near Abilene's healthcare and energy sectors. Multiple bedrooms available for small teams &mdash; one booking, one contact.</p>
+  </div>
+  <div class="audience-card">
+    <div class="audience-card-icon"><svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></div>
+    <div class="audience-card-title">Home-Like Comfort</div>
+    <p class="audience-card-desc">Full kitchen, in-unit laundry, dedicated parking, and premium WiFi. Designed to feel like home after a long workday.</p>
+  </div>
+  <div class="audience-card">
+    <div class="audience-card-icon"><svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></div>
+    <div class="audience-card-title">Corporate Accounts</div>
+    <p class="audience-card-desc">Recurring business? We offer priority booking for corporate travel coordinators managing repeat stays in the Abilene market.</p>
+  </div>
+</div>
+
+<div class="audience-panel" id="panel-university">
+  <div class="audience-card">
+    <div class="audience-card-icon"><svg viewBox="0 0 24 24"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg></div>
+    <div class="audience-card-title">Graduation &amp; Events</div>
+    <p class="audience-card-desc">Families visiting ACU, Hardin-Simmons, or McMurry for graduation. A full home beats hotel blocks &mdash; more space, a real kitchen, easy parking.</p>
+  </div>
+  <div class="audience-card">
+    <div class="audience-card-icon"><svg viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg></div>
+    <div class="audience-card-title">Move-In Transitions</div>
+    <p class="audience-card-desc">Families arriving before the semester who need a base while students get settled. 1&ndash;3 week stays with all essentials already in place.</p>
+  </div>
+  <div class="audience-card">
+    <div class="audience-card-icon"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></div>
+    <div class="audience-card-title">Homecoming Weekends</div>
+    <p class="audience-card-desc">Annual homecoming draws alumni and families from across Texas. Book early &mdash; these weekends fill fast and our homes deliver far beyond area hotels.</p>
+  </div>
+</div>
+
+<script>
+  document.querySelectorAll<HTMLButtonElement>('.audience-tab').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const panelId = btn.dataset.panel!;
+      document.querySelectorAll('.audience-tab').forEach(t => t.classList.remove('active'));
+      document.querySelectorAll('.audience-panel').forEach(p => p.classList.remove('active'));
+      btn.classList.add('active');
+      const panel = document.getElementById('panel-' + panelId);
+      if (!panel) return;
+      panel.classList.add('active');
+      panel.querySelectorAll<HTMLElement>('.audience-card').forEach((card, i) => {
+        card.style.opacity = '0';
+        card.style.transform = 'translateY(16px)';
+        setTimeout(() => {
+          card.style.transition = 'opacity .45s ease, transform .45s ease';
+          card.style.opacity = '1';
+          card.style.transform = 'none';
+        }, i * 70);
+      });
+    });
+  });
+</script>
+
+<style>
+  .audience-tabs {
+    display: flex; justify-content: center; gap: 4px; margin-bottom: 40px;
+    background: rgba(15,31,46,.07); border-radius: 4px; padding: 4px;
+    width: fit-content; margin-left: auto; margin-right: auto;
+  }
+  .audience-tab {
+    padding: 10px 32px; border-radius: 3px; border: none; background: transparent;
+    font-family: 'DM Sans', system-ui, sans-serif; font-size: .76rem; font-weight: 500;
+    letter-spacing: .1em; text-transform: uppercase; color: #7a6e65;
+    cursor: pointer; transition: background .35s, color .35s;
+  }
+  .audience-tab.active { background: #0f1f2e; color: #c9a96e; }
+  .audience-panel { display: none; }
+  .audience-panel.active {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 2px;
+  }
+  .audience-card {
+    background: white; padding: 32px 28px;
+    border: 1px solid rgba(15,31,46,.07); position: relative; overflow: hidden;
+    transition: border-color .35s, box-shadow .35s;
+  }
+  .audience-card::after {
+    content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 2px;
+    background: #c9a96e; transform: scaleX(0); transform-origin: left; transition: transform .35s;
+  }
+  .audience-card:hover { border-color: rgba(201,169,110,.25); box-shadow: 0 4px 24px rgba(15,31,46,.07); }
+  .audience-card:hover::after { transform: scaleX(1); }
+  .audience-card-icon { width: 40px; height: 40px; margin-bottom: 18px; }
+  .audience-card-icon svg {
+    width: 100%; height: 100%; stroke: #a8885a; fill: none;
+    stroke-width: 1.3; stroke-linecap: round; stroke-linejoin: round;
+  }
+  .audience-card-title {
+    font-family: 'Cormorant Garamond', Georgia, serif; font-size: 1.15rem;
+    font-weight: 500; color: #0f1f2e; margin-bottom: 10px;
+  }
+  .audience-card-desc { font-size: .85rem; color: #7a6e65; line-height: 1.7; font-weight: 300; }
+  @media (max-width: 1024px) { .audience-panel.active { grid-template-columns: repeat(2, 1fr); } }
+  @media (max-width: 768px) {
+    .audience-panel.active { grid-template-columns: 1fr; }
+    .audience-tabs { width: 100%; }
+    .audience-tab { flex: 1; }
+  }
+</style>

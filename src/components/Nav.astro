@@ -1,0 +1,98 @@
+---
+interface Props {
+  variant?: 'public' | 'auth';
+}
+const { variant = 'public' } = Astro.props;
+---
+
+<nav id="site-nav">
+  <a href="/#hero" class="wordmark">
+    <span>R<span class="wordmark-accent">&</span>L Capital Realty</span>
+    <span class="wordmark-divider"></span>
+    <span class="wordmark-sub">LLC</span>
+  </a>
+  {variant === 'public' && (
+    <>
+      <ul class="nav-links" id="nav-links">
+        <li><a href="/#audience">Guests</a></li>
+        <li><a href="/#landlords">Landlords</a></li>
+        <li><a href="/#trust">Why Us</a></li>
+        <li><a href="/auth/login">Login</a></li>
+        <li><a href="/#contact" class="nav-cta">Contact</a></li>
+      </ul>
+      <div class="hamburger" id="hamburger" aria-label="Open menu" role="button" tabindex="0">
+        <span></span><span></span><span></span>
+      </div>
+    </>
+  )}
+</nav>
+
+<script>
+  const hamburger = document.getElementById('hamburger');
+  const navLinks  = document.getElementById('nav-links');
+  const nav       = document.getElementById('site-nav');
+
+  hamburger?.addEventListener('click', () => navLinks?.classList.toggle('open'));
+  navLinks?.querySelectorAll('a').forEach(a =>
+    a.addEventListener('click', () => navLinks.classList.remove('open'))
+  );
+
+  window.addEventListener('scroll', () => {
+    if (nav) nav.style.boxShadow = window.scrollY > 40 ? '0 4px 24px rgba(0,0,0,.3)' : '';
+  }, { passive: true });
+</script>
+
+<style>
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 5vw; height: 68px;
+    background: rgba(15,31,46,.97); backdrop-filter: blur(12px);
+    border-bottom: 1px solid rgba(201,169,110,.18);
+    transition: .35s cubic-bezier(.4,0,.2,1);
+  }
+  .wordmark {
+    font-family: 'Cormorant Garamond', Georgia, serif; font-weight: 400;
+    font-size: 1.2rem; letter-spacing: .04em; color: #faf8f4;
+    text-decoration: none; display: flex; align-items: center; gap: 10px;
+  }
+  .wordmark-accent { color: #c9a96e; }
+  .wordmark-divider { width: 1px; height: 18px; background: rgba(201,169,110,.4); }
+  .wordmark-sub {
+    font-family: 'DM Sans', system-ui, sans-serif; font-size: .62rem;
+    font-weight: 300; letter-spacing: .14em; color: rgba(250,248,244,.5); text-transform: uppercase;
+  }
+  .nav-links {
+    display: flex; align-items: center; gap: 32px; list-style: none;
+  }
+  .nav-links a {
+    font-family: 'DM Sans', system-ui, sans-serif; font-size: .76rem; font-weight: 400;
+    letter-spacing: .1em; text-transform: uppercase; color: rgba(250,248,244,.65);
+    text-decoration: none; transition: color .35s;
+  }
+  .nav-links a:hover { color: #c9a96e; }
+  .nav-cta {
+    display: inline-flex; align-items: center; padding: 8px 20px;
+    border: 1px solid #c9a96e; border-radius: 2px;
+    font-size: .72rem !important; letter-spacing: .12em !important;
+    color: #c9a96e !important; transition: background .35s, color .35s !important;
+  }
+  .nav-cta:hover { background: #c9a96e !important; color: #0f1f2e !important; }
+  .hamburger {
+    display: none; flex-direction: column; gap: 5px; cursor: pointer; padding: 4px;
+  }
+  .hamburger span {
+    display: block; width: 22px; height: 1.5px; background: #faf8f4; transition: .35s;
+  }
+  @media (max-width: 768px) {
+    .nav-links { display: none; }
+    .hamburger { display: flex; }
+    .nav-links.open {
+      display: flex; flex-direction: column; position: fixed;
+      top: 68px; left: 0; right: 0;
+      background: rgba(15,31,46,.98); padding: 28px 5vw 36px; gap: 24px;
+      border-bottom: 1px solid rgba(201,169,110,.18);
+    }
+    .nav-links.open a { font-size: 1rem; letter-spacing: .08em; }
+  }
+</style>

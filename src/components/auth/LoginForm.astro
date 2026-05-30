@@ -1,0 +1,217 @@
+---
+---
+
+<div class="page-bg"></div>
+<div class="grid-lines"></div>
+<div class="geo"></div>
+
+<header class="site-header">
+  <a href="/" class="wordmark">
+    <span>R<span class="wordmark-accent">&</span>L Capital Realty</span>
+    <span class="wordmark-divider"></span>
+    <span class="wordmark-sub">LLC</span>
+  </a>
+</header>
+
+<main>
+  <div class="card">
+
+    <!-- VIEW: LOGIN -->
+    <div class="view active" id="view-login">
+      <div class="card-eyebrow">Secure Access</div>
+      <h1 class="card-title">Welcome <em>back</em></h1>
+
+      <div class="alert alert-error" id="login-error" role="alert"></div>
+
+      <form id="login-form" novalidate>
+        <div class="form-group">
+          <label class="form-label" for="login-email">Email</label>
+          <input id="login-email" name="email" type="email" class="form-input" placeholder="you@rlcapitalrealty.com" autocomplete="email" required />
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="login-password">Password</label>
+          <div class="input-wrap">
+            <input id="login-password" name="password" type="password" class="form-input" placeholder="••••••••" autocomplete="current-password" required />
+            <button type="button" class="toggle-pw" aria-label="Toggle password visibility" data-target="login-password">
+              <svg class="eye-on" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+              <svg class="eye-off" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94"/><path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
+            </button>
+          </div>
+        </div>
+        <button type="submit" class="btn-submit" id="login-btn">
+          <div class="btn-spinner"></div>
+          <span class="btn-text">Sign In</span>
+        </button>
+      </form>
+
+      <div class="form-footer">
+        <button class="text-link" id="goto-forgot">Forgot your password?</button>
+      </div>
+    </div>
+
+    <!-- VIEW: FORGOT PASSWORD -->
+    <div class="view" id="view-forgot">
+      <div class="card-eyebrow">Password Reset</div>
+      <h1 class="card-title">Reset your<br><em>password</em></h1>
+
+      <div class="alert alert-error" id="forgot-error" role="alert"></div>
+      <div class="alert alert-success" id="forgot-success" role="alert"></div>
+
+      <form id="forgot-form" novalidate>
+        <div class="form-group">
+          <label class="form-label" for="forgot-email">Email</label>
+          <input id="forgot-email" name="email" type="email" class="form-input" placeholder="you@rlcapitalrealty.com" autocomplete="email" required />
+        </div>
+        <button type="submit" class="btn-submit" id="forgot-btn">
+          <div class="btn-spinner"></div>
+          <span class="btn-text">Send Reset Link</span>
+        </button>
+      </form>
+
+      <div class="form-footer">
+        <button class="text-link" id="goto-login">Back to sign in</button>
+      </div>
+    </div>
+
+  </div>
+</main>
+
+<footer class="site-footer">
+  <a href="/">rlcapitalrealty.com</a> &nbsp;&middot;&nbsp; &copy; 2026 R&amp;L Capital Realty LLC
+</footer>
+
+<script>
+  import { supabase } from '@lib/supabase';
+  import { redirectIfLoggedIn } from '@lib/auth';
+
+  (async () => {
+    await redirectIfLoggedIn();
+
+    const views = {
+      login:  document.getElementById('view-login')!,
+      forgot: document.getElementById('view-forgot')!,
+    };
+    const loginError    = document.getElementById('login-error')!;
+    const loginBtn      = document.getElementById('login-btn') as HTMLButtonElement;
+    const forgotError   = document.getElementById('forgot-error')!;
+    const forgotSuccess = document.getElementById('forgot-success')!;
+    const forgotBtn     = document.getElementById('forgot-btn') as HTMLButtonElement;
+
+    function showView(name: 'login' | 'forgot') {
+      Object.values(views).forEach(v => v.classList.remove('active'));
+      views[name].classList.add('active');
+      loginError.classList.remove('show');
+      forgotError.classList.remove('show');
+      forgotSuccess.classList.remove('show');
+    }
+
+    function setLoading(btn: HTMLButtonElement, on: boolean) {
+      btn.disabled = on;
+      btn.classList.toggle('loading', on);
+    }
+
+    function showError(el: HTMLElement, msg: string) {
+      el.textContent = msg;
+      el.classList.add('show');
+    }
+
+    document.querySelectorAll<HTMLButtonElement>('.toggle-pw').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const input = document.getElementById(btn.dataset.target!) as HTMLInputElement;
+        input.type = input.type === 'password' ? 'text' : 'password';
+        btn.classList.toggle('shown');
+      });
+    });
+
+    document.getElementById('goto-forgot')!.addEventListener('click', () => showView('forgot'));
+    document.getElementById('goto-login')!.addEventListener('click',  () => showView('login'));
+
+    document.getElementById('login-form')!.addEventListener('submit', async e => {
+      e.preventDefault();
+      loginError.classList.remove('show');
+      const email    = (document.getElementById('login-email') as HTMLInputElement).value.trim();
+      const password = (document.getElementById('login-password') as HTMLInputElement).value;
+      if (!email || !password) { showError(loginError, 'Please enter your email and password.'); return; }
+      setLoading(loginBtn, true);
+      const { error } = await supabase.auth.signInWithPassword({ email, password });
+      setLoading(loginBtn, false);
+      if (error) { showError(loginError, 'Invalid email or password. Please try again.'); }
+      else { window.location.replace('/admin'); }
+    });
+
+    document.getElementById('forgot-form')!.addEventListener('submit', async e => {
+      e.preventDefault();
+      forgotError.classList.remove('show');
+      forgotSuccess.classList.remove('show');
+      const email = (document.getElementById('forgot-email') as HTMLInputElement).value.trim();
+      if (!email) { showError(forgotError, 'Please enter your email address.'); return; }
+      setLoading(forgotBtn, true);
+      const { error } = await supabase.auth.resetPasswordForEmail(email, {
+        redirectTo: window.location.origin + '/auth/callback',
+      });
+      setLoading(forgotBtn, false);
+      if (error) { showError(forgotError, 'Reset link could not be sent. Check your email address and try again.'); }
+      else {
+        forgotSuccess.textContent = 'Check your inbox. A reset link is on its way.';
+        forgotSuccess.classList.add('show');
+        (document.getElementById('forgot-form') as HTMLFormElement).reset();
+      }
+    });
+  })();
+</script>
+
+<style>
+  body { font-family: 'DM Sans', system-ui, sans-serif; background: #0f1f2e; color: #3d3530; font-size: 16px; line-height: 1.6; display: flex; flex-direction: column; min-height: 100vh; overflow-x: hidden; }
+  .page-bg { position: fixed; inset: 0; pointer-events: none; overflow: hidden; z-index: 0; }
+  .page-bg::before { content: ''; position: absolute; width: 700px; height: 700px; border-radius: 50%; background: radial-gradient(circle, rgba(201,169,110,.06) 0%, transparent 70%); top: -200px; right: -200px; }
+  .page-bg::after { content: ''; position: absolute; width: 500px; height: 500px; border-radius: 50%; background: radial-gradient(circle, rgba(201,169,110,.04) 0%, transparent 70%); bottom: -150px; left: -100px; }
+  .grid-lines { position: fixed; inset: 0; z-index: 0; pointer-events: none; background-image: linear-gradient(rgba(201,169,110,.03) 1px, transparent 1px), linear-gradient(90deg, rgba(201,169,110,.03) 1px, transparent 1px); background-size: 60px 60px; }
+  .geo { position: fixed; top: 10%; right: 6%; width: 260px; height: 260px; border: 1px solid rgba(201,169,110,.1); transform: rotate(15deg); pointer-events: none; z-index: 0; animation: geo-drift 18s ease-in-out infinite; }
+  .geo::before { content: ''; position: absolute; inset: 22px; border: 1px solid rgba(201,169,110,.06); transform: rotate(-8deg); }
+  @keyframes geo-drift { 0%, 100% { transform: rotate(15deg) translateY(0); } 50% { transform: rotate(15deg) translateY(-10px); } }
+  .site-header { position: relative; z-index: 10; padding: 28px 5vw; display: flex; align-items: center; }
+  .wordmark { font-family: 'Cormorant Garamond', Georgia, serif; font-weight: 400; font-size: 1.1rem; letter-spacing: .04em; color: #faf8f4; text-decoration: none; display: flex; align-items: center; gap: 10px; }
+  .wordmark-accent { color: #c9a96e; }
+  .wordmark-divider { width: 1px; height: 16px; background: rgba(201,169,110,.35); }
+  .wordmark-sub { font-family: 'DM Sans', system-ui, sans-serif; font-size: .6rem; font-weight: 300; letter-spacing: .14em; color: rgba(250,248,244,.45); text-transform: uppercase; }
+  main { flex: 1; display: flex; align-items: center; justify-content: center; padding: 24px 5vw 60px; position: relative; z-index: 1; }
+  .card { background: #faf8f4; width: 100%; max-width: 420px; padding: 48px 44px; position: relative; overflow: hidden; box-shadow: 0 32px 80px rgba(0,0,0,.35), 0 0 0 1px rgba(201,169,110,.12); }
+  .card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; background: linear-gradient(90deg, #a8885a, #c9a96e, #a8885a); }
+  .card-eyebrow { font-family: 'DM Sans', system-ui, sans-serif; font-size: .65rem; font-weight: 500; letter-spacing: .2em; text-transform: uppercase; color: #a8885a; display: flex; align-items: center; gap: 10px; margin-bottom: 14px; }
+  .card-eyebrow::before { content: ''; display: block; width: 22px; height: 1px; background: #a8885a; }
+  .card-title { font-family: 'Cormorant Garamond', Georgia, serif; font-weight: 400; font-size: 2rem; color: #0f1f2e; line-height: 1.15; margin-bottom: 32px; letter-spacing: -.01em; }
+  .card-title em { font-style: italic; color: #a8885a; }
+  .form-group { display: flex; flex-direction: column; gap: 6px; margin-bottom: 20px; }
+  .form-label { font-size: .72rem; font-weight: 500; letter-spacing: .1em; text-transform: uppercase; color: #7a6e65; }
+  .form-input { width: 100%; padding: 12px 14px; border: 1px solid rgba(15,31,46,.15); border-radius: 2px; font-family: 'DM Sans', system-ui, sans-serif; font-size: .95rem; color: #0f1f2e; background: white; outline: none; transition: border-color .35s, box-shadow .35s; }
+  .form-input:focus { outline: none; border-color: #c9a96e; box-shadow: 0 0 0 3px rgba(201,169,110,.22); }
+  .form-input:focus-visible { border-color: #c9a96e; box-shadow: 0 0 0 3px rgba(201,169,110,.22); }
+  .form-input::placeholder { color: #8a7e78; }
+  .input-wrap { position: relative; }
+  .input-wrap .form-input { padding-right: 42px; }
+  .toggle-pw { position: absolute; right: 12px; top: 50%; transform: translateY(-50%); background: none; border: none; padding: 4px; cursor: pointer; color: #7a6e65; line-height: 0; transition: color .35s; }
+  .toggle-pw:hover { color: #0f1f2e; }
+  .toggle-pw .eye-off { display: none; }
+  .toggle-pw.shown .eye-on { display: none; }
+  .toggle-pw.shown .eye-off { display: block; }
+  .btn-submit { width: 100%; padding: 13px 24px; background: #0f1f2e; color: #faf8f4; font-family: 'DM Sans', system-ui, sans-serif; font-size: .78rem; font-weight: 500; letter-spacing: .12em; text-transform: uppercase; border: none; border-radius: 2px; cursor: pointer; transition: background .35s, transform .35s, box-shadow .35s; position: relative; display: flex; align-items: center; justify-content: center; gap: 10px; margin-top: 8px; }
+  .btn-submit:hover:not(:disabled) { background: #243a52; transform: translateY(-1px); box-shadow: 0 8px 24px rgba(15,31,46,.3); }
+  .btn-submit:disabled { opacity: .6; cursor: not-allowed; }
+  .btn-spinner { width: 14px; height: 14px; border: 2px solid rgba(250,248,244,.3); border-top-color: #faf8f4; border-radius: 50%; animation: spin .7s linear infinite; display: none; }
+  .btn-submit.loading .btn-spinner { display: block; }
+  .btn-submit.loading .btn-text { opacity: .7; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .alert { padding: 12px 14px; border-radius: 2px; font-size: .85rem; line-height: 1.5; margin-bottom: 20px; display: none; }
+  .alert.show { display: block; }
+  .alert-error { background: rgba(192,57,43,.07); border: 1px solid rgba(192,57,43,.35); color: #c0392b; }
+  .alert-success { background: rgba(46,125,94,.07); border: 1px solid rgba(46,125,94,.35); color: #2e7d5e; }
+  .form-footer { margin-top: 20px; text-align: center; }
+  .text-link { font-size: .82rem; color: #a8885a; text-decoration: none; border-bottom: 1px solid transparent; transition: border-color .35s, color .35s; cursor: pointer; background: none; border-left: none; border-right: none; border-top: none; font-family: 'DM Sans', system-ui, sans-serif; padding: 0; }
+  .text-link:hover { color: #c9a96e; border-bottom-color: #c9a96e; }
+  .view { display: none; }
+  .view.active { display: block; }
+  .site-footer { position: relative; z-index: 1; text-align: center; padding: 20px 5vw 32px; font-size: .72rem; color: rgba(250,248,244,.25); letter-spacing: .06em; }
+  .site-footer a { color: rgba(250,248,244,.35); text-decoration: none; transition: color .35s; }
+  .site-footer a:hover { color: #c9a96e; }
+  @media (max-width: 480px) { .card { padding: 36px 28px; } .geo { display: none; } }
+</style>
