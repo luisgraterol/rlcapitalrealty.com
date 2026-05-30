@@ -63,6 +63,13 @@ main{flex:1;display:flex;align-items:center;justify-content:center;padding:24px 
 .alert-error{background:rgba(192,57,43,.08);border:1px solid rgba(192,57,43,.2);color:var(--error)}
 .alert-success{background:rgba(46,125,94,.08);border:1px solid rgba(46,125,94,.2);color:var(--success)}
 .password-hint{font-size:.75rem;color:var(--text-muted);margin-top:4px}
+.input-wrap{position:relative}
+.input-wrap .form-input{padding-right:42px}
+.toggle-pw{position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;padding:4px;cursor:pointer;color:var(--text-muted);line-height:0;transition:color var(--t)}
+.toggle-pw:hover{color:var(--navy)}
+.toggle-pw .eye-off{display:none}
+.toggle-pw.shown .eye-on{display:none}
+.toggle-pw.shown .eye-off{display:block}
 .view{display:none}
 .view.active{display:block}
 .site-footer{position:relative;z-index:1;text-align:center;padding:20px 5vw 32px;font-size:.72rem;color:rgba(250,248,244,.25);letter-spacing:.06em}
@@ -104,20 +111,32 @@ main{flex:1;display:flex;align-items:center;justify-content:center;padding:24px 
       <form id="reset-form" novalidate>
         <div class="form-group">
           <label class="form-label" for="new-password">New Password</label>
-          <input
-            id="new-password" name="password" type="password"
-            class="form-input" placeholder="••••••••"
-            autocomplete="new-password" required
-          >
+          <div class="input-wrap">
+            <input
+              id="new-password" name="password" type="password"
+              class="form-input" placeholder="••••••••"
+              autocomplete="new-password" required
+            >
+            <button type="button" class="toggle-pw" aria-label="Toggle password visibility" data-target="new-password">
+              <svg class="eye-on" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+              <svg class="eye-off" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94"/><path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
+            </button>
+          </div>
           <span class="password-hint">Minimum 8 characters</span>
         </div>
         <div class="form-group">
           <label class="form-label" for="confirm-password">Confirm Password</label>
-          <input
-            id="confirm-password" name="confirm" type="password"
-            class="form-input" placeholder="••••••••"
-            autocomplete="new-password" required
-          >
+          <div class="input-wrap">
+            <input
+              id="confirm-password" name="confirm" type="password"
+              class="form-input" placeholder="••••••••"
+              autocomplete="new-password" required
+            >
+            <button type="button" class="toggle-pw" aria-label="Toggle password visibility" data-target="confirm-password">
+              <svg class="eye-on" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+              <svg class="eye-off" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94"/><path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
+            </button>
+          </div>
         </div>
 
         <button type="submit" class="btn-submit" id="reset-btn">
@@ -168,6 +187,14 @@ main{flex:1;display:flex;align-items:center;justify-content:center;padding:24px 
     resetBtn.disabled = on;
     resetBtn.classList.toggle('loading', on);
   }
+
+  document.querySelectorAll('.toggle-pw').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const input = document.getElementById(btn.dataset.target);
+      input.type = input.type === 'password' ? 'text' : 'password';
+      btn.classList.toggle('shown');
+    });
+  });
 
   // Supabase detects the ?code= param automatically and fires onAuthStateChange.
   // PASSWORD_RECOVERY means the user clicked a valid reset link.
