@@ -1,4 +1,10 @@
 {
-  "buildCommand": "node scripts/build.js",
-  "outputDirectory": "."
+  "buildCommand": "npm run build",
+  "outputDirectory": "dist",
+  "framework": "astro",
+  "redirects": [
+    { "source": "/admin.html", "destination": "/admin", "permanent": true },
+    { "source": "/auth/login.html", "destination": "/auth/login", "permanent": true },
+    { "source": "/auth/callback.html", "destination": "/auth/callback", "permanent": true }
+  ]
 }

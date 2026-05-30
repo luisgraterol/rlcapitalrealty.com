@@ -1,0 +1,390 @@
+---
+import Base from '../layouts/Base.astro';
+import Nav from '../components/Nav.astro';
+import AudienceTabs from '../components/AudienceTabs.astro';
+import ScrollReveal from '../components/ScrollReveal.astro';
+---
+
+<Base
+  title="R&L Capital Realty LLC — Premium Short-Term Housing · Abilene, TX"
+  description="Fully furnished, professionally managed short-term housing near Dyess Air Force Base. Built for military TDY personnel, government contractors, and university visitors."
+>
+  <Fragment slot="head">
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://rlcapitalrealty.com/" />
+    <meta property="og:title" content="R&L Capital Realty LLC — Premium Short-Term Housing · Abilene, TX" />
+    <meta property="og:description" content="Fully furnished, professionally managed short-term housing near Dyess Air Force Base. Built for military TDY personnel, government contractors, and university visitors." />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="R&L Capital Realty LLC — Premium Short-Term Housing · Abilene, TX" />
+    <meta name="twitter:description" content="Fully furnished, professionally managed short-term housing near Dyess Air Force Base. Built for military TDY personnel, government contractors, and university visitors." />
+    <meta name="keywords" content="short term rental Abilene TX, military housing Abilene, TDY housing Dyess Air Force Base, furnished housing Abilene Texas, corporate housing Abilene" />
+    <link rel="canonical" href="https://rlcapitalrealty.com/" />
+    <script is:inline>
+      (function () {
+        const hash = window.location.hash;
+        if (hash && (hash.includes('type=recovery') || hash.includes('type=magiclink'))) {
+          window.location.replace('/auth/callback' + hash);
+        }
+      })();
+    </script>
+  </Fragment>
+
+  <Nav />
+
+  <main>
+
+  <!-- HERO -->
+  <section id="hero">
+    <div class="hero-bg"><div class="hero-grid-lines"></div></div>
+    <div class="hero-geo"></div>
+    <div class="hero-geo-2"></div>
+    <div class="hero-content">
+      <div class="hero-eyebrow">Abilene, Texas &middot; Est. 2026</div>
+      <h1 class="hero-headline">Premium furnished housing<br>for those who <em>serve &amp; build</em></h1>
+      <p class="hero-sub">Professional short-term accommodations for military personnel, government contractors, and university visitors &mdash; managed with precision.</p>
+      <div class="hero-btns">
+        <a href="#audience" class="btn-primary">Find Your Stay <span class="btn-arrow">&#8594;</span></a>
+        <a href="#landlords" class="btn-secondary-hero">For Landlords <span class="btn-arrow">&#8594;</span></a>
+      </div>
+    </div>
+  </section>
+
+  <!-- MARQUEE -->
+  <div class="marquee-strip" aria-hidden="true">
+    <div class="marquee-inner">
+      <span class="marquee-item">Military TDY Housing<span class="marquee-dot"></span></span>
+      <span class="marquee-item">Government Contractors<span class="marquee-dot"></span></span>
+      <span class="marquee-item">University Visitors<span class="marquee-dot"></span></span>
+      <span class="marquee-item">Dyess Air Force Base<span class="marquee-dot"></span></span>
+      <span class="marquee-item">Professionally Managed<span class="marquee-dot"></span></span>
+      <span class="marquee-item">Fully Furnished<span class="marquee-dot"></span></span>
+      <span class="marquee-item">Abilene, Texas<span class="marquee-dot"></span></span>
+      <span class="marquee-item">Military TDY Housing<span class="marquee-dot"></span></span>
+      <span class="marquee-item">Government Contractors<span class="marquee-dot"></span></span>
+      <span class="marquee-item">University Visitors<span class="marquee-dot"></span></span>
+      <span class="marquee-item">Dyess Air Force Base<span class="marquee-dot"></span></span>
+      <span class="marquee-item">Professionally Managed<span class="marquee-dot"></span></span>
+      <span class="marquee-item">Fully Furnished<span class="marquee-dot"></span></span>
+      <span class="marquee-item">Abilene, Texas<span class="marquee-dot"></span></span>
+    </div>
+  </div>
+
+  <!-- AUDIENCE / GUESTS -->
+  <section id="audience">
+    <div class="audience-header reveal">
+      <h2 class="section-title">The right home for <em>every kind of stay</em></h2>
+    </div>
+    <AudienceTabs />
+    <div class="audience-cta reveal">
+      <a href="#contact" class="btn-primary" style="opacity:1;animation:none">Inquire About Availability <span class="btn-arrow">&#8594;</span></a>
+    </div>
+  </section>
+
+  <!-- SERVICES -->
+  <section id="services">
+    <div class="services-layout">
+      <div class="services-intro reveal">
+        <h2 class="section-title">Residential properties,<br><em>elevated</em> for short stays</h2>
+        <p class="section-intro">We lease, furnish, and manage residential properties in Abilene, TX &mdash; delivering hotel-quality comfort in a home setting for guests who demand reliability.</p>
+      </div>
+      <div class="services-cards">
+        <div class="service-card reveal reveal-delay-1">
+          <div class="service-number">01</div>
+          <div class="service-name">Furnished Properties</div>
+          <p class="service-desc">Every property is curated and fully furnished to a consistent standard &mdash; premium linens, smart home access, high-speed WiFi, and everything guests need from day one.</p>
+        </div>
+        <div class="service-card reveal reveal-delay-2">
+          <div class="service-number">02</div>
+          <div class="service-name">Military &amp; Corporate Housing</div>
+          <p class="service-desc">Optimized for TDY personnel, per diem travelers, and government contractors. Flexible stays from one night to 29 days, with seamless booking and zero-friction check-in.</p>
+        </div>
+        <div class="service-card reveal reveal-delay-3">
+          <div class="service-number">03</div>
+          <div class="service-name">Abilene, TX Market</div>
+          <p class="service-desc">Strategically located near Dyess Air Force Base and Abilene's universities. Year-round demand means consistent availability and competitive rates for guests who plan ahead.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- TRUST -->
+  <section id="trust">
+    <div class="trust-layout">
+      <div class="trust-header reveal">
+        <div class="section-label" style="color:rgba(201,169,110,.6)">Why Us</div>
+        <h2 class="section-title">Built on trust,<br><em>backed by credentials</em></h2>
+        <p class="section-intro">We operate with the transparency and professionalism of an institutional property manager &mdash; at the responsiveness of a dedicated owner.</p>
+      </div>
+      <div class="trust-grid">
+        <div class="trust-card reveal reveal-delay-1">
+          <div class="trust-icon"><svg viewBox="0 0 44 44"><rect x="8" y="10" width="28" height="24" rx="2"/><path d="M15 10V7a7 7 0 0 1 14 0v3"/><circle cx="22" cy="22" r="3"/></svg></div>
+          <div class="trust-title">Licensed Texas LLC</div>
+          <p class="trust-desc">Registered with the Texas Secretary of State. We operate as a formal business entity with full legal standing.</p>
+        </div>
+        <div class="trust-card reveal reveal-delay-2">
+          <div class="trust-icon"><svg viewBox="0 0 44 44"><path d="M22 8l11 4v10c0 7-5 12-11 14C11 34 6 29 6 22V12z"/><path d="M16 22l4 4 8-8"/></svg></div>
+          <div class="trust-title">STR Insurance</div>
+          <p class="trust-desc">Fully insured through a specialized short-term rental carrier with $1M+ per-occurrence coverage. Landlords are named as additional insured.</p>
+        </div>
+        <div class="trust-card reveal reveal-delay-3">
+          <div class="trust-icon"><svg viewBox="0 0 44 44"><circle cx="22" cy="16" r="6"/><path d="M10 36c0-6.627 5.373-12 12-12s12 5.373 12 12"/></svg></div>
+          <div class="trust-title">Professional Management</div>
+          <p class="trust-desc">Local cleaning, maintenance, and operations partners ensure properties are always guest-ready. Issues resolved within 24 hours.</p>
+        </div>
+        <div class="trust-card reveal reveal-delay-4">
+          <div class="trust-icon"><svg viewBox="0 0 44 44"><path d="M22 6c-8.837 0-16 7.163-16 16s7.163 16 16 16 16-7.163 16-16S30.837 6 22 6z"/><path d="M14 22l5 5 11-11"/></svg></div>
+          <div class="trust-title">Verified Airbnb Host</div>
+          <p class="trust-desc">Listed on Airbnb with identity verification, guest screening, and the backing of Airbnb's AirCover host protection program.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- LANDLORDS -->
+  <section id="landlords">
+    <div class="landlord-geo"></div>
+    <div class="landlord-layout">
+      <div class="reveal" style="position:relative;z-index:1">
+        <div class="section-label">For Landlords</div>
+        <h2 class="section-title">Your property,<br><em>managed right</em></h2>
+        <p class="section-intro" style="margin-bottom:36px">We partner with Abilene landlords who want reliable, professional tenants &mdash; without the headaches of managing short-term guests themselves.</p>
+        <a href="#contact" class="btn-primary" style="opacity:1;animation:none">Talk to Us <span class="btn-arrow">&#8594;</span></a>
+      </div>
+      <div class="landlord-benefits reveal reveal-delay-1">
+        <div class="landlord-benefit">
+          <div class="lb-icon"><svg viewBox="0 0 24 24"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></div>
+          <div>
+            <div class="lb-title">Guaranteed Monthly Rent</div>
+            <p class="lb-desc">We pay on a fixed schedule via ACH, every month, whether the property is occupied or not. No vacancy risk, no late payments.</p>
+          </div>
+        </div>
+        <div class="landlord-benefit">
+          <div class="lb-icon"><svg viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg></div>
+          <div>
+            <div class="lb-title">Professional Operations</div>
+            <p class="lb-desc">We handle cleaning, maintenance coordination, guest screening, and 24-hour issue response. Your property is treated like a business asset.</p>
+          </div>
+        </div>
+        <div class="landlord-benefit">
+          <div class="lb-icon"><svg viewBox="0 0 24 24"><path d="M12 2L3 7v5c0 5.25 3.75 10.15 9 11.25C17.25 22.15 21 17.25 21 12V7l-9-5z"/></svg></div>
+          <div>
+            <div class="lb-title">$1M Insurance Coverage</div>
+            <p class="lb-desc">You are named as additional insured on our STR-specific policy. Guest damage is covered via Airbnb AirCover. Your asset is protected at every layer.</p>
+          </div>
+        </div>
+        <div class="landlord-benefit">
+          <div class="lb-icon"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg></div>
+          <div>
+            <div class="lb-title">Clean Legal Framework</div>
+            <p class="lb-desc">We operate with a formal sublease addendum &mdash; Texas-law compliant, attorney-reviewed &mdash; that protects your rights and clearly defines responsibilities.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CONTACT -->
+  <section id="contact">
+    <div class="contact-geo"></div>
+    <div class="contact-inner">
+      <div class="reveal">
+        <div class="section-label">Contact</div>
+        <h2 class="section-title">Let's start a<br><em>conversation</em></h2>
+        <p class="section-intro" style="margin-bottom:40px">Whether you're a prospective guest, a landlord looking to partner, or a corporate travel coordinator &mdash; we respond within one business day.</p>
+        <div class="contact-detail">
+          <div class="contact-line">
+            <div class="contact-icon"><svg viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg></div>
+            <div>
+              <div class="contact-line-label">Email</div>
+              <div class="contact-line-value"><a href="mailto:rgraterol@rlcapitalrealty.com">rgraterol@rlcapitalrealty.com</a></div>
+            </div>
+          </div>
+          <div class="contact-line">
+            <div class="contact-icon"><svg viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.61 3.4 2 2 0 0 1 3.6 1.22h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.78a16 16 0 0 0 6 6l.95-.95a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 21.73 16.92z"/></svg></div>
+            <div>
+              <div class="contact-line-label">Phone / WhatsApp</div>
+              <div class="contact-line-value"><a href="tel:+17865314280">+1 (786) 531-4280</a></div>
+            </div>
+          </div>
+          <div class="contact-line">
+            <div class="contact-icon"><svg viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg></div>
+            <div>
+              <div class="contact-line-label">Market</div>
+              <div class="contact-line-value">Abilene, Texas &mdash; 79605 &amp; 79606</div>
+            </div>
+          </div>
+          <div class="contact-line">
+            <div class="contact-icon"><svg viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg></div>
+            <div>
+              <div class="contact-line-label">Platform</div>
+              <div class="contact-line-value">Airbnb &middot; VRBO &middot; Furnished Finder</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="contact-cta-box reveal reveal-delay-2">
+        <h3>Ready to book or<br><em>partner with us?</em></h3>
+        <p>Reach out by email, call us directly, or message on WhatsApp. We welcome guests, landlords, and corporate accounts.</p>
+        <div class="contact-actions">
+          <a href="mailto:rgraterol@rlcapitalrealty.com" class="btn-gold-outline">Send an Email <span>&#8594;</span></a>
+          <a href="https://wa.me/17865314280" target="_blank" rel="noopener" class="btn-whatsapp">
+            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413z"/></svg>
+            WhatsApp Us
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  </main>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="footer-brand">R<span>&amp;</span>L Capital Realty LLC</div>
+    <div class="footer-meta">&copy; 2026 R&amp;L Capital Realty LLC &middot; Abilene, TX &middot; All rights reserved</div>
+  </footer>
+
+  <ScrollReveal />
+</Base>
+
+<style>
+  body { font-family: 'DM Sans', system-ui, sans-serif; background: #faf8f4; color: #3d3530; font-size: 16px; line-height: 1.6; overflow-x: hidden; font-optical-sizing: auto; }
+
+  /* HERO */
+  #hero { min-height: 100vh; display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden; background: #0f1f2e; padding: 120px 5vw 80px; }
+  .hero-bg { position: absolute; inset: 0; overflow: hidden; pointer-events: none; }
+  .hero-bg::before { content: ''; position: absolute; width: 700px; height: 700px; border-radius: 50%; background: radial-gradient(circle, rgba(201,169,110,.06) 0%, transparent 70%); top: -120px; right: -160px; }
+  .hero-bg::after { content: ''; position: absolute; width: 500px; height: 500px; border-radius: 50%; background: radial-gradient(circle, rgba(201,169,110,.04) 0%, transparent 70%); bottom: -100px; left: -80px; }
+  .hero-grid-lines { position: absolute; inset: 0; background-image: linear-gradient(rgba(201,169,110,.035) 1px, transparent 1px), linear-gradient(90deg, rgba(201,169,110,.035) 1px, transparent 1px); background-size: 60px 60px; }
+  .hero-geo { position: absolute; top: 12%; right: 8%; width: 280px; height: 280px; border: 1px solid rgba(201,169,110,.12); transform: rotate(15deg); animation: geo-drift 18s ease-in-out infinite; }
+  .hero-geo::before { content: ''; position: absolute; inset: 24px; border: 1px solid rgba(201,169,110,.08); transform: rotate(-8deg); }
+  .hero-geo-2 { position: absolute; bottom: 18%; left: 6%; width: 160px; height: 160px; border: 1px solid rgba(201,169,110,.08); transform: rotate(-20deg); animation: geo-drift 22s ease-in-out infinite reverse; }
+  @keyframes geo-drift { 0%, 100% { transform: rotate(15deg) translateY(0); } 50% { transform: rotate(15deg) translateY(-12px); } }
+  .hero-content { position: relative; z-index: 2; max-width: 820px; text-align: center; }
+  .hero-eyebrow { display: inline-flex; align-items: center; gap: 12px; font-family: 'DM Sans', system-ui, sans-serif; font-size: .7rem; font-weight: 400; letter-spacing: .2em; text-transform: uppercase; color: #c9a96e; margin-bottom: 28px; opacity: 0; animation: fade-up .9s .2s forwards; }
+  .hero-eyebrow::before, .hero-eyebrow::after { content: ''; display: block; width: 36px; height: 1px; background: #a8885a; }
+  .hero-headline { font-family: 'Cormorant Garamond', Georgia, serif; font-weight: 300; font-size: clamp(2.8rem, 6vw, 5rem); line-height: 1.1; color: #faf8f4; letter-spacing: -.01em; margin-bottom: 24px; opacity: 0; animation: fade-up .9s .45s forwards; text-wrap: balance; }
+  .hero-headline em { font-style: italic; color: #c9a96e; }
+  .hero-sub { font-family: 'DM Sans', system-ui, sans-serif; font-size: 1rem; font-weight: 400; color: rgba(250,248,244,.55); line-height: 1.75; max-width: 520px; margin: 0 auto 44px; letter-spacing: .015em; opacity: 0; animation: fade-up .9s .65s forwards; text-wrap: pretty; }
+  .hero-btns { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; opacity: 0; animation: fade-up .9s .85s forwards; }
+
+  /* BUTTONS */
+  .btn-primary { display: inline-flex; align-items: center; gap: 12px; padding: 15px 40px; background: #c9a96e; color: #0f1f2e; font-family: 'DM Sans', system-ui, sans-serif; font-size: .78rem; font-weight: 500; letter-spacing: .12em; text-transform: uppercase; text-decoration: none; border-radius: 2px; transition: background .35s, transform .35s, box-shadow .35s; }
+  .btn-primary:hover { background: #dfc090; transform: translateY(-2px); box-shadow: 0 12px 32px rgba(201,169,110,.25); }
+  .btn-secondary-hero { display: inline-flex; align-items: center; gap: 10px; padding: 15px 32px; border: 1px solid rgba(201,169,110,.4); color: rgba(250,248,244,.7); font-family: 'DM Sans', system-ui, sans-serif; font-size: .78rem; font-weight: 400; letter-spacing: .12em; text-transform: uppercase; text-decoration: none; border-radius: 2px; transition: border-color .35s, color .35s; }
+  .btn-secondary-hero:hover { border-color: #c9a96e; color: #c9a96e; }
+  .btn-arrow { display: inline-block; transition: transform .35s; }
+  .btn-primary:hover .btn-arrow, .btn-secondary-hero:hover .btn-arrow { transform: translateX(4px); }
+
+  /* MARQUEE */
+  .marquee-strip { background: #c9a96e; padding: 14px 0; overflow: hidden; white-space: nowrap; }
+  .marquee-inner { display: inline-flex; animation: marquee 28s linear infinite; }
+  .marquee-item { display: inline-flex; align-items: center; gap: 24px; padding: 0 36px; font-family: 'DM Sans', system-ui, sans-serif; font-size: .7rem; font-weight: 500; letter-spacing: .18em; text-transform: uppercase; color: #0f1f2e; }
+  .marquee-dot { width: 4px; height: 4px; background: #0f1f2e; border-radius: 50%; opacity: .4; }
+  @keyframes marquee { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+
+  /* SECTIONS */
+  section { padding: 100px 5vw; }
+  .section-label { font-family: 'DM Sans', system-ui, sans-serif; font-size: .65rem; font-weight: 500; letter-spacing: .22em; text-transform: uppercase; color: #a8885a; margin-bottom: 14px; display: flex; align-items: center; gap: 12px; }
+  .section-label::before { content: ''; display: block; width: 28px; height: 1px; background: #a8885a; }
+  .section-title { font-family: 'Cormorant Garamond', Georgia, serif; font-weight: 400; font-size: clamp(2rem, 3.5vw, 3rem); line-height: 1.15; color: #0f1f2e; letter-spacing: -.01em; margin-bottom: 16px; text-wrap: balance; }
+  .section-title em { font-style: italic; color: #a8885a; }
+  .section-intro { font-size: 1rem; color: #7a6e65; max-width: 480px; line-height: 1.75; font-weight: 300; text-wrap: pretty; }
+
+  /* AUDIENCE */
+  #audience { background: #f2ede4; padding: 80px 5vw; }
+  .audience-header { text-align: center; margin-bottom: 48px; }
+  .audience-cta { text-align: center; margin-top: 40px; }
+
+  /* SERVICES */
+  #services { background: #faf8f4; }
+  .services-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: start; }
+  .services-cards { display: flex; flex-direction: column; gap: 2px; }
+  .service-card { background: white; border: 1px solid rgba(15,31,46,.07); padding: 32px 36px; position: relative; transition: border-color .35s, box-shadow .35s, transform .35s; }
+  .service-card::before { content: ''; position: absolute; left: 0; right: 0; top: 0; height: 2px; background: #c9a96e; transform: scaleX(0); transform-origin: left; transition: transform .35s cubic-bezier(0.4, 0, 0.2, 1); }
+  .service-card:hover { border-color: rgba(201,169,110,.3); box-shadow: 0 8px 32px rgba(15,31,46,.08); transform: translateY(-3px); }
+  .service-card:hover::before { transform: scaleX(1); }
+  .service-number { font-family: 'Cormorant Garamond', Georgia, serif; font-size: .75rem; font-weight: 400; letter-spacing: .12em; color: #a8885a; margin-bottom: 12px; }
+  .service-name { font-family: 'Cormorant Garamond', Georgia, serif; font-size: 1.3rem; font-weight: 500; color: #0f1f2e; margin-bottom: 10px; letter-spacing: -.01em; }
+  .service-desc { font-size: .9rem; color: #7a6e65; line-height: 1.7; font-weight: 300; text-wrap: pretty; }
+
+  /* TRUST */
+  #trust { background: #0f1f2e; position: relative; overflow: hidden; }
+  #trust::before { content: ''; position: absolute; inset: 0; background-image: linear-gradient(rgba(201,169,110,.03) 1px, transparent 1px), linear-gradient(90deg, rgba(201,169,110,.03) 1px, transparent 1px); background-size: 48px 48px; pointer-events: none; }
+  .trust-layout { position: relative; z-index: 1; }
+  .trust-header { margin-bottom: 64px; }
+  .trust-header .section-title { color: #faf8f4; }
+  .trust-header .section-intro { color: rgba(250,248,244,.45); }
+  .trust-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 2px; }
+  .trust-card { background: rgba(250,248,244,.04); border: 1px solid rgba(201,169,110,.1); padding: 40px 28px; text-align: center; transition: background .35s, border-color .35s; position: relative; overflow: hidden; }
+  .trust-card::after { content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 2px; background: linear-gradient(90deg, transparent, #c9a96e, transparent); opacity: 0; transition: opacity .35s; }
+  .trust-card:hover { background: rgba(250,248,244,.07); border-color: rgba(201,169,110,.25); }
+  .trust-card:hover::after { opacity: 1; }
+  .trust-icon { width: 44px; height: 44px; margin: 0 auto 20px; display: flex; align-items: center; justify-content: center; }
+  .trust-icon svg { width: 100%; height: 100%; stroke: #c9a96e; fill: none; stroke-width: 1.2; stroke-linecap: round; stroke-linejoin: round; }
+  .trust-title { font-family: 'Cormorant Garamond', Georgia, serif; font-size: 1.05rem; font-weight: 500; color: #faf8f4; margin-bottom: 10px; letter-spacing: .01em; }
+  .trust-desc { font-size: .875rem; color: rgba(250,248,244,.45); line-height: 1.7; font-weight: 400; text-wrap: pretty; letter-spacing: .01em; }
+
+  /* LANDLORDS */
+  #landlords { background: #faf8f4; position: relative; overflow: hidden; padding: 120px 5vw; }
+  .landlord-geo { position: absolute; left: -80px; top: -80px; width: 400px; height: 400px; border: 1px solid rgba(15,31,46,.05); transform: rotate(12deg); pointer-events: none; }
+  .landlord-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center; }
+  .landlord-benefits { display: flex; flex-direction: column; gap: 2px; position: relative; z-index: 1; }
+  .landlord-benefit { display: flex; gap: 18px; align-items: flex-start; padding: 22px 24px; background: white; border: 1px solid rgba(15,31,46,.07); transition: border-color .35s, box-shadow .35s; }
+  .landlord-benefit:hover { border-color: rgba(201,169,110,.3); box-shadow: 0 4px 20px rgba(15,31,46,.06); }
+  .lb-icon { width: 36px; height: 36px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; border: 1px solid rgba(201,169,110,.25); margin-top: 2px; }
+  .lb-icon svg { width: 16px; height: 16px; stroke: #a8885a; fill: none; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
+  .lb-title { font-family: 'Cormorant Garamond', Georgia, serif; font-size: 1rem; font-weight: 500; color: #0f1f2e; margin-bottom: 4px; }
+  .lb-desc { font-size: .9rem; color: #7a6e65; line-height: 1.65; font-weight: 300; text-wrap: pretty; }
+
+  /* CONTACT */
+  #contact { background: #f2ede4; position: relative; overflow: hidden; padding: 120px 5vw 100px; }
+  .contact-inner { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center; }
+  .contact-geo { position: absolute; right: -60px; top: -60px; width: 320px; height: 320px; border: 1px solid rgba(15,31,46,.06); transform: rotate(20deg); pointer-events: none; }
+  .contact-geo::before { content: ''; position: absolute; inset: 30px; border: 1px solid rgba(15,31,46,.04); }
+  .contact-detail { display: flex; flex-direction: column; gap: 28px; }
+  .contact-line { display: flex; align-items: flex-start; gap: 18px; }
+  .contact-icon { width: 36px; height: 36px; flex-shrink: 0; border: 1px solid rgba(201,169,110,.3); display: flex; align-items: center; justify-content: center; margin-top: 2px; }
+  .contact-icon svg { width: 16px; height: 16px; stroke: #a8885a; fill: none; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
+  .contact-line-label { font-size: .65rem; font-weight: 500; letter-spacing: .18em; text-transform: uppercase; color: #7a6e65; margin-bottom: 4px; }
+  .contact-line-value { font-family: 'Cormorant Garamond', Georgia, serif; font-size: 1.1rem; color: #0f1f2e; font-weight: 400; }
+  .contact-line-value a { color: inherit; text-decoration: none; transition: color .35s; }
+  .contact-line-value a:hover { color: #a8885a; }
+  .contact-cta-box { background: #0f1f2e; padding: 52px 44px; position: relative; overflow: hidden; }
+  .contact-cta-box::before { content: ''; position: absolute; top: -1px; left: 0; right: 0; height: 2px; background: #c9a96e; }
+  .contact-cta-box h3 { font-family: 'Cormorant Garamond', Georgia, serif; font-size: 1.6rem; font-weight: 300; color: #faf8f4; line-height: 1.25; margin-bottom: 14px; text-wrap: balance; }
+  .contact-cta-box h3 em { font-style: italic; color: #c9a96e; }
+  .contact-cta-box p { font-size: .9rem; color: rgba(250,248,244,.5); line-height: 1.75; margin-bottom: 28px; font-weight: 400; text-wrap: pretty; letter-spacing: .01em; }
+  .contact-actions { display: flex; flex-direction: column; gap: 10px; }
+  .btn-gold-outline { display: inline-flex; align-items: center; gap: 10px; padding: 12px 30px; border: 1px solid #c9a96e; color: #c9a96e; font-family: 'DM Sans', system-ui, sans-serif; font-size: .75rem; font-weight: 500; letter-spacing: .12em; text-transform: uppercase; text-decoration: none; border-radius: 2px; transition: background .35s, color .35s; width: fit-content; }
+  .btn-gold-outline:hover { background: #c9a96e; color: #0f1f2e; }
+  .btn-whatsapp { display: inline-flex; align-items: center; gap: 10px; padding: 12px 30px; border: 1px solid rgba(250,248,244,.18); color: rgba(250,248,244,.55); font-family: 'DM Sans', system-ui, sans-serif; font-size: .75rem; font-weight: 400; letter-spacing: .12em; text-transform: uppercase; text-decoration: none; border-radius: 2px; transition: border-color .35s, color .35s; width: fit-content; }
+  .btn-whatsapp:hover { border-color: rgba(250,248,244,.4); color: #faf8f4; }
+  .btn-whatsapp svg { width: 15px; height: 15px; fill: currentColor; flex-shrink: 0; }
+
+  /* FOOTER */
+  footer { background: #0f1f2e; border-top: 1px solid rgba(201,169,110,.15); padding: 36px 5vw; display: flex; align-items: center; justify-content: space-between; gap: 24px; flex-wrap: wrap; }
+  .footer-brand { font-family: 'Cormorant Garamond', Georgia, serif; font-size: 1rem; color: #faf8f4; letter-spacing: .04em; }
+  .footer-brand span { color: #c9a96e; }
+  .footer-meta { font-size: .75rem; color: rgba(250,248,244,.3); letter-spacing: .06em; text-align: right; }
+
+  /* RESPONSIVE */
+  @media (max-width: 1024px) {
+    .trust-grid { grid-template-columns: repeat(2, 1fr); }
+  }
+  @media (max-width: 768px) {
+    section { padding: 64px 5vw; }
+    #landlords, #contact { padding: 80px 5vw; }
+    .hero-geo, .hero-geo-2 { display: none; }
+    .hero-btns { flex-direction: column; align-items: center; }
+    .services-layout, .landlord-layout, .contact-inner { grid-template-columns: 1fr; gap: 48px; }
+    .trust-grid { grid-template-columns: 1fr 1fr; }
+    .contact-geo, .landlord-geo { display: none; }
+    footer { flex-direction: column; align-items: flex-start; gap: 8px; }
+    .footer-meta { text-align: left; }
+  }
+  @media (max-width: 480px) {
+    .trust-grid { grid-template-columns: 1fr; }
+    .hero-headline { font-size: 2.4rem; }
+  }
+</style>
