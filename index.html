@@ -3,6 +3,16 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<script>
+  // Supabase recovery/magic-link emails redirect to the site root when sent from
+  // the dashboard. Forward to callback.html so it can handle the token.
+  (function () {
+    const hash = window.location.hash;
+    if (hash && (hash.includes('type=recovery') || hash.includes('type=magiclink'))) {
+      window.location.replace('/auth/callback.html' + hash);
+    }
+  })();
+</script>
 <title>R&L Capital Realty LLC — Premium Short-Term Housing · Abilene, TX</title>
 
 <!-- Open Graph -->
