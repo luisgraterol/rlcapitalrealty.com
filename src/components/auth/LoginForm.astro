@@ -23,7 +23,7 @@
 
       <div class="alert alert-error" id="login-error" role="alert"></div>
 
-      <form id="login-form" novalidate>
+      <form id="login-form" method="post" novalidate>
         <div class="form-group">
           <label class="form-label" for="login-email">Email</label>
           <input id="login-email" name="email" type="email" class="form-input" placeholder="you@rlcapitalrealty.com" autocomplete="email" required />
@@ -57,7 +57,7 @@
       <div class="alert alert-error" id="forgot-error" role="alert"></div>
       <div class="alert alert-success" id="forgot-success" role="alert"></div>
 
-      <form id="forgot-form" novalidate>
+      <form id="forgot-form" method="post" novalidate>
         <div class="form-group">
           <label class="form-label" for="forgot-email">Email</label>
           <input id="forgot-email" name="email" type="email" class="form-input" placeholder="you@rlcapitalrealty.com" autocomplete="email" required />
@@ -85,7 +85,7 @@
   import { redirectIfLoggedIn } from '@lib/auth';
 
   (async () => {
-    await redirectIfLoggedIn();
+    try { await redirectIfLoggedIn(); } catch (_) { /* supabase may be unconfigured in this env */ }
 
     const views = {
       login:  document.getElementById('view-login')!,
@@ -133,10 +133,15 @@
       const password = (document.getElementById('login-password') as HTMLInputElement).value;
       if (!email || !password) { showError(loginError, 'Please enter your email and password.'); return; }
       setLoading(loginBtn, true);
-      const { error } = await supabase.auth.signInWithPassword({ email, password });
-      setLoading(loginBtn, false);
-      if (error) { showError(loginError, 'Invalid email or password. Please try again.'); }
-      else { window.location.replace('/admin'); }
+      try {
+        const { error } = await supabase.auth.signInWithPassword({ email, password });
+        setLoading(loginBtn, false);
+        if (error) { showError(loginError, 'Invalid email or password. Please try again.'); }
+        else { window.location.replace('/admin'); }
+      } catch (err) {
+        setLoading(loginBtn, false);
+        showError(loginError, 'Service unavailable. Please try again later.');
+      }
     });
 
     document.getElementById('forgot-form')!.addEventListener('submit', async e => {
