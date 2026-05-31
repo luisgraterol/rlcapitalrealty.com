@@ -67,33 +67,33 @@ const { title = 'Owner Admin — R&L Capital Realty LLC' } = Astro.props;
     position: fixed; top: 0; left: 0; right: 0; z-index: 100;
     display: flex; align-items: center; justify-content: space-between;
     padding: 0 5vw; height: 68px;
-    background: rgba(15,31,46,.97); backdrop-filter: blur(12px);
-    border-bottom: 1px solid rgba(201,169,110,.18);
+    background: #ffffff; backdrop-filter: blur(12px);
+    border-bottom: 1px solid rgba(15,31,46,.1);
   }
   .wordmark {
     font-family: 'Cormorant Garamond', Georgia, serif; font-weight: 400;
-    font-size: 1.2rem; letter-spacing: .04em; color: #faf8f4;
+    font-size: 1.2rem; letter-spacing: .04em; color: #0f1f2e;
     text-decoration: none; display: flex; align-items: center; gap: 10px;
   }
   .wordmark-accent { color: #c9a96e; }
-  .wordmark-divider { width: 1px; height: 18px; background: rgba(201,169,110,.4); }
+  .wordmark-divider { width: 1px; height: 18px; background: rgba(15,31,46,.2); }
   .wordmark-sub {
     font-family: 'DM Sans', system-ui, sans-serif; font-size: .62rem;
-    font-weight: 300; letter-spacing: .14em; color: rgba(250,248,244,.5); text-transform: uppercase;
+    font-weight: 300; letter-spacing: .14em; color: rgba(15,31,46,.4); text-transform: uppercase;
   }
   .nav-right { display: flex; align-items: center; gap: 20px; }
   .nav-user {
-    font-size: .72rem; letter-spacing: .06em; color: rgba(250,248,244,.4);
+    font-size: .72rem; letter-spacing: .06em; color: #7a6e65;
     max-width: 200px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
   }
   .btn-logout {
     display: inline-flex; align-items: center; gap: 8px; padding: 8px 18px;
-    border: 1px solid rgba(201,169,110,.35); border-radius: 2px;
+    border: 1px solid rgba(15,31,46,.3); border-radius: 2px;
     font-family: 'DM Sans', system-ui, sans-serif; font-size: .72rem; font-weight: 400;
-    letter-spacing: .1em; text-transform: uppercase; color: rgba(250,248,244,.6);
-    background: none; cursor: pointer; transition: border-color .35s, color .35s;
+    letter-spacing: .1em; text-transform: uppercase; color: rgba(15,31,46,.70);
+    background: none; cursor: pointer; transition: border-color .35s, color .35s, background .35s;
   }
-  .btn-logout:hover { border-color: #c9a96e; color: #c9a96e; }
+  .btn-logout:hover { border-color: #0f1f2e; background: #0f1f2e; color: #ffffff; }
   .btn-logout svg {
     width: 13px; height: 13px; stroke: currentColor; fill: none;
     stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round;
