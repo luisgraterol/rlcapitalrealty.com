@@ -1,0 +1,143 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-05-30T00:00:00Z",
+  "title": "Design System: R&L Capital Realty",
+  "extensions": {
+    "colorMeta": {
+      "navy":        { "role": "primary",  "displayName": "Deep Garrison Navy",  "canonical": "oklch(19% 0.040 230)", "tonalRamp": ["#080f18","#0f1f2e","#182d42","#213c56","#2c4d6a","#3d6b8e","#6a95b5","#c0d5e5"] },
+      "navy-mid":    { "role": "primary",  "displayName": "Mid Navy",            "canonical": "oklch(26% 0.038 230)", "tonalRamp": ["#080f18","#0f1f2e","#182d42","#213c56","#2c4d6a","#3d6b8e","#6a95b5","#c0d5e5"] },
+      "navy-light":  { "role": "primary",  "displayName": "Navy Light",          "canonical": "oklch(32% 0.036 230)", "tonalRamp": ["#080f18","#0f1f2e","#182d42","#213c56","#2c4d6a","#3d6b8e","#6a95b5","#c0d5e5"] },
+      "gold":        { "role": "secondary","displayName": "Burnished Gold",       "canonical": "oklch(73% 0.090 70)",  "tonalRamp": ["#2d1e08","#4a3219","#6b4a24","#8e6430","#b07f3d","#c9a96e","#e5cf9e","#f7f0de"] },
+      "gold-light":  { "role": "secondary","displayName": "Gold Light",           "canonical": "oklch(82% 0.075 70)",  "tonalRamp": ["#2d1e08","#4a3219","#6b4a24","#8e6430","#b07f3d","#c9a96e","#e5cf9e","#f7f0de"] },
+      "gold-dim":    { "role": "secondary","displayName": "Gold Dim",             "canonical": "oklch(62% 0.080 70)",  "tonalRamp": ["#2d1e08","#4a3219","#6b4a24","#8e6430","#b07f3d","#c9a96e","#e5cf9e","#f7f0de"] },
+      "cream":       { "role": "neutral",  "displayName": "Cream White",          "canonical": "oklch(97% 0.006 80)",  "tonalRamp": ["#8a857d","#a5a09a","#bcb9b4","#d0cec9","#e0deda","#ece9e5","#f2ede4","#faf8f4"] },
+      "cream-dark":  { "role": "neutral",  "displayName": "Cream Dark",           "canonical": "oklch(93% 0.010 80)",  "tonalRamp": ["#8a857d","#a5a09a","#bcb9b4","#d0cec9","#e0deda","#ece9e5","#f2ede4","#faf8f4"] },
+      "ink":         { "role": "neutral",  "displayName": "Warm Ink",             "canonical": "oklch(30% 0.018 50)",  "tonalRamp": ["#1a1310","#2a1e19","#3d3530","#5c4f49","#7a6e65","#9c918a","#c3bdb8","#ece9e5"] },
+      "muted":       { "role": "neutral",  "displayName": "Warm Muted",           "canonical": "oklch(50% 0.016 50)",  "tonalRamp": ["#1a1310","#2a1e19","#3d3530","#5c4f49","#7a6e65","#9c918a","#c3bdb8","#ece9e5"] },
+      "profit":      { "role": "tertiary", "displayName": "Profit Green",         "canonical": "oklch(68% 0.100 158)", "tonalRamp": ["#0d2b1e","#1a4c34","#226844","#2e7d5e","#3a8a64","#4caf81","#87d4aa","#d0f0e2"] },
+      "risk":        { "role": "tertiary", "displayName": "Risk Amber",           "canonical": "oklch(72% 0.095 72)",  "tonalRamp": ["#2d2200","#4a3800","#6b5200","#8e6e00","#b08a00","#d4a32a","#e8c870","#f8eed4"] },
+      "loss":        { "role": "tertiary", "displayName": "Loss Red",             "canonical": "oklch(52% 0.140 25)",  "tonalRamp": ["#2d0808","#4a1010","#6b1c1c","#8e2a2a","#a83838","#c94a4a","#e48888","#f7d5d5"] }
+    },
+    "typographyMeta": {
+      "display": { "displayName": "Display / Hero", "purpose": "Hero headline only. Weight 300 always. Italics for emotional emphasis within the heading, once per heading." },
+      "headline": { "displayName": "Headline / Section", "purpose": "Section h2 headings. Weight 400. One italic emphasis word allowed." },
+      "title":    { "displayName": "Title / Card",    "purpose": "Card headings, service names, trust titles. Weight 500. No italic." },
+      "body":     { "displayName": "Body / Prose",    "purpose": "All paragraph text. DM Sans 300. Max line length ~65ch." },
+      "label":    { "displayName": "Label / Tag",     "purpose": "Section kickers, button text, nav links, form labels. Uppercase only at this scale." }
+    },
+    "shadows": [
+      { "name": "hover-lift",    "value": "0 8px 32px rgba(15,31,46,.08)",    "purpose": "Service cards and list rows on hover. Navy-tinted ambient lift." },
+      { "name": "button-glow",   "value": "0 12px 32px rgba(201,169,110,.25)","purpose": "Primary button on hover. Gold-tinted glow." },
+      { "name": "nav-scroll",    "value": "0 4px 24px rgba(0,0,0,.3)",        "purpose": "Navigation bar after 40px scroll only." },
+      { "name": "contact-hover", "value": "0 4px 20px rgba(15,31,46,.06)",    "purpose": "Landlord benefit row on hover. Lighter than service cards." }
+    ],
+    "motion": [
+      { "name": "ease-standard", "value": "cubic-bezier(0.4, 0, 0.2, 1)", "purpose": "Default easing for all state transitions (hover, focus, active)." },
+      { "name": "fade-up",       "value": "opacity 0→1 + translateY(24px→0), 0.9s ease-standard", "purpose": "Hero entrance cascade: eyebrow at 0.2s, headline at 0.45s, sub at 0.65s, buttons at 0.85s." },
+      { "name": "scroll-reveal", "value": "opacity 0→1 + translateY(28px→0), 0.8s ease-standard, IntersectionObserver triggered", "purpose": "All .reveal elements when they enter the viewport. Delay variants: .1s, .2s, .3s, .4s." },
+      { "name": "geo-drift",     "value": "translateY(0 ↔ -12px), 18-22s ease-in-out infinite", "purpose": "Floating geometric decorative rectangles on hero section only." },
+      { "name": "marquee",       "value": "translateX(0 → -50%), 28s linear infinite", "purpose": "Full-width gold marquee strip between hero and audience sections." }
+    ],
+    "breakpoints": [
+      { "name": "mobile",  "value": "480px",  "note": "Single column trust grid, hero headline font-size fallback 2.4rem." },
+      { "name": "tablet",  "value": "768px",  "note": "Single column for services/landlords/contact grids. Hamburger nav active." },
+      { "name": "desktop", "value": "1024px", "note": "Trust grid collapses from 4 to 2 columns." }
+    ]
+  },
+  "components": [
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "Main CTA. Gold fill, navy text, nearly square corners. Lifts on hover.",
+      "html": "<a class=\"ds-btn-primary\" href=\"#\">Find Your Stay <span class=\"ds-btn-arrow\">→</span></a>",
+      "css": ".ds-btn-primary { display: inline-flex; align-items: center; gap: 12px; padding: 15px 40px; background: #c9a96e; color: #0f1f2e; font-family: 'DM Sans', system-ui, sans-serif; font-size: .78rem; font-weight: 500; letter-spacing: .12em; text-transform: uppercase; text-decoration: none; border-radius: 2px; border: none; cursor: pointer; transition: background 0.35s cubic-bezier(0.4,0,0.2,1), transform 0.35s cubic-bezier(0.4,0,0.2,1), box-shadow 0.35s cubic-bezier(0.4,0,0.2,1); } .ds-btn-primary:hover { background: #dfc090; transform: translateY(-2px); box-shadow: 0 12px 32px rgba(201,169,110,.25); } .ds-btn-primary:focus-visible { outline: 2px solid #c9a96e; outline-offset: 2px; } .ds-btn-arrow { display: inline-block; transition: transform 0.35s cubic-bezier(0.4,0,0.2,1); } .ds-btn-primary:hover .ds-btn-arrow { transform: translateX(4px); }"
+    },
+    {
+      "name": "Ghost Gold Button",
+      "kind": "button",
+      "refersTo": "button-ghost-gold",
+      "description": "Secondary CTA on light backgrounds. Gold border and text, fills on hover.",
+      "html": "<a class=\"ds-btn-ghost-gold\" href=\"#\">Send an Email <span class=\"ds-btn-arrow\">→</span></a>",
+      "css": ".ds-btn-ghost-gold { display: inline-flex; align-items: center; gap: 10px; padding: 12px 30px; border: 1px solid #c9a96e; color: #c9a96e; background: transparent; font-family: 'DM Sans', system-ui, sans-serif; font-size: .75rem; font-weight: 500; letter-spacing: .12em; text-transform: uppercase; text-decoration: none; border-radius: 2px; cursor: pointer; transition: background 0.35s cubic-bezier(0.4,0,0.2,1), color 0.35s cubic-bezier(0.4,0,0.2,1); } .ds-btn-ghost-gold:hover { background: #c9a96e; color: #0f1f2e; } .ds-btn-ghost-gold:focus-visible { outline: 2px solid #c9a96e; outline-offset: 2px; } .ds-btn-arrow { display: inline-block; transition: transform 0.35s; } .ds-btn-ghost-gold:hover .ds-btn-arrow { transform: translateX(4px); }"
+    },
+    {
+      "name": "Nav CTA",
+      "kind": "nav",
+      "refersTo": "nav-cta",
+      "description": "Gold ghost link inside the navigation bar. Smaller than page buttons.",
+      "html": "<a class=\"ds-nav-cta\" href=\"#contact\">Contact</a>",
+      "css": ".ds-nav-cta { display: inline-flex; align-items: center; padding: 8px 20px; border: 1px solid #c9a96e; border-radius: 2px; font-family: 'DM Sans', system-ui, sans-serif; font-size: .72rem; font-weight: 400; letter-spacing: .12em; text-transform: uppercase; color: #c9a96e; text-decoration: none; background: transparent; transition: background 0.35s, color 0.35s; } .ds-nav-cta:hover { background: #c9a96e; color: #0f1f2e; } .ds-nav-cta:focus-visible { outline: 2px solid #c9a96e; outline-offset: 2px; }"
+    },
+    {
+      "name": "Service Card",
+      "kind": "card",
+      "refersTo": "button-primary",
+      "description": "White card with thin navy border, lifts and slides on hover. Left-stripe accent is flagged for replacement in polish.",
+      "html": "<div class=\"ds-service-card\"><div class=\"ds-service-number\">01</div><div class=\"ds-service-name\">Furnished Properties</div><p class=\"ds-service-desc\">Every property is curated and fully furnished to a consistent standard.</p></div>",
+      "css": ".ds-service-card { background: white; border: 1px solid rgba(15,31,46,.07); padding: 32px 36px; position: relative; transition: border-color .35s cubic-bezier(0.4,0,0.2,1), box-shadow .35s cubic-bezier(0.4,0,0.2,1), transform .35s cubic-bezier(0.4,0,0.2,1); } .ds-service-card:hover { border-color: rgba(201,169,110,.3); box-shadow: 0 8px 32px rgba(15,31,46,.08); transform: translateX(6px); } .ds-service-number { font-family: 'Cormorant Garamond', Georgia, serif; font-size: .75rem; font-weight: 400; letter-spacing: .12em; color: #a8885a; margin-bottom: 12px; } .ds-service-name { font-family: 'Cormorant Garamond', Georgia, serif; font-size: 1.3rem; font-weight: 500; color: #0f1f2e; margin-bottom: 10px; } .ds-service-desc { font-family: 'DM Sans', system-ui, sans-serif; font-size: .87rem; color: #7a6e65; line-height: 1.7; font-weight: 300; }"
+    },
+    {
+      "name": "Trust Card",
+      "kind": "card",
+      "refersTo": "button-primary",
+      "description": "Dark navy surface card for the trust grid. Icon, title, description. Bottom gold reveal line on hover.",
+      "html": "<div class=\"ds-trust-card\"><div class=\"ds-trust-title\">Licensed & Insured</div><p class=\"ds-trust-desc\">Fully licensed Texas operator with comprehensive property and liability insurance.</p></div>",
+      "css": ".ds-trust-card { background: rgba(250,248,244,.04); border: 1px solid rgba(201,169,110,.1); padding: 40px 28px; text-align: center; position: relative; overflow: hidden; transition: background .35s, border-color .35s; } .ds-trust-card::after { content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 2px; background: linear-gradient(90deg, transparent, #c9a96e, transparent); opacity: 0; transition: opacity .35s; } .ds-trust-card:hover { background: rgba(250,248,244,.07); border-color: rgba(201,169,110,.25); } .ds-trust-card:hover::after { opacity: 1; } .ds-trust-title { font-family: 'Cormorant Garamond', Georgia, serif; font-size: 1.05rem; font-weight: 500; color: #faf8f4; margin-bottom: 10px; } .ds-trust-desc { font-family: 'DM Sans', system-ui, sans-serif; font-size: .82rem; color: rgba(250,248,244,.4); line-height: 1.65; font-weight: 300; }"
+    },
+    {
+      "name": "Form Input",
+      "kind": "input",
+      "refersTo": "button-primary",
+      "description": "Auth and admin form input. Dark background with cream text and gold focus ring.",
+      "html": "<div class=\"ds-form-group\"><label class=\"ds-form-label\" for=\"ds-input\">Email</label><input id=\"ds-input\" class=\"ds-form-input\" type=\"email\" placeholder=\"you@rlcapitalrealty.com\" /></div>",
+      "css": ".ds-form-group { display: flex; flex-direction: column; gap: 8px; } .ds-form-label { font-family: 'DM Sans', system-ui, sans-serif; font-size: .72rem; font-weight: 500; letter-spacing: .1em; text-transform: uppercase; color: rgba(250,248,244,.5); } .ds-form-input { width: 100%; padding: 14px 16px; background: rgba(250,248,244,.06); border: 1px solid rgba(250,248,244,.12); border-radius: 2px; font-family: 'DM Sans', system-ui, sans-serif; font-size: .92rem; font-weight: 300; color: #faf8f4; transition: border-color .25s; } .ds-form-input::placeholder { color: rgba(250,248,244,.25); } .ds-form-input:focus { outline: none; border-color: #c9a96e; box-shadow: 0 0 0 2px rgba(201,169,110,.15); }"
+    },
+    {
+      "name": "Navigation Bar",
+      "kind": "nav",
+      "refersTo": "nav-cta",
+      "description": "Fixed 68px navy bar with gold-rule bottom border and backdrop blur. Wordmark + links + CTA.",
+      "html": "<nav class=\"ds-nav\"><a class=\"ds-wordmark\" href=\"/\">R<span class=\"ds-wordmark-accent\">&amp;</span>L Capital Realty<span class=\"ds-wordmark-div\"></span><span class=\"ds-wordmark-sub\">LLC</span></a><a class=\"ds-nav-cta\" href=\"#contact\">Contact</a></nav>",
+      "css": ".ds-nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; display: flex; align-items: center; justify-content: space-between; padding: 0 5vw; height: 68px; background: rgba(15,31,46,.97); backdrop-filter: blur(12px); border-bottom: 1px solid rgba(201,169,110,.18); transition: box-shadow .35s; } .ds-wordmark { font-family: 'Cormorant Garamond', Georgia, serif; font-weight: 400; font-size: 1.2rem; letter-spacing: .04em; color: #faf8f4; text-decoration: none; display: flex; align-items: center; gap: 10px; } .ds-wordmark-accent { color: #c9a96e; } .ds-wordmark-div { width: 1px; height: 18px; background: rgba(201,169,110,.4); } .ds-wordmark-sub { font-family: 'DM Sans', system-ui, sans-serif; font-size: .62rem; font-weight: 300; letter-spacing: .14em; color: rgba(250,248,244,.5); text-transform: uppercase; } .ds-nav-cta { display: inline-flex; align-items: center; padding: 8px 20px; border: 1px solid #c9a96e; border-radius: 2px; font-family: 'DM Sans', system-ui, sans-serif; font-size: .72rem; letter-spacing: .12em; text-transform: uppercase; color: #c9a96e; text-decoration: none; transition: background .35s, color .35s; } .ds-nav-cta:hover { background: #c9a96e; color: #0f1f2e; }"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Garrison Estate",
+    "overview": "R&L Capital Realty occupies a specific intersection: the measured confidence of a military command structure and the quiet prestige of a well-run estate. The system speaks to people who have been sent somewhere on someone else's schedule, or who are deciding whether to trust a stranger with their property. Neither audience tolerates decoration that pretends to be function. The design earns trust by looking like it was made by someone who does not need to impress you.\n\nThe palette is dark-anchored and gold-accented: a near-black deep navy as the primary structural color, a warm burnished gold as the sole emphasis voice, and an off-white cream as the light surface. These three colors have clear jobs and do not cross over. The typography pairs a weight-light display serif (Cormorant Garamond) for headings and italic emphasis with a clean geometric sans (DM Sans) for all functional text: labels, body, navigation, buttons.\n\nThe system explicitly rejects: vacation-rental marketplace aesthetics, budget hospitality chain identity, generic real estate agency templates, over-corporate coldness, and any form of gradient text, glassmorphism, or startup-launch-page energy.",
+    "keyCharacteristics": [
+      "Dark-anchored pages (navy backgrounds) punctuated by warm cream sections",
+      "Gold used as a single emphasis accent voice, never background fill except the marquee strip",
+      "Serif headings always in lower weight (300-400), italic for emotional emphasis only",
+      "Square-cornered components throughout (2px radius maximum)",
+      "Motion is entrance-only at page/section level; components animate on hover state only"
+    ],
+    "rules": [
+      { "name": "The One Voice Rule", "body": "Gold appears on one element at a time per viewport. Two gold elements competing for attention on the same screen is a mistake.", "section": "colors" },
+      { "name": "The Section Alternation Rule", "body": "Light sections (cream) and dark sections (navy) alternate to create reading rhythm. Two light sections never stack without a dark separator.", "section": "colors" },
+      { "name": "The Italic-Only Emphasis Rule", "body": "Within serif headings, emphasis is conveyed exclusively through italics. No bold within display or headline copy.", "section": "typography" },
+      { "name": "The Serif-Heading Sans-Body Split", "body": "Cormorant Garamond is never used for body copy, form labels, or navigation. DM Sans is never used for headings.", "section": "typography" },
+      { "name": "The Flat-By-Default Rule", "body": "No component carries a shadow at rest. Shadows are state, not decoration.", "section": "elevation" }
+    ],
+    "dos": [
+      "Do use navy (#0f1f2e) as the background for any section that needs authority: hero, trust, admin, footer.",
+      "Do use gold (#c9a96e) as a single emphasis voice per screen region.",
+      "Do use Cormorant Garamond in italic for the emotionally charged word in any hero or section headline, once per heading.",
+      "Do keep all border radii at 2px or zero.",
+      "Do use cream (#faf8f4) and cream-dark (#f2ede4) to alternate light section backgrounds.",
+      "Do size display text with clamp() and cap the max at 5rem.",
+      "Do provide @media (prefers-reduced-motion: reduce) alternatives for every animation.",
+      "Do use DM Sans at 300 weight for body copy."
+    ],
+    "donts": [
+      "Don't use vacation rental platform aesthetics (photo grid layouts, star ratings, booking-widget UI patterns).",
+      "Don't use glassmorphism. No frosted-glass cards or blur-backed panels as a decorative default.",
+      "Don't use gradient text (background-clip: text). Gold is a single solid color.",
+      "Don't add side-stripe borders: border-left wider than 1px as a colored accent on cards.",
+      "Don't use the section-label eyebrow pattern on every section.",
+      "Don't use numbered section markers (01 / 02 / 03) as decorative scaffolding unless the sequence genuinely carries ordered information.",
+      "Don't extend the font count beyond two families.",
+      "Don't use budget hospitality chain conventions: floor plan icons, rate tables in the hero, review score badges."
+    ]
+  }
+}
