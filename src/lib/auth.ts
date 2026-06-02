@@ -11,7 +11,7 @@ export async function requireAuth() {
 
 export async function redirectIfLoggedIn() {
   const { data: { session } } = await supabase.auth.getSession();
-  if (session) window.location.replace('/admin');
+  if (session) window.location.replace('/admin/analyzer');
 }
 
 export async function logout() {

@@ -1,0 +1,308 @@
+---
+---
+
+<div class="page-content">
+
+  <div class="page-header">
+    <div>
+      <div class="section-label">Saved Analyses</div>
+    </div>
+    <a href="/admin/analyzer" class="btn btn-primary">
+      <svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+      New Analysis
+    </a>
+  </div>
+
+  <div id="analyses-container">
+    <div class="loading-state">
+      <span class="loading-text">Loading analyses…</span>
+    </div>
+  </div>
+
+  <!-- Compare panel -->
+  <div class="compare-panel" id="compare-panel">
+    <div class="compare-panel-title">Side-by-Side Comparison</div>
+    <div class="compare-scroll">
+      <table class="compare-table" id="compare-table">
+        <thead><tr id="compare-head"></tr></thead>
+        <tbody id="compare-body"></tbody>
+      </table>
+    </div>
+  </div>
+
+</div>
+
+<footer>
+  <div class="footer-brand">R<span>&amp;</span>L Capital Realty LLC</div>
+  <div class="footer-meta">&copy; 2026 &middot; Abilene, TX &middot; Owner Portal</div>
+</footer>
+
+<script>
+  import { fmt, fmtPct, fmtX } from '@lib/formatters';
+  import { supabase } from '@lib/supabase';
+  import { requireAuth } from '@lib/auth';
+
+  let analyses: any[] = [];
+  let compareIds = new Set<string>();
+
+  function esc(str: string): string {
+    return String(str ?? '')
+      .replace(/&/g, '&amp;').replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+  }
+
+  async function loadAnalyses() {
+    const container = document.getElementById('analyses-container')!;
+    container.innerHTML = '<div class="loading-state"><span class="loading-text">Loading analyses…</span></div>';
+
+    const { data, error } = await supabase
+      .from('property_analyses')
+      .select('*, property:properties(id, address_line1, address_line2, city, landlord:landlords(id, name))')
+      .order('created_at', { ascending: false });
+
+    if (error) {
+      container.innerHTML = '<div class="empty-state">Failed to load analyses. Please refresh.</div>';
+      return;
+    }
+
+    analyses = data || [];
+    renderTable();
+  }
+
+  function renderTable() {
+    const container = document.getElementById('analyses-container')!;
+
+    if (!analyses.length) {
+      container.innerHTML = `
+        <div class="empty-state">
+          <div class="empty-icon">
+            <svg viewBox="0 0 24 24"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><circle cx="3" cy="6" r="1" fill="currentColor" stroke="none"/><circle cx="3" cy="12" r="1" fill="currentColor" stroke="none"/><circle cx="3" cy="18" r="1" fill="currentColor" stroke="none"/></svg>
+          </div>
+          <div class="empty-title">No saved analyses yet</div>
+          <div class="empty-body">Use the Property Analyzer to create and save your first analysis.</div>
+          <a href="/admin/analyzer" class="btn btn-primary" style="margin-top:16px">Open Analyzer</a>
+        </div>`;
+      updateComparePanel();
+      return;
+    }
+
+    container.innerHTML = `
+      <div class="table-wrap">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th style="width:32px"></th>
+              <th>Analysis</th>
+              <th>Property</th>
+              <th>Landlord</th>
+              <th class="num-col">Net/Mo</th>
+              <th class="num-col">Net/Yr</th>
+              <th class="num-col">ROI 12mo</th>
+              <th>Updated</th>
+              <th style="width:80px"></th>
+            </tr>
+          </thead>
+          <tbody id="analyses-tbody"></tbody>
+        </table>
+      </div>`;
+
+    renderRows();
+    bindRowEvents();
+    updateComparePanel();
+  }
+
+  function renderRows() {
+    const tbody = document.getElementById('analyses-tbody')!;
+    tbody.innerHTML = analyses.map(a => {
+      const r          = a.results || {};
+      const prop       = a.property as any;
+      const landlord   = prop?.landlord;
+      const netMonthly = r.netMonthly ?? 0;
+      const netAnnual  = r.netAnnual  ?? 0;
+      const roi12      = r.roi12      ?? 0;
+      const profitCls  = netMonthly >= 0 ? 'green' : 'red';
+      const ts         = new Date(a.updated_at || a.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+      const orphan     = !a.property_id;
+      const addrParts  = prop ? [prop.address_line1, prop.city].filter(Boolean).join(', ') : '';
+
+      return `
+        <tr class="data-row${orphan ? ' orphan-row' : ''}" data-id="${a.id}">
+          <td class="check-cell">
+            <label class="compare-label" onclick="event.stopPropagation()">
+              <input type="checkbox" class="compare-cb" data-id="${a.id}" />
+            </label>
+          </td>
+          <td>
+            <div class="analysis-name">${esc(a.name)}</div>
+            ${orphan ? '<span class="orphan-badge">No property</span>' : ''}
+          </td>
+          <td class="muted-cell">${addrParts ? esc(addrParts) : '<span class="dash">—</span>'}</td>
+          <td class="muted-cell">${landlord?.name ? esc(landlord.name) : '<span class="dash">—</span>'}</td>
+          <td class="num-col ${profitCls}">${fmt(netMonthly)}</td>
+          <td class="num-col ${profitCls}">${fmt(netAnnual)}</td>
+          <td class="num-col">${fmtPct(roi12)}</td>
+          <td class="ts-cell">${ts}</td>
+          <td class="action-cell">
+            <a href="/admin/analyzer?load=${a.id}" class="row-action-btn" title="Open in Analyzer" onclick="event.stopPropagation()">
+              <svg viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+            </a>
+            <button class="row-action-btn row-del-btn" data-id="${a.id}" title="Delete" onclick="event.stopPropagation()">
+              <svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4h6v2"/></svg>
+            </button>
+          </td>
+        </tr>`;
+    }).join('');
+  }
+
+  function bindRowEvents() {
+    document.querySelectorAll<HTMLButtonElement>('.row-del-btn').forEach(btn => {
+      btn.addEventListener('click', e => {
+        e.stopPropagation();
+        deleteAnalysis(btn.dataset.id!);
+      });
+    });
+
+    document.querySelectorAll<HTMLInputElement>('.compare-cb').forEach(cb => {
+      cb.addEventListener('change', () => {
+        if (cb.checked) compareIds.add(cb.dataset.id!);
+        else compareIds.delete(cb.dataset.id!);
+        updateComparePanel();
+      });
+      cb.checked = compareIds.has(cb.dataset.id!);
+    });
+  }
+
+  async function deleteAnalysis(id: string) {
+    const a = analyses.find(x => x.id === id);
+    if (!a || !confirm(`Delete "${a.name}"? This cannot be undone.`)) return;
+    const { error } = await supabase.from('property_analyses').delete().eq('id', id);
+    if (error) { alert('Delete failed: ' + error.message); return; }
+    compareIds.delete(id);
+    await loadAnalyses();
+  }
+
+  // ── Compare ──────────────────────────────────────────────────────────────────
+
+  function updateComparePanel() {
+    const panel    = document.getElementById('compare-panel')!;
+    const selected = analyses.filter(a => compareIds.has(a.id));
+    if (selected.length < 2) { panel.style.display = 'none'; return; }
+    panel.style.display = '';
+    renderCompareTable(selected);
+  }
+
+  function renderCompareTable(items: any[]) {
+    const head = document.getElementById('compare-head')!;
+    const body = document.getElementById('compare-body')!;
+    head.innerHTML = '<th>Metric</th>' + items.map(a => `<th>${esc(a.name)}</th>`).join('');
+    const rows = [
+      { label: 'Net Monthly Profit',   key: 'netMonthly',   fmtFn: fmt,    higherBetter: true },
+      { label: 'Net Annual Profit',    key: 'netAnnual',    fmtFn: fmt,    higherBetter: true },
+      { label: 'Gross Revenue/mo',     key: 'grossRevenue', fmtFn: fmt,    higherBetter: true },
+      { label: 'Break-Even Occ%',      key: 'breakEvenOcc', fmtFn: fmtPct, higherBetter: false },
+      { label: 'Margin %',             key: 'margin',       fmtFn: fmtPct, higherBetter: true },
+      { label: 'Rent-to-Rev Multiple', key: 'multiple',     fmtFn: fmtX,   higherBetter: true },
+      { label: 'Total Investment',     key: 'totalInvest',  fmtFn: fmt,    higherBetter: false },
+      { label: 'Payback (months)',     key: 'payback',      fmtFn: (v: number) => isFinite(v) ? v.toFixed(1) : '—', higherBetter: false },
+      { label: '12-Month ROI',         key: 'roi12',        fmtFn: fmtPct, higherBetter: true },
+      { label: '24-Month ROI',         key: 'roi24',        fmtFn: fmtPct, higherBetter: true },
+    ];
+    body.innerHTML = rows.map(row => {
+      const vals = items.map(a => (a.results || {})[row.key]);
+      const nums = vals.map((v: any) => parseFloat(v) || 0);
+      const best = row.higherBetter ? Math.max(...nums) : Math.min(...nums);
+      return `<tr><td>${row.label}</td>${vals.map((v: any, i: number) => {
+        const isBest = nums[i] === best && nums.filter((x: number) => x === best).length < nums.length;
+        return `<td class="${isBest ? 'best' : ''}">${row.fmtFn(v)}</td>`;
+      }).join('')}</tr>`;
+    }).join('');
+  }
+
+  // ── Init ─────────────────────────────────────────────────────────────────────
+
+  (async () => {
+    const session = await requireAuth();
+    if (!session) return;
+    await loadAnalyses();
+    document.body.classList.add('ready');
+  })();
+</script>
+
+<style>
+  body { font-family: 'DM Sans', system-ui, sans-serif; background: #f6f5f3; color: #0f1f2e; font-size: 16px; line-height: 1.6; opacity: 0; transition: opacity .4s ease; }
+  body.ready { opacity: 1; }
+
+  .page-content { padding: 48px 5vw 80px; max-width: 1200px; margin: 0 auto; }
+  .page-header { display: flex; align-items: flex-end; justify-content: space-between; gap: 16px; margin-bottom: 32px; flex-wrap: wrap; }
+  .section-label { font-family: 'DM Sans', system-ui, sans-serif; font-size: .65rem; font-weight: 500; letter-spacing: .22em; text-transform: uppercase; color: #a8885a; display: flex; align-items: center; gap: 12px; }
+  .section-label::before { content: ''; display: block; width: 28px; height: 1px; background: #a8885a; }
+
+  .btn { display: inline-flex; align-items: center; gap: 8px; padding: 10px 20px; border-radius: 2px; cursor: pointer; font-family: 'DM Sans', system-ui, sans-serif; font-size: .75rem; font-weight: 400; letter-spacing: .1em; text-transform: uppercase; transition: all .25s; border: 1px solid; text-decoration: none; }
+  .btn-primary { background: #c9a96e; color: #0f1f2e; border-color: #c9a96e; }
+  .btn-primary:hover { background: #dfc090; border-color: #dfc090; }
+  .btn svg { width: 13px; height: 13px; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+
+  /* Table */
+  .table-wrap { background: #ffffff; border: 1px solid rgba(15,31,46,.1); box-shadow: 0 1px 4px rgba(15,31,46,.06); overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  .data-table { width: 100%; border-collapse: collapse; min-width: 700px; }
+  .data-table th { font-size: .63rem; letter-spacing: .14em; text-transform: uppercase; color: #7a6e65; font-weight: 500; padding: 12px 16px; text-align: left; border-bottom: 1px solid rgba(15,31,46,.1); white-space: nowrap; background: rgba(15,31,46,.015); }
+  .data-table th.num-col { text-align: right; }
+  .data-row { border-bottom: 1px solid rgba(15,31,46,.07); transition: background .15s; }
+  .data-row:last-child { border-bottom: none; }
+  .data-row:hover { background: #faf9f8; }
+  .data-row.orphan-row { background: rgba(212,163,42,.03); }
+  .data-row.orphan-row:hover { background: rgba(212,163,42,.06); }
+  .data-table td { padding: 13px 16px; font-size: .85rem; color: #0f1f2e; vertical-align: middle; }
+  .data-table td.num-col { text-align: right; font-variant-numeric: tabular-nums; }
+  .data-table td.muted-cell { color: rgba(15,31,46,.5); font-size: .82rem; }
+  .data-table td.ts-cell { color: rgba(15,31,46,.38); font-size: .75rem; white-space: nowrap; }
+  .data-table .green { color: #4caf81; font-weight: 500; }
+  .data-table .red   { color: #c94a4a; font-weight: 500; }
+  .dash { color: rgba(15,31,46,.25); }
+
+  .analysis-name { font-weight: 400; color: #0f1f2e; }
+  .orphan-badge { display: inline-flex; align-items: center; padding: 2px 7px; border-radius: 2px; font-size: .62rem; letter-spacing: .1em; text-transform: uppercase; background: rgba(212,163,42,.12); border: 1px solid rgba(212,163,42,.3); color: rgba(180,130,0,.8); margin-top: 3px; }
+
+  /* Check cell */
+  .check-cell { width: 32px; padding: 13px 4px 13px 14px !important; }
+  .compare-label { display: flex; align-items: center; cursor: pointer; }
+  .compare-label input { width: 14px; height: 14px; cursor: pointer; accent-color: #c9a96e; }
+
+  /* Row actions */
+  .action-cell { white-space: nowrap; }
+  .row-action-btn {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 30px; height: 30px; background: none; border: none; cursor: pointer;
+    color: rgba(15,31,46,.4); border-radius: 2px; transition: color .2s, background .2s; text-decoration: none;
+  }
+  .row-action-btn:hover { color: #0f1f2e; background: rgba(15,31,46,.06); }
+  .row-del-btn:hover { color: #c94a4a; background: rgba(201,74,74,.08); }
+  .row-action-btn svg { width: 13px; height: 13px; stroke: currentColor; fill: none; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+
+  /* Empty & loading */
+  .empty-state { background: #ffffff; border: 1px solid rgba(15,31,46,.1); padding: 64px 24px; text-align: center; }
+  .empty-icon svg { width: 28px; height: 28px; stroke: rgba(15,31,46,.2); fill: none; stroke-width: 1.5; margin: 0 auto 16px; display: block; }
+  .empty-title { font-family: 'Cormorant Garamond', Georgia, serif; font-size: 1.1rem; color: rgba(15,31,46,.6); margin-bottom: 8px; }
+  .empty-body { font-size: .85rem; color: #7a6e65; max-width: 320px; margin: 0 auto; }
+  .loading-state { background: #ffffff; border: 1px solid rgba(15,31,46,.1); padding: 48px 24px; text-align: center; }
+  .loading-text { font-size: .8rem; color: #7a6e65; letter-spacing: .06em; animation: blink 1.5s ease-in-out infinite; }
+  @keyframes blink { 0%, 100% { opacity: .3; } 50% { opacity: .8; } }
+
+  /* Compare panel */
+  .compare-panel { background: #ffffff; border: 1px solid rgba(15,31,46,.1); box-shadow: 0 1px 4px rgba(15,31,46,.06); padding: 24px; margin-top: 12px; display: none; }
+  .compare-panel-title { font-size: .65rem; font-weight: 500; letter-spacing: .18em; text-transform: uppercase; color: #a8885a; margin-bottom: 16px; padding-bottom: 10px; border-bottom: 1px solid rgba(201,169,110,.1); }
+  .compare-scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  .compare-table { width: 100%; border-collapse: collapse; min-width: 500px; font-size: .82rem; }
+  .compare-table th { font-size: .65rem; letter-spacing: .12em; text-transform: uppercase; color: #7a6e65; font-weight: 400; padding: 8px 12px; border-bottom: 1px solid rgba(15,31,46,.1); white-space: nowrap; text-align: right; }
+  .compare-table th:first-child { text-align: left; min-width: 140px; }
+  .compare-table td { padding: 7px 12px; border-bottom: 1px solid rgba(15,31,46,.06); color: rgba(15,31,46,.75); text-align: right; white-space: nowrap; }
+  .compare-table td:first-child { text-align: left; color: #7a6e65; font-size: .75rem; letter-spacing: .06em; text-transform: uppercase; }
+  .compare-table td.best { color: #4caf81; font-weight: 500; }
+
+  footer { border-top: 1px solid rgba(201,169,110,.1); padding: 24px 5vw; display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
+  .footer-brand { font-family: 'Cormorant Garamond', Georgia, serif; font-size: .95rem; color: rgba(15,31,46,.65); letter-spacing: .04em; }
+  .footer-brand span { color: #a8885a; }
+  .footer-meta { font-size: .72rem; color: #7a6e65; letter-spacing: .06em; }
+
+  @media (max-width: 600px) { .page-content { padding: 32px 5vw 60px; } }
+</style>
