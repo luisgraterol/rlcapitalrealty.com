@@ -47,6 +47,20 @@
                 </select>
               </div>
               <div class="field-group">
+                <label for="inp-bathrooms">Bathrooms</label>
+                <select id="inp-bathrooms">
+                  <option value="1">1 BA</option>
+                  <option value="1.5">1.5 BA</option>
+                  <option value="2" selected>2 BA</option>
+                  <option value="2.5">2.5 BA</option>
+                  <option value="3">3 BA</option>
+                  <option value="3.5">3.5 BA</option>
+                  <option value="4">4 BA</option>
+                </select>
+              </div>
+            </div>
+            <div class="field-row">
+              <div class="field-group">
                 <label for="inp-type">Property Type</label>
                 <select id="inp-type">
                   <option value="House" selected>House</option>
@@ -54,6 +68,7 @@
                   <option value="Condo">Condo</option>
                 </select>
               </div>
+              <div class="field-group"></div>
             </div>
             <div class="field-row">
               <div class="field-group">
@@ -292,18 +307,34 @@
         <!-- Monthly P&L -->
         <div>
           <div class="out-section-title">Monthly P&amp;L — Base Case</div>
-          <div class="metric-row"><span class="metric-label">Gross Revenue</span><span class="metric-value" id="out-gross">—</span></div>
-          <div class="metric-row"><span class="metric-label">Airbnb Fee (3%)</span><span class="metric-value" id="out-airbnb-fee">—</span></div>
-          <div class="metric-row"><span class="metric-label">Net Platform Revenue</span><span class="metric-value" id="out-net-platform">—</span></div>
-          <div class="metric-row"><span class="metric-label">Total Fixed Costs</span><span class="metric-value" id="out-fixed-costs">—</span></div>
-          <div class="metric-row"><span class="metric-label">Maintenance Reserve</span><span class="metric-value" id="out-maintenance">—</span></div>
-          <div class="metric-row"><span class="metric-label">Stays / Month</span><span class="metric-value" id="out-stays">—</span></div>
-          <div class="metric-row"><span class="metric-label">Cleaning (pass-through)</span><span class="metric-value" id="out-cleaning">$0 net</span></div>
+          <div class="metric-row metric-row--gross"><span class="metric-label">Gross Revenue</span><span class="metric-value" id="out-gross">—</span></div>
+          <div class="cost-stack-label">Monthly Costs</div>
+          <div class="metric-row cost-item"><span class="metric-label">Rent</span><span class="metric-value" id="out-cost-rent">—</span></div>
+          <div class="metric-row cost-item"><span class="metric-label">Utilities</span><span class="metric-value" id="out-cost-utilities">—</span></div>
+          <div class="metric-row cost-item" id="row-cost-internet"><span class="metric-label">Internet</span><span class="metric-value" id="out-cost-internet">—</span></div>
+          <div class="metric-row cost-item"><span class="metric-label">Insurance (Proper STR)</span><span class="metric-value" id="out-cost-insurance">—</span></div>
+          <div class="metric-row cost-item"><span class="metric-label">Supplies &amp; Amenities</span><span class="metric-value" id="out-cost-supplies">—</span></div>
+          <div class="metric-row cost-item"><span class="metric-label">Hospitable PMS</span><span class="metric-value" id="out-cost-pms">—</span></div>
+          <div class="metric-row cost-item"><span class="metric-label">PriceLabs</span><span class="metric-value" id="out-cost-pricing">—</span></div>
+          <div class="metric-row cost-item"><span class="metric-label">Maintenance Reserve</span><span class="metric-value" id="out-cost-maintenance">—</span></div>
+          <div class="metric-row cost-item"><span class="metric-label">Airbnb Fee (3%)</span><span class="metric-value" id="out-airbnb-fee">—</span></div>
+          <div class="metric-row cost-item"><span class="metric-label">STR Permit</span><span class="metric-value">$0</span></div>
+          <div class="metric-row metric-row--total"><span class="metric-label">Total Costs</span><span class="metric-value" id="out-total-costs">—</span></div>
           <div class="metric-row highlight"><span class="metric-label">Net Monthly Profit</span><span class="metric-value" id="out-net-monthly">—</span></div>
           <div class="metric-row highlight"><span class="metric-label">Net Annual Profit</span><span class="metric-value" id="out-net-annual">—</span></div>
           <div class="metric-row"><span class="metric-label">Break-Even Occupancy</span><span class="metric-value" id="out-breakeven">—</span></div>
           <div class="metric-row"><span class="metric-label">Margin %</span><span class="metric-value" id="out-margin">—</span></div>
           <div class="metric-row"><span class="metric-label">Rent-to-Revenue Multiple</span><span class="metric-value" id="out-multiple">—</span></div>
+        </div>
+
+        <!-- Cleaning Pass-Through -->
+        <div>
+          <div class="out-section-title">Cleaning — Pass-Through</div>
+          <div class="passthrough-note">Revenue collected from guest = cost paid to cleaner. Net P&amp;L impact = $0.</div>
+          <div class="metric-row"><span class="metric-label">Stays / Month</span><span class="metric-value" id="out-stays">—</span></div>
+          <div class="metric-row"><span class="metric-label">Cleaning Collected</span><span class="metric-value" id="out-cleaning-collected">—</span></div>
+          <div class="metric-row"><span class="metric-label">Cleaning Paid</span><span class="metric-value" id="out-cleaning-paid">—</span></div>
+          <div class="metric-row"><span class="metric-label">Net P&amp;L Impact</span><span class="metric-value green">$0</span></div>
         </div>
 
         <!-- Scenario Analysis -->
@@ -477,17 +508,33 @@
     const r = calcAll(inputs);
     lastResults = r;
 
-    setOut('out-gross',        fmt(r.grossRevenue));
-    setOut('out-airbnb-fee',   fmt(r.airbnbFee));
-    setOut('out-net-platform', fmt(r.netPlatform));
-    setOut('out-fixed-costs',  fmt(r.fixed));
-    setOut('out-maintenance',  fmt(r.maintenance));
-    setOut('out-stays',        r.staysPerMonth.toFixed(1));
+    const totalCosts = r.airbnbFee + r.fixed;
+    const staysPerMonth = r.staysPerMonth;
+    const cleaningPerStay = inputs.cleaning;
+    const cleaningTotal = staysPerMonth * cleaningPerStay;
+
+    setOut('out-gross',             fmt(r.grossRevenue));
+    setOut('out-cost-rent',         fmt(inputs.rentNeg));
+    setOut('out-cost-utilities',    fmt(inputs.utilities));
+    const internetRow = document.getElementById('row-cost-internet');
+    if (internetRow) internetRow.style.display = inputs.internet > 0 ? '' : 'none';
+    setOut('out-cost-internet',     fmt(inputs.internet));
+    setOut('out-cost-insurance',    fmt(inputs.insurance));
+    setOut('out-cost-supplies',     fmt(inputs.supplies));
+    setOut('out-cost-pms',          fmt(inputs.pms));
+    setOut('out-cost-pricing',      fmt(inputs.pricing));
+    setOut('out-cost-maintenance',  fmt(r.maintenance));
+    setOut('out-airbnb-fee',        fmt(r.airbnbFee));
+    setOut('out-total-costs',       fmt(totalCosts));
     setOut('out-net-monthly',  fmt(r.netMonthly), colorClass(r.netMonthly, { greenAbove: 0, redBelow: 0 }));
     setOut('out-net-annual',   fmt(r.netAnnual),  colorClass(r.netAnnual,  { greenAbove: 0, redBelow: 0 }));
     setOut('out-breakeven',    fmtPct(r.breakEvenOcc), r.breakEvenOcc > 65 ? 'amber' : 'green');
     setOut('out-margin',       fmtPct(r.margin),  colorClass(r.margin,  { greenAbove: 15, redBelow: 0 }));
     setOut('out-multiple',     fmtX(r.multiple),  colorClass(r.multiple, { greenAbove: 2, redBelow: 1.8 }));
+
+    setOut('out-stays',             staysPerMonth.toFixed(1));
+    setOut('out-cleaning-collected', fmt(cleaningTotal));
+    setOut('out-cleaning-paid',     fmt(cleaningTotal));
 
     // Scenarios
     const tbody = document.getElementById('scenario-tbody')!;
@@ -521,7 +568,7 @@
   }
 
   const inputIds = [
-    'inp-name','inp-address','inp-bedrooms','inp-type',
+    'inp-name','inp-address','inp-bedrooms','inp-bathrooms','inp-type',
     'inp-rent-ask','inp-rent-neg','inp-deposit','inp-hoa',
     'inp-adr','inp-occ','inp-stay','inp-demand',
     'inp-utilities','inp-internet','inp-insurance','inp-supplies','inp-pms','inp-pricing',
@@ -713,7 +760,7 @@
     currentAnalysisId = null;
     const defaults: Record<string, string> = {
       'inp-name': 'New Property', 'inp-address': '',
-      'inp-bedrooms': '2', 'inp-type': 'House',
+      'inp-bedrooms': '2', 'inp-bathrooms': '2', 'inp-type': 'House',
       'inp-rent-ask': '1400', 'inp-rent-neg': '1200', 'inp-deposit': '1400', 'inp-hoa': 'No',
       'inp-adr': '167', 'inp-occ': '77', 'inp-stay': '3.2', 'inp-demand': 'Military TDY',
       'inp-utilities': '185', 'inp-internet': '80', 'inp-insurance': '100',
@@ -781,32 +828,53 @@
       .filter(t => !t.startsWith('✓'))
       .map(t => '- ' + t);
 
+    const mdTotalCosts = r.airbnbFee + r.fixed;
+    const mdStays = r.staysPerMonth;
+    const mdClean = mdStays * inp('inp-cleaning');
+    const mdInternetLine = inp('inp-internet') > 0
+      ? `| Internet | ${fmt(inp('inp-internet'))} |\n` : '';
+
     const md = `# Property Analysis — ${name}
 **R&L Capital Realty LLC** | Abilene, TX | Generated: ${date}
 
 ## Property Details
 - Address: ${inpStr('inp-address') || 'N/A'}
-- Bedrooms: ${inpStr('inp-bedrooms')}
+- Bedrooms: ${inpStr('inp-bedrooms')} | Bathrooms: ${inpStr('inp-bathrooms')}
 - Property Type: ${inpStr('inp-type')}
 - Negotiated Rent: ${fmt(inp('inp-rent-neg'))}
 
 ## Revenue Assumptions
 - ADR: ${fmt(inp('inp-adr'))} | Occupancy: ${inp('inp-occ')}% | Avg Stay: ${inp('inp-stay')} nights
-- Estimated stays/month: ${r.staysPerMonth.toFixed(1)}
+- Estimated stays/month: ${mdStays.toFixed(1)}
 
 ## Monthly P&L — Base Case
 | Metric | Amount |
 |--------|--------|
 | Gross Revenue | ${fmt(r.grossRevenue)} |
-| Airbnb Fee (3%) | ${fmt(r.airbnbFee)} |
-| Net Platform Revenue | ${fmt(r.netPlatform)} |
-| Total Fixed Costs | ${fmt(r.fixed)} |
+| **Monthly Costs** | |
+| Rent | ${fmt(inp('inp-rent-neg'))} |
+| Utilities | ${fmt(inp('inp-utilities'))} |
+${mdInternetLine}| Insurance (Proper STR) | ${fmt(inp('inp-insurance'))} |
+| Supplies & Amenities | ${fmt(inp('inp-supplies'))} |
+| Hospitable PMS | ${fmt(inp('inp-pms'))} |
+| PriceLabs | ${fmt(inp('inp-pricing'))} |
 | Maintenance Reserve | ${fmt(r.maintenance)} |
+| Airbnb Fee (3%) | ${fmt(r.airbnbFee)} |
+| STR Permit | $0 |
+| **Total Costs** | **${fmt(mdTotalCosts)}** |
 | Net Monthly Profit | ${fmt(r.netMonthly)} |
 | Net Annual Profit | ${fmt(r.netAnnual)} |
 | Break-Even Occupancy | ${fmtPct(r.breakEvenOcc)} |
 | Margin % | ${fmtPct(r.margin)} |
 | Rent-to-Revenue Multiple | ${fmtX(r.multiple)} |
+
+## Cleaning — Pass-Through
+| | |
+|-|-|
+| Stays / Month | ${mdStays.toFixed(1)} |
+| Cleaning Collected (from guest) | ${fmt(mdClean)} |
+| Cleaning Paid (to cleaner) | ${fmt(mdClean)} |
+| Net P&L Impact | $0 |
 
 ## Scenario Analysis
 | Scenario | Occ% | ADR | Net/mo | Net/yr |
@@ -922,6 +990,13 @@ ${inpStr('inp-notes') || 'None.'}
   .metric-row.highlight { background: rgba(15,31,46,.04); margin: 0 -8px; padding: 7px 8px; border-bottom: 1px solid rgba(15,31,46,.06); }
   .metric-row.highlight .metric-label { color: rgba(15,31,46,.65); font-weight: 400; }
   .metric-row.highlight .metric-value { font-size: .95rem; }
+  .metric-row--gross { padding-bottom: 10px; }
+  .cost-stack-label { font-size: .62rem; letter-spacing: .14em; text-transform: uppercase; color: #a8885a; font-weight: 500; padding: 8px 0 4px; border-top: 1px solid rgba(201,169,110,.12); margin-top: 4px; }
+  .metric-row.cost-item { padding: 4px 0 4px 10px; font-size: .8rem; border-bottom: 1px solid rgba(15,31,46,.04); }
+  .metric-row.cost-item .metric-label { color: rgba(15,31,46,.55); font-weight: 300; }
+  .metric-row--total { border-top: 1px solid rgba(15,31,46,.12); margin-top: 2px; padding-top: 7px; font-weight: 500; }
+  .metric-row--total .metric-label { color: rgba(15,31,46,.75); font-weight: 500; }
+  .passthrough-note { font-size: .75rem; color: #7a6e65; font-style: italic; margin-bottom: 10px; line-height: 1.5; }
 
   .scenario-table { width: 100%; border-collapse: collapse; font-size: .8rem; margin-top: 8px; }
   .scenario-table th { font-size: .68rem; letter-spacing: .12em; text-transform: uppercase; color: #7a6e65; font-weight: 400; padding: 12px 16px; text-align: right; border-bottom: 1px solid rgba(15,31,46,.08); }
