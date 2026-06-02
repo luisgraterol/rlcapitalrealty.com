@@ -3,32 +3,72 @@ import Base from './Base.astro';
 
 interface Props {
   title?: string;
+  activePage?: 'analyzer' | 'analyses' | 'properties' | 'landlords';
 }
 
-const { title = 'Owner Admin — R&L Capital Realty LLC' } = Astro.props;
+const {
+  title = 'Owner Portal — R&L Capital Realty LLC',
+  activePage = 'analyzer',
+} = Astro.props;
 ---
 
 <Base title={title} noindex={true}>
-  <div class="grid-lines"></div>
-  <div class="glow-top"></div>
-  <div class="glow-bottom"></div>
+  <div class="admin-shell">
 
-  <nav>
-    <a href="/" class="wordmark">
-      <span>R<span class="wordmark-accent">&</span>L Capital Realty</span>
-      <span class="wordmark-divider"></span>
-      <span class="wordmark-sub">LLC</span>
-    </a>
-    <div class="nav-right">
-      <span class="nav-user" id="nav-email"></span>
-      <button class="btn-logout" id="logout-btn">
-        <svg viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
-        Sign Out
-      </button>
+    <!-- ── Sidebar ── -->
+    <aside class="sidebar" id="sidebar">
+
+      <div class="sidebar-brand">
+        <a href="/admin/analyzer" class="brand-link">
+          <span class="brand-rl">R<span class="brand-amp">&</span>L</span>
+          <span class="brand-name">Capital Realty</span>
+        </a>
+      </div>
+
+      <nav class="sidebar-nav">
+        <a href="/admin/analyzer"   class={`nav-item${activePage === 'analyzer'   ? ' active' : ''}`}>
+          <svg viewBox="0 0 24 24"><rect x="2" y="2" width="9" height="9" rx="1"/><rect x="13" y="2" width="9" height="9" rx="1"/><rect x="2" y="13" width="9" height="9" rx="1"/><rect x="13" y="13" width="9" height="9" rx="1"/></svg>
+          Property Analyzer
+        </a>
+        <a href="/admin/analyses"   class={`nav-item${activePage === 'analyses'   ? ' active' : ''}`}>
+          <svg viewBox="0 0 24 24"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><circle cx="3" cy="6" r="1" fill="currentColor" stroke="none"/><circle cx="3" cy="12" r="1" fill="currentColor" stroke="none"/><circle cx="3" cy="18" r="1" fill="currentColor" stroke="none"/></svg>
+          Saved Analyses
+        </a>
+        <a href="/admin/properties" class={`nav-item${activePage === 'properties' ? ' active' : ''}`}>
+          <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+          Properties
+        </a>
+        <a href="/admin/landlords"  class={`nav-item${activePage === 'landlords'  ? ' active' : ''}`}>
+          <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+          Landlords
+        </a>
+      </nav>
+
+      <div class="sidebar-footer">
+        <div class="sidebar-email" id="sidebar-email"></div>
+        <button class="btn-signout" id="logout-btn">
+          <svg viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+          Sign Out
+        </button>
+      </div>
+    </aside>
+
+    <!-- ── Mobile overlay ── -->
+    <div class="sidebar-overlay" id="sidebar-overlay"></div>
+
+    <!-- ── Main ── -->
+    <div class="admin-main">
+      <div class="mobile-bar">
+        <button class="hamburger" id="sidebar-toggle" aria-label="Toggle navigation">
+          <svg viewBox="0 0 24 24"><line x1="3" y1="7" x2="21" y2="7"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="17" x2="21" y2="17"/></svg>
+        </button>
+        <span class="mobile-brand">R<span>&</span>L Capital</span>
+      </div>
+
+      <slot />
     </div>
-  </nav>
 
-  <slot />
+  </div>
 </Base>
 
 <script>
@@ -37,66 +77,115 @@ const { title = 'Owner Admin — R&L Capital Realty LLC' } = Astro.props;
   (async () => {
     const session = await requireAuth();
     if (!session) return;
-    const email = session.user.email ?? '';
-    const navEmail = document.getElementById('nav-email');
-    if (navEmail) navEmail.textContent = email;
+    const el = document.getElementById('sidebar-email');
+    if (el) el.textContent = session.user.email ?? '';
   })();
 
   document.getElementById('logout-btn')?.addEventListener('click', logout);
+
+  const toggle  = document.getElementById('sidebar-toggle');
+  const sidebar = document.getElementById('sidebar');
+  const overlay = document.getElementById('sidebar-overlay');
+
+  function openSidebar()  { sidebar?.classList.add('open');    overlay?.classList.add('visible'); }
+  function closeSidebar() { sidebar?.classList.remove('open'); overlay?.classList.remove('visible'); }
+
+  toggle?.addEventListener('click',  () => sidebar?.classList.contains('open') ? closeSidebar() : openSidebar());
+  overlay?.addEventListener('click', closeSidebar);
 </script>
 
 <style>
-  .grid-lines {
-    position: fixed; inset: 0; z-index: 0; pointer-events: none;
-    background-image:
-      linear-gradient(rgba(201,169,110,.03) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(201,169,110,.03) 1px, transparent 1px);
-    background-size: 60px 60px;
+  .admin-shell { display: flex; min-height: 100vh; background: #f6f5f3; }
+
+  /* ── Sidebar ─────────────────────────────────────────────────── */
+  .sidebar {
+    width: 224px; flex-shrink: 0;
+    position: fixed; top: 0; left: 0; bottom: 0; z-index: 100;
+    display: flex; flex-direction: column;
+    background: #ffffff;
+    border-right: 1px solid rgba(15,31,46,.1);
+    transition: transform .25s ease;
   }
-  .glow-top {
-    position: fixed; top: -200px; right: -200px; width: 700px; height: 700px;
-    border-radius: 50%; pointer-events: none; z-index: 0;
-    background: radial-gradient(circle, rgba(201,169,110,.06) 0%, transparent 70%);
+
+  .sidebar-brand { padding: 22px 20px 18px; border-bottom: 1px solid rgba(15,31,46,.06); }
+  .brand-link { text-decoration: none; display: flex; align-items: baseline; gap: 8px; }
+  .brand-rl {
+    font-family: 'Cormorant Garamond', Georgia, serif;
+    font-size: 1.3rem; font-weight: 500; color: #0f1f2e; letter-spacing: .02em;
   }
-  .glow-bottom {
-    position: fixed; bottom: -150px; left: -100px; width: 500px; height: 500px;
-    border-radius: 50%; pointer-events: none; z-index: 0;
-    background: radial-gradient(circle, rgba(201,169,110,.04) 0%, transparent 70%);
+  .brand-amp { color: #c9a96e; }
+  .brand-name {
+    font-family: 'DM Sans', system-ui, sans-serif;
+    font-size: .6rem; font-weight: 400; letter-spacing: .16em;
+    text-transform: uppercase; color: rgba(15,31,46,.38);
   }
-  nav {
-    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
-    display: flex; align-items: center; justify-content: space-between;
-    padding: 0 5vw; height: 68px;
-    background: #ffffff; backdrop-filter: blur(12px);
-    border-bottom: 1px solid rgba(15,31,46,.1);
+
+  .sidebar-nav { flex: 1; padding: 14px 10px; display: flex; flex-direction: column; gap: 1px; overflow-y: auto; }
+  .nav-item {
+    display: flex; align-items: center; gap: 10px;
+    padding: 10px 12px; border-radius: 3px;
+    font-family: 'DM Sans', system-ui, sans-serif;
+    font-size: .78rem; font-weight: 400; letter-spacing: .02em;
+    color: rgba(15,31,46,.5); text-decoration: none;
+    transition: color .18s, background .18s;
   }
-  .wordmark {
-    font-family: 'Cormorant Garamond', Georgia, serif; font-weight: 400;
-    font-size: 1.2rem; letter-spacing: .04em; color: #0f1f2e;
-    text-decoration: none; display: flex; align-items: center; gap: 10px;
+  .nav-item svg {
+    width: 15px; height: 15px; stroke: currentColor; fill: none;
+    stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; flex-shrink: 0;
   }
-  .wordmark-accent { color: #c9a96e; }
-  .wordmark-divider { width: 1px; height: 18px; background: rgba(15,31,46,.2); }
-  .wordmark-sub {
-    font-family: 'DM Sans', system-ui, sans-serif; font-size: .62rem;
-    font-weight: 300; letter-spacing: .14em; color: rgba(15,31,46,.4); text-transform: uppercase;
+  .nav-item:hover { color: #0f1f2e; background: rgba(15,31,46,.04); }
+  .nav-item.active {
+    color: #a8885a; background: rgba(201,169,110,.08);
+    font-weight: 500; border-left: 2px solid #c9a96e; padding-left: 10px;
   }
-  .nav-right { display: flex; align-items: center; gap: 20px; }
-  .nav-user {
-    font-size: .72rem; letter-spacing: .06em; color: #7a6e65;
-    max-width: 200px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  .nav-item.active svg { stroke: #a8885a; }
+
+  .sidebar-footer { padding: 14px 20px 20px; border-top: 1px solid rgba(15,31,46,.06); }
+  .sidebar-email {
+    font-size: .67rem; color: rgba(15,31,46,.38); letter-spacing: .04em;
+    margin-bottom: 10px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+    min-height: 16px;
   }
-  .btn-logout {
-    display: inline-flex; align-items: center; gap: 8px; padding: 8px 18px;
-    border: 1px solid rgba(15,31,46,.3); border-radius: 2px;
-    font-family: 'DM Sans', system-ui, sans-serif; font-size: .72rem; font-weight: 400;
-    letter-spacing: .1em; text-transform: uppercase; color: rgba(15,31,46,.70);
-    background: none; cursor: pointer; transition: border-color .35s, color .35s, background .35s;
+  .btn-signout {
+    display: inline-flex; align-items: center; justify-content: center; gap: 7px; width: 100%;
+    padding: 8px 14px; border: 1px solid rgba(15,31,46,.18); border-radius: 2px;
+    font-family: 'DM Sans', system-ui, sans-serif; font-size: .68rem; font-weight: 400;
+    letter-spacing: .1em; text-transform: uppercase; color: rgba(15,31,46,.5);
+    background: none; cursor: pointer; transition: border-color .2s, color .2s, background .2s;
   }
-  .btn-logout:hover { border-color: #0f1f2e; background: #0f1f2e; color: #ffffff; }
-  .btn-logout svg {
-    width: 13px; height: 13px; stroke: currentColor; fill: none;
+  .btn-signout:hover { border-color: #0f1f2e; background: #0f1f2e; color: #fff; }
+  .btn-signout svg {
+    width: 12px; height: 12px; stroke: currentColor; fill: none;
     stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round;
   }
-  @media (max-width: 900px) { .nav-user { display: none; } }
+
+  /* ── Main ─────────────────────────────────────────────────────── */
+  .admin-main { margin-left: 224px; flex: 1; min-height: 100vh; display: flex; flex-direction: column; }
+
+  /* ── Mobile bar ───────────────────────────────────────────────── */
+  .mobile-bar {
+    display: none; align-items: center; gap: 14px;
+    padding: 0 20px; height: 52px;
+    background: #ffffff; border-bottom: 1px solid rgba(15,31,46,.1);
+    position: sticky; top: 0; z-index: 50; flex-shrink: 0;
+  }
+  .hamburger {
+    background: none; border: none; cursor: pointer; padding: 5px;
+    color: #0f1f2e; display: flex; align-items: center;
+  }
+  .hamburger svg { width: 20px; height: 20px; stroke: currentColor; fill: none; stroke-width: 1.8; stroke-linecap: round; }
+  .mobile-brand { font-family: 'Cormorant Garamond', Georgia, serif; font-size: 1.1rem; color: #0f1f2e; }
+  .mobile-brand span { color: #c9a96e; }
+
+  /* ── Overlay ──────────────────────────────────────────────────── */
+  .sidebar-overlay { display: none; position: fixed; inset: 0; background: rgba(15,31,46,.3); z-index: 99; }
+  .sidebar-overlay.visible { display: block; }
+
+  /* ── Responsive ───────────────────────────────────────────────── */
+  @media (max-width: 768px) {
+    .sidebar { transform: translateX(-100%); box-shadow: none; }
+    .sidebar.open { transform: translateX(0); box-shadow: 4px 0 24px rgba(15,31,46,.12); }
+    .admin-main { margin-left: 0; }
+    .mobile-bar { display: flex; }
+  }
 </style>

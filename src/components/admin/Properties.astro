@@ -1,0 +1,425 @@
+---
+---
+
+<div class="page-content">
+
+  <div class="page-header">
+    <div class="section-label">Properties</div>
+    <button class="btn btn-primary" id="btn-create-property">
+      <svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+      Add Property
+    </button>
+  </div>
+
+  <div id="properties-container">
+    <div class="loading-state"><span class="loading-text">Loading properties…</span></div>
+  </div>
+
+</div>
+
+<footer>
+  <div class="footer-brand">R<span>&amp;</span>L Capital Realty LLC</div>
+  <div class="footer-meta">&copy; 2026 &middot; Abilene, TX &middot; Owner Portal</div>
+</footer>
+
+<!-- Slide-over overlay -->
+<div class="overlay" id="overlay"></div>
+
+<!-- Slide-over panel -->
+<div class="slide-over" id="slide-over">
+  <div class="slide-over-header">
+    <div class="slide-over-title" id="slide-over-title">Add Property</div>
+    <button class="slide-over-close" id="slide-over-close" aria-label="Close">
+      <svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </button>
+  </div>
+  <div class="slide-over-body">
+    <div class="form-error" id="form-error" style="display:none"></div>
+
+    <div class="field-group">
+      <label for="f-addr1">Address Line 1 <span class="req">*</span></label>
+      <input type="text" id="f-addr1" placeholder="123 Main St" />
+    </div>
+    <div class="field-group">
+      <label for="f-addr2">Address Line 2</label>
+      <input type="text" id="f-addr2" placeholder="Apt 2B, Unit 4…" />
+    </div>
+    <div class="field-row">
+      <div class="field-group">
+        <label for="f-city">City <span class="req">*</span></label>
+        <input type="text" id="f-city" placeholder="Abilene" />
+      </div>
+      <div class="field-group">
+        <label for="f-zip">Zip Code <span class="req">*</span></label>
+        <input type="text" id="f-zip" placeholder="79601" />
+      </div>
+    </div>
+    <div class="field-group">
+      <label for="f-neighborhood">Neighborhood</label>
+      <input type="text" id="f-neighborhood" placeholder="Optional" />
+    </div>
+    <div class="field-group">
+      <label for="f-landlord">Landlord <span class="req">*</span></label>
+      <select id="f-landlord">
+        <option value="">— Select landlord —</option>
+      </select>
+      <span class="field-note">
+        <a href="/admin/landlords" target="_blank">Manage landlords →</a>
+      </span>
+    </div>
+    <div class="field-group">
+      <label for="f-notes">Notes</label>
+      <textarea id="f-notes" placeholder="Optional notes about this property…"></textarea>
+    </div>
+
+    <div class="slide-over-actions">
+      <button class="btn btn-ghost" id="btn-so-cancel">Cancel</button>
+      <button class="btn btn-primary" id="btn-so-save">Create Property</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  import { supabase } from '@lib/supabase';
+  import { requireAuth } from '@lib/auth';
+
+  let properties: any[] = [];
+  let landlords: any[] = [];
+  let editingId: string | null = null;
+
+  function esc(str: string): string {
+    return String(str ?? '')
+      .replace(/&/g, '&amp;').replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+  }
+
+  // ── Data loading ─────────────────────────────────────────────────────────────
+
+  async function loadLandlords() {
+    const { data } = await supabase.from('landlords').select('id, name').order('name');
+    landlords = data || [];
+    const sel = document.getElementById('f-landlord') as HTMLSelectElement;
+    sel.innerHTML = '<option value="">— Select landlord —</option>' +
+      landlords.map(l => `<option value="${esc(l.id)}">${esc(l.name)}</option>`).join('');
+  }
+
+  async function loadProperties() {
+    const container = document.getElementById('properties-container')!;
+    container.innerHTML = '<div class="loading-state"><span class="loading-text">Loading properties…</span></div>';
+    const { data, error } = await supabase
+      .from('properties')
+      .select('*, landlord:landlords(id, name), analyses_count:property_analyses!property_id(count)')
+      .order('created_at', { ascending: false });
+    if (error) { container.innerHTML = '<div class="empty-state">Failed to load. Please refresh.</div>'; return; }
+    properties = data || [];
+    renderTable();
+  }
+
+  function renderTable() {
+    const container = document.getElementById('properties-container')!;
+    if (!properties.length) {
+      container.innerHTML = `
+        <div class="empty-state">
+          <div class="empty-icon">
+            <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+          </div>
+          <div class="empty-title">No properties yet</div>
+          <div class="empty-body">Add your first property to start creating analyses.</div>
+        </div>`;
+      return;
+    }
+    container.innerHTML = `
+      <div class="table-wrap">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Address</th>
+              <th>City</th>
+              <th>Neighborhood</th>
+              <th>Landlord</th>
+              <th class="num-col">Analyses</th>
+              <th>Added</th>
+              <th style="width:96px"></th>
+            </tr>
+          </thead>
+          <tbody>
+            ${properties.map(p => {
+              const landlord = p.landlord as any;
+              const count    = (p.analyses_count as any)?.[0]?.count ?? 0;
+              const ts       = new Date(p.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+              return `
+                <tr class="data-row" data-id="${p.id}">
+                  <td>
+                    <div class="prop-addr">${esc(p.address_line1)}</div>
+                    ${p.address_line2 ? `<div class="prop-addr2">${esc(p.address_line2)}</div>` : ''}
+                  </td>
+                  <td class="muted-cell">${esc(p.city)}, ${esc(p.zip_code)}</td>
+                  <td class="muted-cell">${p.neighborhood ? esc(p.neighborhood) : '<span class="dash">—</span>'}</td>
+                  <td class="muted-cell">${landlord?.name ? esc(landlord.name) : '<span class="dash">—</span>'}</td>
+                  <td class="num-col">
+                    ${count > 0
+                      ? `<a href="/admin/analyses" class="count-link">${count}</a>`
+                      : `<span class="dash">0</span>`}
+                  </td>
+                  <td class="ts-cell">${ts}</td>
+                  <td class="action-cell">
+                    <a href="/admin/analyzer" class="row-action-btn" title="New Analysis for this property" data-property-id="${p.id}" data-property-addr="${esc(p.address_line1)}, ${esc(p.city)}">
+                      <svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                    </a>
+                    <button class="row-action-btn btn-edit" data-id="${p.id}" title="Edit">
+                      <svg viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                    </button>
+                    <button class="row-action-btn btn-del" data-id="${p.id}" title="Delete">
+                      <svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4h6v2"/></svg>
+                    </button>
+                  </td>
+                </tr>`;
+            }).join('')}
+          </tbody>
+        </table>
+      </div>`;
+
+    bindTableEvents();
+  }
+
+  function bindTableEvents() {
+    document.querySelectorAll<HTMLButtonElement>('.btn-edit').forEach(btn => {
+      btn.addEventListener('click', () => openSlideOver(btn.dataset.id!));
+    });
+    document.querySelectorAll<HTMLButtonElement>('.btn-del').forEach(btn => {
+      btn.addEventListener('click', () => deleteProperty(btn.dataset.id!));
+    });
+    // "New Analysis" shortcut: navigate to analyzer with property pre-selected
+    document.querySelectorAll<HTMLAnchorElement>('a[data-property-id]').forEach(a => {
+      a.addEventListener('click', e => {
+        e.preventDefault();
+        const pid  = a.dataset.propertyId!;
+        const addr = a.dataset.propertyAddr!;
+        // Store pending selection so the analyzer can pick it up
+        sessionStorage.setItem('analyzer_property_id',   pid);
+        sessionStorage.setItem('analyzer_property_addr', addr);
+        window.location.href = '/admin/analyzer';
+      });
+    });
+  }
+
+  async function deleteProperty(id: string) {
+    const p = properties.find(x => x.id === id);
+    if (!p) return;
+    const count = (p.analyses_count as any)?.[0]?.count ?? 0;
+    const msg   = count > 0
+      ? `Delete "${p.address_line1}"? This will unlink ${count} saved ${count === 1 ? 'analysis' : 'analyses'}. This cannot be undone.`
+      : `Delete "${p.address_line1}"? This cannot be undone.`;
+    if (!confirm(msg)) return;
+    const { error } = await supabase.from('properties').delete().eq('id', id);
+    if (error) { alert('Delete failed: ' + error.message); return; }
+    await loadProperties();
+  }
+
+  // ── Slide-over ───────────────────────────────────────────────────────────────
+
+  function openSlideOver(editId?: string) {
+    editingId = editId ?? null;
+    const titleEl  = document.getElementById('slide-over-title')!;
+    const saveBtn  = document.getElementById('btn-so-save') as HTMLButtonElement;
+    const errorEl  = document.getElementById('form-error')!;
+    errorEl.style.display = 'none';
+
+    if (editingId) {
+      const p = properties.find(x => x.id === editingId)!;
+      titleEl.textContent    = 'Edit Property';
+      saveBtn.textContent    = 'Save Changes';
+      (document.getElementById('f-addr1')        as HTMLInputElement).value   = p.address_line1 ?? '';
+      (document.getElementById('f-addr2')        as HTMLInputElement).value   = p.address_line2 ?? '';
+      (document.getElementById('f-city')         as HTMLInputElement).value   = p.city ?? '';
+      (document.getElementById('f-zip')          as HTMLInputElement).value   = p.zip_code ?? '';
+      (document.getElementById('f-neighborhood') as HTMLInputElement).value   = p.neighborhood ?? '';
+      (document.getElementById('f-notes')        as HTMLTextAreaElement).value = p.notes ?? '';
+      (document.getElementById('f-landlord')     as HTMLSelectElement).value  = p.landlord_id ?? '';
+    } else {
+      titleEl.textContent    = 'Add Property';
+      saveBtn.textContent    = 'Create Property';
+      ['f-addr1','f-addr2','f-city','f-zip','f-neighborhood','f-notes'].forEach(id => {
+        (document.getElementById(id) as HTMLInputElement).value = '';
+      });
+      (document.getElementById('f-landlord') as HTMLSelectElement).value = '';
+    }
+
+    document.getElementById('overlay')!.classList.add('visible');
+    document.getElementById('slide-over')!.classList.add('open');
+  }
+
+  function closeSlideOver() {
+    document.getElementById('overlay')!.classList.remove('visible');
+    document.getElementById('slide-over')!.classList.remove('open');
+    editingId = null;
+  }
+
+  async function handleSave() {
+    const addr1       = (document.getElementById('f-addr1')        as HTMLInputElement).value.trim();
+    const addr2       = (document.getElementById('f-addr2')        as HTMLInputElement).value.trim();
+    const city        = (document.getElementById('f-city')         as HTMLInputElement).value.trim();
+    const zip         = (document.getElementById('f-zip')          as HTMLInputElement).value.trim();
+    const neighborhood = (document.getElementById('f-neighborhood') as HTMLInputElement).value.trim();
+    const notes       = (document.getElementById('f-notes')        as HTMLTextAreaElement).value.trim();
+    const landlordId  = (document.getElementById('f-landlord')     as HTMLSelectElement).value;
+    const errorEl     = document.getElementById('form-error')!;
+
+    if (!addr1 || !city || !zip || !landlordId) {
+      errorEl.textContent    = 'Address line 1, city, zip code, and landlord are required.';
+      errorEl.style.display  = '';
+      return;
+    }
+    errorEl.style.display = 'none';
+
+    const btn = document.getElementById('btn-so-save') as HTMLButtonElement;
+    btn.disabled = true;
+    btn.textContent = editingId ? 'Saving…' : 'Creating…';
+
+    const payload = {
+      address_line1: addr1,
+      address_line2: addr2 || null,
+      city,
+      zip_code: zip,
+      neighborhood: neighborhood || null,
+      notes: notes || null,
+      landlord_id: landlordId,
+    };
+
+    let error: any;
+    if (editingId) {
+      const res = await supabase
+        .from('properties')
+        .update({ ...payload, updated_at: new Date().toISOString() })
+        .eq('id', editingId);
+      error = res.error;
+    } else {
+      const { data: { session } } = await supabase.auth.getSession();
+      const res = await supabase
+        .from('properties')
+        .insert([{ ...payload, user_id: session?.user.id }]);
+      error = res.error;
+    }
+
+    btn.disabled    = false;
+    btn.textContent = editingId ? 'Save Changes' : 'Create Property';
+
+    if (error) {
+      errorEl.textContent   = 'Failed: ' + error.message;
+      errorEl.style.display = '';
+      return;
+    }
+
+    closeSlideOver();
+    await loadProperties();
+  }
+
+  // ── Button wiring ────────────────────────────────────────────────────────────
+
+  document.getElementById('btn-create-property')?.addEventListener('click', () => openSlideOver());
+  document.getElementById('btn-so-cancel')?.addEventListener('click', closeSlideOver);
+  document.getElementById('slide-over-close')?.addEventListener('click', closeSlideOver);
+  document.getElementById('overlay')?.addEventListener('click', closeSlideOver);
+  document.getElementById('btn-so-save')?.addEventListener('click', handleSave);
+
+  // ── Init ─────────────────────────────────────────────────────────────────────
+
+  (async () => {
+    const session = await requireAuth();
+    if (!session) return;
+    await Promise.all([loadLandlords(), loadProperties()]);
+    document.body.classList.add('ready');
+  })();
+</script>
+
+<style>
+  body { font-family: 'DM Sans', system-ui, sans-serif; background: #f6f5f3; color: #0f1f2e; font-size: 16px; line-height: 1.6; opacity: 0; transition: opacity .4s ease; }
+  body.ready { opacity: 1; }
+
+  .page-content { padding: 48px 5vw 80px; max-width: 1200px; margin: 0 auto; }
+  .page-header { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-bottom: 32px; flex-wrap: wrap; }
+  .section-label { font-family: 'DM Sans', system-ui, sans-serif; font-size: .65rem; font-weight: 500; letter-spacing: .22em; text-transform: uppercase; color: #a8885a; display: flex; align-items: center; gap: 12px; }
+  .section-label::before { content: ''; display: block; width: 28px; height: 1px; background: #a8885a; }
+
+  .btn { display: inline-flex; align-items: center; gap: 8px; padding: 10px 20px; border-radius: 2px; cursor: pointer; font-family: 'DM Sans', system-ui, sans-serif; font-size: .75rem; font-weight: 400; letter-spacing: .1em; text-transform: uppercase; transition: all .25s; border: 1px solid; text-decoration: none; }
+  .btn-primary { background: #c9a96e; color: #0f1f2e; border-color: #c9a96e; }
+  .btn-primary:hover { background: #dfc090; border-color: #dfc090; }
+  .btn-ghost { background: none; color: rgba(15,31,46,.7); border-color: rgba(15,31,46,.25); }
+  .btn-ghost:hover { border-color: #0f1f2e; color: #0f1f2e; }
+  .btn svg { width: 13px; height: 13px; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+
+  /* Table */
+  .table-wrap { background: #ffffff; border: 1px solid rgba(15,31,46,.1); box-shadow: 0 1px 4px rgba(15,31,46,.06); overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  .data-table { width: 100%; border-collapse: collapse; min-width: 680px; }
+  .data-table th { font-size: .63rem; letter-spacing: .14em; text-transform: uppercase; color: #7a6e65; font-weight: 500; padding: 12px 16px; text-align: left; border-bottom: 1px solid rgba(15,31,46,.1); white-space: nowrap; background: rgba(15,31,46,.015); }
+  .data-table th.num-col { text-align: right; }
+  .data-row { border-bottom: 1px solid rgba(15,31,46,.07); transition: background .15s; }
+  .data-row:last-child { border-bottom: none; }
+  .data-row:hover { background: #faf9f8; }
+  .data-table td { padding: 13px 16px; font-size: .85rem; color: #0f1f2e; vertical-align: middle; }
+  .data-table td.num-col { text-align: right; }
+  .data-table td.muted-cell { color: rgba(15,31,46,.5); font-size: .82rem; }
+  .data-table td.ts-cell { color: rgba(15,31,46,.38); font-size: .75rem; white-space: nowrap; }
+  .prop-addr { font-weight: 400; }
+  .prop-addr2 { font-size: .75rem; color: rgba(15,31,46,.45); margin-top: 1px; }
+  .dash { color: rgba(15,31,46,.25); }
+  .count-link { color: #a8885a; text-decoration: none; font-weight: 500; }
+  .count-link:hover { color: #c9a96e; text-decoration: underline; }
+
+  /* Row actions */
+  .action-cell { white-space: nowrap; }
+  .row-action-btn { display: inline-flex; align-items: center; justify-content: center; width: 30px; height: 30px; background: none; border: none; cursor: pointer; color: rgba(15,31,46,.4); border-radius: 2px; transition: color .2s, background .2s; text-decoration: none; }
+  .row-action-btn:hover { color: #0f1f2e; background: rgba(15,31,46,.06); }
+  .btn-del:hover { color: #c94a4a; background: rgba(201,74,74,.08); }
+  .row-action-btn svg { width: 13px; height: 13px; stroke: currentColor; fill: none; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+
+  /* Empty/loading */
+  .empty-state { background: #ffffff; border: 1px solid rgba(15,31,46,.1); padding: 64px 24px; text-align: center; }
+  .empty-icon svg { width: 28px; height: 28px; stroke: rgba(15,31,46,.2); fill: none; stroke-width: 1.5; margin: 0 auto 16px; display: block; }
+  .empty-title { font-family: 'Cormorant Garamond', Georgia, serif; font-size: 1.1rem; color: rgba(15,31,46,.6); margin-bottom: 8px; }
+  .empty-body { font-size: .85rem; color: #7a6e65; max-width: 320px; margin: 0 auto; }
+  .loading-state { background: #ffffff; border: 1px solid rgba(15,31,46,.1); padding: 48px 24px; text-align: center; }
+  .loading-text { font-size: .8rem; color: #7a6e65; letter-spacing: .06em; animation: blink 1.5s ease-in-out infinite; }
+  @keyframes blink { 0%, 100% { opacity: .3; } 50% { opacity: .8; } }
+
+  /* Overlay */
+  .overlay { display: none; position: fixed; inset: 0; background: rgba(15,31,46,.3); z-index: 150; }
+  .overlay.visible { display: block; }
+
+  /* Slide-over */
+  .slide-over {
+    position: fixed; top: 0; right: -520px; width: 480px; max-width: 100vw;
+    height: 100vh; overflow-y: auto; z-index: 200;
+    background: #ffffff; border-left: 1px solid rgba(15,31,46,.12);
+    box-shadow: -4px 0 32px rgba(15,31,46,.12);
+    transition: right .28s ease; display: flex; flex-direction: column;
+  }
+  .slide-over.open { right: 0; }
+  .slide-over-header { display: flex; align-items: center; justify-content: space-between; padding: 24px 28px 20px; border-bottom: 1px solid rgba(15,31,46,.08); flex-shrink: 0; }
+  .slide-over-title { font-family: 'Cormorant Garamond', Georgia, serif; font-size: 1.2rem; font-weight: 500; color: #0f1f2e; }
+  .slide-over-close { background: none; border: none; cursor: pointer; color: rgba(15,31,46,.4); transition: color .2s; padding: 4px; }
+  .slide-over-close:hover { color: #0f1f2e; }
+  .slide-over-close svg { width: 18px; height: 18px; stroke: currentColor; fill: none; stroke-width: 1.8; stroke-linecap: round; }
+  .slide-over-body { padding: 24px 28px 32px; flex: 1; display: flex; flex-direction: column; gap: 14px; }
+  .slide-over-actions { display: flex; gap: 10px; justify-content: flex-end; padding-top: 8px; border-top: 1px solid rgba(15,31,46,.08); margin-top: auto; }
+
+  /* Form elements */
+  .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .field-group { display: flex; flex-direction: column; gap: 5px; }
+  label { font-size: .68rem; letter-spacing: .1em; text-transform: uppercase; color: #7a6e65; font-weight: 400; }
+  .req { color: #c94a4a; font-style: normal; }
+  input[type="text"], input[type="email"], select, textarea { background: #ffffff; border: 1px solid rgba(15,31,46,.15); border-radius: 2px; padding: 9px 12px; font-family: 'DM Sans', system-ui, sans-serif; font-size: .88rem; color: #0f1f2e; width: 100%; transition: border-color .25s; -webkit-appearance: none; appearance: none; }
+  input:focus, select:focus, textarea:focus { outline: none; border-color: #c9a96e; background: rgba(201,169,110,.04); }
+  textarea { resize: vertical; min-height: 80px; line-height: 1.5; }
+  select option { background: #fff; color: #0f1f2e; }
+  .field-note { font-size: .72rem; color: #7a6e65; font-style: italic; }
+  .field-note a { color: #a8885a; }
+  .form-error { background: rgba(201,74,74,.1); border: 1px solid rgba(201,74,74,.3); color: #c94a4a; padding: 10px 14px; border-radius: 2px; font-size: .82rem; }
+
+  footer { border-top: 1px solid rgba(201,169,110,.1); padding: 24px 5vw; display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
+  .footer-brand { font-family: 'Cormorant Garamond', Georgia, serif; font-size: .95rem; color: rgba(15,31,46,.65); }
+  .footer-brand span { color: #a8885a; }
+  .footer-meta { font-size: .72rem; color: #7a6e65; letter-spacing: .06em; }
+
+  @media (max-width: 600px) { .page-content { padding: 32px 5vw 60px; } .field-row { grid-template-columns: 1fr; } }
+</style>
