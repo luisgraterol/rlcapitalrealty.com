@@ -60,6 +60,7 @@ export function calcMaintenance(rentNeg: number): number {
 export function calcFixedCosts(inputs: AnalysisInputs): number {
   const maintenance = calcMaintenance(inputs.rentNeg);
   return (
+    inputs.rentNeg +
     inputs.utilities +
     inputs.internet +
     inputs.insurance +
@@ -83,7 +84,7 @@ export function calcAll(inputs: AnalysisInputs): AnalysisResults {
   const staysPerMonth = (occ * 30) / avgStay;
   const netMonthly = netPlatform - fixed;
   const netAnnual = netMonthly * 12;
-  const breakEvenOcc = fixed / (inputs.adr * 30) * 100;
+  const breakEvenOcc = fixed / (inputs.adr * 30 * 0.97) * 100;
   const margin = grossRevenue > 0 ? (netMonthly / grossRevenue) * 100 : 0;
   const multiple = inputs.rentNeg > 0 ? grossRevenue / inputs.rentNeg : 0;
 
