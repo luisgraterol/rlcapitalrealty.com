@@ -62,34 +62,17 @@
             <div class="field-row">
               <div class="field-group">
                 <label for="inp-bedrooms">Bedrooms</label>
-                <select id="inp-bedrooms">
-                  <option value="1">1 BR</option>
-                  <option value="2" selected>2 BR</option>
-                  <option value="3">3 BR</option>
-                  <option value="4">4 BR</option>
-                </select>
+                <input type="text" id="inp-bedrooms" disabled class="prop-auto-field" placeholder="— from property —" />
               </div>
               <div class="field-group">
                 <label for="inp-bathrooms">Bathrooms</label>
-                <select id="inp-bathrooms">
-                  <option value="1">1 BA</option>
-                  <option value="1.5">1.5 BA</option>
-                  <option value="2" selected>2 BA</option>
-                  <option value="2.5">2.5 BA</option>
-                  <option value="3">3 BA</option>
-                  <option value="3.5">3.5 BA</option>
-                  <option value="4">4 BA</option>
-                </select>
+                <input type="text" id="inp-bathrooms" disabled class="prop-auto-field" placeholder="— from property —" />
               </div>
             </div>
             <div class="field-row">
               <div class="field-group">
                 <label for="inp-type">Property Type</label>
-                <select id="inp-type">
-                  <option value="House" selected>House</option>
-                  <option value="Apartment">Apartment</option>
-                  <option value="Condo">Condo</option>
-                </select>
+                <input type="text" id="inp-type" disabled class="prop-auto-field" placeholder="— from property —" />
               </div>
               <div class="field-group"></div>
             </div>
@@ -459,6 +442,46 @@
         <input type="text" id="np-neighborhood" placeholder="Optional" />
       </div>
     </div>
+    <div class="field-row">
+      <div class="field-group">
+        <label for="np-bedrooms">Bedrooms</label>
+        <select id="np-bedrooms">
+          <option value="">—</option>
+          <option value="1">1 BR</option>
+          <option value="2">2 BR</option>
+          <option value="3">3 BR</option>
+          <option value="4">4 BR</option>
+          <option value="5">5+ BR</option>
+        </select>
+      </div>
+      <div class="field-group">
+        <label for="np-bathrooms">Bathrooms</label>
+        <select id="np-bathrooms">
+          <option value="">—</option>
+          <option value="1">1 BA</option>
+          <option value="1.5">1.5 BA</option>
+          <option value="2">2 BA</option>
+          <option value="2.5">2.5 BA</option>
+          <option value="3">3 BA</option>
+          <option value="3.5">3.5 BA</option>
+          <option value="4">4 BA</option>
+        </select>
+      </div>
+    </div>
+    <div class="field-row">
+      <div class="field-group">
+        <label for="np-type">Property Type</label>
+        <select id="np-type">
+          <option value="">—</option>
+          <option value="House">House</option>
+          <option value="Apartment">Apartment</option>
+          <option value="Condo">Condo</option>
+          <option value="Townhouse">Townhouse</option>
+          <option value="Duplex">Duplex</option>
+        </select>
+      </div>
+      <div class="field-group"></div>
+    </div>
     <div class="field-row full">
       <div class="field-group">
         <label for="np-landlord">Landlord <span class="req">*</span></label>
@@ -686,7 +709,7 @@
   }
 
   const inputIds = [
-    'inp-name','inp-address','inp-bedrooms','inp-bathrooms','inp-type',
+    'inp-name','inp-address',
     'inp-rent-ask','inp-rent-neg','inp-deposit','inp-hoa',
     'inp-adr','inp-occ','inp-stay','inp-demand',
     'inp-utilities','inp-internet','inp-insurance','inp-supplies','inp-pms','inp-pricing',
@@ -726,6 +749,22 @@
     }
   }
 
+  function applyPropertyMeta(prop: any | null) {
+    const bedroomsEl  = document.getElementById('inp-bedrooms')  as HTMLInputElement;
+    const bathroomsEl = document.getElementById('inp-bathrooms') as HTMLInputElement;
+    const typeEl      = document.getElementById('inp-type')      as HTMLInputElement;
+    if (!bedroomsEl || !bathroomsEl || !typeEl) return;
+    if (prop) {
+      bedroomsEl.value  = prop.bedrooms      != null ? String(prop.bedrooms)      : '';
+      bathroomsEl.value = prop.bathrooms     != null ? String(prop.bathrooms)     : '';
+      typeEl.value      = prop.property_type != null ? String(prop.property_type) : '';
+    } else {
+      bedroomsEl.value  = '';
+      bathroomsEl.value = '';
+      typeEl.value      = '';
+    }
+  }
+
   document.getElementById('inp-property')?.addEventListener('change', e => {
     const val = (e.target as HTMLSelectElement).value;
     selectedPropertyId = val || null;
@@ -741,6 +780,14 @@
     } else if (addrEl) {
       addrEl.value = '';
     }
+
+    // Default label to address_line1 only if still showing the default placeholder
+    const nameEl = document.getElementById('inp-name') as HTMLInputElement;
+    if (prop && nameEl && nameEl.value.trim() === 'New Analysis') {
+      nameEl.value = prop.address_line1;
+    }
+
+    applyPropertyMeta(prop ?? null);
 
     hide('orphan-warning');
     if (!selectedPropertyId) {
@@ -800,6 +847,8 @@
 
     const addrEl = document.getElementById('inp-address') as HTMLInputElement;
     if (addrEl && data.address) addrEl.value = data.address;
+
+    applyPropertyMeta(propertiesList.find(p => p.id === selectedPropertyId) ?? null);
 
     if (!data.property_id) {
       show('orphan-warning');
@@ -884,7 +933,6 @@
 
     const defaults: Record<string, string> = {
       'inp-name': 'New Analysis', 'inp-address': '',
-      'inp-bedrooms': '2', 'inp-bathrooms': '2', 'inp-type': 'House',
       'inp-rent-ask': '1400', 'inp-rent-neg': '1200', 'inp-deposit': '1400', 'inp-hoa': 'No',
       'inp-adr': '167', 'inp-occ': '77', 'inp-stay': '3.2', 'inp-demand': 'Military TDY',
       'inp-utilities': '185', 'inp-internet': '80', 'inp-insurance': '100',
@@ -899,6 +947,8 @@
     });
     const propSelect = document.getElementById('inp-property') as HTMLSelectElement;
     if (propSelect) propSelect.value = '';
+
+    applyPropertyMeta(null);
 
     (document.getElementById('btn-save')   as HTMLElement).style.display = '';
     (document.getElementById('btn-update') as HTMLElement).style.display = 'none';
@@ -997,7 +1047,10 @@ ${inpStr('inp-notes') || 'None.'}
     const url  = URL.createObjectURL(blob);
     const a    = document.createElement('a');
     a.href = url;
-    a.download = (name.replace(/[^a-z0-9]/gi, '_').toLowerCase() || 'analysis') + '.md';
+    const _ts  = new Date();
+    const _pad = (n: number) => String(n).padStart(2, '0');
+    const _stamp = `${_ts.getFullYear()}${_pad(_ts.getMonth()+1)}${_pad(_ts.getDate())}_${_pad(_ts.getHours())}${_pad(_ts.getMinutes())}${_pad(_ts.getSeconds())}`;
+    a.download = (name.replace(/[^a-z0-9]/gi, '_').toLowerCase() || 'analysis') + '-' + _stamp + '.md';
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
@@ -1108,13 +1161,16 @@ ${inpStr('inp-notes') || 'None.'}
   });
 
   document.getElementById('btn-modal-save')?.addEventListener('click', async () => {
-    const addr1       = (document.getElementById('np-addr1')        as HTMLInputElement).value.trim();
-    const addr2       = (document.getElementById('np-addr2')        as HTMLInputElement).value.trim();
-    const city        = (document.getElementById('np-city')         as HTMLInputElement).value.trim();
-    const zip         = (document.getElementById('np-zip')          as HTMLInputElement).value.trim();
+    const addr1        = (document.getElementById('np-addr1')        as HTMLInputElement).value.trim();
+    const addr2        = (document.getElementById('np-addr2')        as HTMLInputElement).value.trim();
+    const city         = (document.getElementById('np-city')         as HTMLInputElement).value.trim();
+    const zip          = (document.getElementById('np-zip')          as HTMLInputElement).value.trim();
     const neighborhood = (document.getElementById('np-neighborhood') as HTMLInputElement).value.trim();
-    const notes       = (document.getElementById('np-notes')        as HTMLTextAreaElement).value.trim();
-    const landlordId  = (document.getElementById('np-landlord')     as HTMLSelectElement).value;
+    const notes        = (document.getElementById('np-notes')        as HTMLTextAreaElement).value.trim();
+    const landlordId   = (document.getElementById('np-landlord')     as HTMLSelectElement).value;
+    const npBedrooms   = (document.getElementById('np-bedrooms')     as HTMLSelectElement).value;
+    const npBathrooms  = (document.getElementById('np-bathrooms')    as HTMLSelectElement).value;
+    const npType       = (document.getElementById('np-type')         as HTMLSelectElement).value;
 
     const errEl = document.getElementById('modal-error')!;
     if (!addr1 || !city || !zip || !landlordId) {
@@ -1139,6 +1195,9 @@ ${inpStr('inp-notes') || 'None.'}
         notes: notes || null,
         landlord_id: landlordId,
         user_id: session?.user.id,
+        bedrooms:      npBedrooms  ? parseInt(npBedrooms)       : null,
+        bathrooms:     npBathrooms ? parseFloat(npBathrooms)    : null,
+        property_type: npType      || null,
       }])
       .select('*, landlord:landlords(id, name)')
       .single();
@@ -1171,6 +1230,7 @@ ${inpStr('inp-notes') || 'None.'}
       parts.push(data.city);
       addrEl.value = parts.join(', ');
     }
+    applyPropertyMeta(data);
     hide('orphan-warning');
     hide('no-property-hint');
     runCalc();
@@ -1201,6 +1261,7 @@ ${inpStr('inp-notes') || 'None.'}
         if (propSelect) propSelect.value = preselectedId;
         const addrEl = document.getElementById('inp-address') as HTMLInputElement;
         if (addrEl && preselectedAddr) addrEl.value = preselectedAddr;
+        applyPropertyMeta(propertiesList.find(p => p.id === preselectedId) ?? null);
         hide('orphan-warning');
         hide('no-property-hint');
         runCalc();
@@ -1263,6 +1324,7 @@ ${inpStr('inp-notes') || 'None.'}
   input[type="text"], input[type="number"], input[type="email"], select, textarea { background: #ffffff; border: 1px solid rgba(15,31,46,.15); border-radius: 2px; padding: 9px 12px; font-family: 'DM Sans', system-ui, sans-serif; font-size: .88rem; color: #0f1f2e; width: 100%; transition: border-color .35s, background .35s; -webkit-appearance: none; appearance: none; }
   input:focus, select:focus, textarea:focus { outline: none; border-color: #c9a96e; background: rgba(201,169,110,.04); }
   input[readonly], input[disabled] { opacity: .5; cursor: not-allowed; background: rgba(15,31,46,.03); }
+  input.prop-auto-field { opacity: 1; cursor: default; color: rgba(15,31,46,.6); font-style: italic; }
   input::placeholder, textarea::placeholder { color: #8a7e78; }
   select option { background: #ffffff; color: #0f1f2e; }
   textarea { resize: vertical; min-height: 72px; line-height: 1.5; }
