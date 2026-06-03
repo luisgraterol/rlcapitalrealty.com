@@ -21,3 +21,7 @@ npm-debug.log*
 # Editor
 .vscode/settings.json
 .idea/
+
+# Test artifacts
+test-results/
+playwright-report/

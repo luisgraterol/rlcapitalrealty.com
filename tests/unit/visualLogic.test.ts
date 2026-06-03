@@ -5,7 +5,7 @@ import {
   metricCardClass,
   badgeState,
   getMonthlyProfile,
-} from '../visualLogic';
+} from '@lib/visualLogic';
 
 // ── fmtK ─────────────────────────────────────────────────────────────────────
 
