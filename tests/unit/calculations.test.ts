@@ -6,7 +6,7 @@ import {
   getScenariosData,
   getRiskFlags,
   type AnalysisInputs,
-} from '../calculations';
+} from '@lib/calculations';
 
 // ── Fixtures ──────────────────────────────────────────────────────────────────
 
