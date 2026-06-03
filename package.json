@@ -13,7 +13,8 @@
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.49.0",
-    "astro": "^5.0.0"
+    "astro": "^5.0.0",
+    "chart.js": "^4.5.1"
   },
   "devDependencies": {
     "@astrojs/tailwind": "^5.1.0",

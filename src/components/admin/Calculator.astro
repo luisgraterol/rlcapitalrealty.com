@@ -99,6 +99,14 @@
                 </select>
               </div>
             </div>
+            <div class="field-row">
+              <div class="field-group">
+                <label for="inp-walk-away">Walk-Away Threshold ($)</label>
+                <input type="number" id="inp-walk-away" value="1750" min="0" step="50" />
+                <span class="field-note">Max monthly rent R&amp;L will sign</span>
+              </div>
+              <div class="field-group"></div>
+            </div>
             <div class="hoa-block" id="hoa-block">
               <div class="hoa-block-title">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
@@ -310,68 +318,110 @@
           <p class="hoa-block-body">Saving and export are disabled. R&amp;L Capital Realty does not lease HOA properties.</p>
         </div>
 
-        <!-- Monthly P&L -->
-        <div>
-          <div class="out-section-title">Monthly P&amp;L — Base Case</div>
-          <div class="metric-row metric-row--gross"><span class="metric-label">Gross Revenue</span><span class="metric-value" id="out-gross">—</span></div>
-          <div class="cost-stack-label">Monthly Costs</div>
-          <div class="metric-row cost-item"><span class="metric-label">Rent</span><span class="metric-value" id="out-cost-rent">—</span></div>
-          <div class="metric-row cost-item"><span class="metric-label">Utilities</span><span class="metric-value" id="out-cost-utilities">—</span></div>
-          <div class="metric-row cost-item" id="row-cost-internet"><span class="metric-label">Internet</span><span class="metric-value" id="out-cost-internet">—</span></div>
-          <div class="metric-row cost-item"><span class="metric-label">Insurance (Proper STR)</span><span class="metric-value" id="out-cost-insurance">—</span></div>
-          <div class="metric-row cost-item"><span class="metric-label">Supplies &amp; Amenities</span><span class="metric-value" id="out-cost-supplies">—</span></div>
-          <div class="metric-row cost-item"><span class="metric-label">Hospitable PMS</span><span class="metric-value" id="out-cost-pms">—</span></div>
-          <div class="metric-row cost-item"><span class="metric-label">PriceLabs</span><span class="metric-value" id="out-cost-pricing">—</span></div>
-          <div class="metric-row cost-item"><span class="metric-label">Maintenance Reserve</span><span class="metric-value" id="out-cost-maintenance">—</span></div>
-          <div class="metric-row cost-item"><span class="metric-label">Airbnb Fee (3%)</span><span class="metric-value" id="out-airbnb-fee">—</span></div>
-          <div class="metric-row cost-item"><span class="metric-label">STR Permit</span><span class="metric-value">$0</span></div>
-          <div class="metric-row metric-row--total"><span class="metric-label">Total Costs</span><span class="metric-value" id="out-total-costs">—</span></div>
-          <div class="metric-row highlight"><span class="metric-label">Net Monthly Profit</span><span class="metric-value" id="out-net-monthly">—</span></div>
-          <div class="metric-row highlight"><span class="metric-label">Net Annual Profit</span><span class="metric-value" id="out-net-annual">—</span></div>
-          <div class="metric-row"><span class="metric-label">Break-Even Occupancy</span><span class="metric-value" id="out-breakeven">—</span></div>
-          <div class="metric-row"><span class="metric-label">Margin %</span><span class="metric-value" id="out-margin">—</span></div>
-          <div class="metric-row"><span class="metric-label">Rent-to-Revenue Multiple</span><span class="metric-value" id="out-multiple">—</span></div>
-        </div>
-
-        <!-- Cleaning Pass-Through -->
-        <div>
-          <div class="out-section-title">Cleaning — Pass-Through</div>
-          <div class="passthrough-note">Revenue collected from guest = cost paid to cleaner. Net P&amp;L impact = $0.</div>
-          <div class="metric-row"><span class="metric-label">Stays / Month</span><span class="metric-value" id="out-stays">—</span></div>
-          <div class="metric-row"><span class="metric-label">Cleaning Collected</span><span class="metric-value" id="out-cleaning-collected">—</span></div>
-          <div class="metric-row"><span class="metric-label">Cleaning Paid</span><span class="metric-value" id="out-cleaning-paid">—</span></div>
-          <div class="metric-row"><span class="metric-label">Net P&amp;L Impact</span><span class="metric-value green">$0</span></div>
-        </div>
-
-        <!-- Scenario Analysis -->
-        <div>
-          <div class="out-section-title">Scenario Analysis</div>
-          <table class="scenario-table">
-            <thead>
-              <tr><th>Scenario</th><th>Occ%</th><th>ADR</th><th>Net/mo</th><th>Net/yr</th></tr>
-            </thead>
-            <tbody id="scenario-tbody">
-              <tr><td colspan="5" style="text-align:center;color:rgba(15,31,46,.25);font-size:.78rem;padding:12px">—</td></tr>
-            </tbody>
-          </table>
-        </div>
-
-        <!-- Investment Summary -->
-        <div>
-          <div class="out-section-title">Investment Summary</div>
-          <div class="metric-row"><span class="metric-label">Total Initial Investment</span><span class="metric-value" id="out-total-invest">—</span></div>
-          <div class="metric-row"><span class="metric-label">Payback Period</span><span class="metric-value" id="out-payback">—</span></div>
-          <div class="metric-row"><span class="metric-label">12-Month ROI</span><span class="metric-value" id="out-roi-12">—</span></div>
-          <div class="metric-row"><span class="metric-label">24-Month ROI</span><span class="metric-value" id="out-roi-24">—</span></div>
-        </div>
-
-        <!-- Risk Flags -->
-        <div>
-          <div class="out-section-title">Risk Assessment</div>
-          <div class="risk-flags" id="risk-flags">
-            <div class="risk-flag ok"><span class="risk-flag-icon">✓</span>No risk flags triggered.</div>
+        <!-- Section 1: Property header -->
+        <div class="res-header">
+          <div class="res-header-main">
+            <div class="res-address" id="res-address">—</div>
+            <div class="res-subline" id="res-subline">Select a property to begin</div>
+          </div>
+          <div class="res-header-side">
+            <div class="res-buffer-label">Break-even buffer</div>
+            <div class="res-buffer-val" id="res-buffer">—</div>
           </div>
         </div>
+        <div id="res-badge" class="res-badge" style="display:none"></div>
+
+        <!-- Section 2: Metric cards -->
+        <div class="res-metrics">
+          <div class="res-metric" id="rmc-net-monthly">
+            <div class="rmc-val" id="res-net-monthly">—</div>
+            <div class="rmc-label">Net / month</div>
+            <div class="rmc-sub" id="res-margin-sub">— margin</div>
+          </div>
+          <div class="res-metric" id="rmc-net-annual">
+            <div class="rmc-val" id="res-net-annual">—</div>
+            <div class="rmc-label">Net / year</div>
+            <div class="rmc-sub">base case</div>
+          </div>
+          <div class="res-metric">
+            <div class="rmc-val" id="res-roi12">—</div>
+            <div class="rmc-label">12-mo ROI</div>
+            <div class="rmc-sub" id="res-roi-sub">—</div>
+          </div>
+          <div class="res-metric">
+            <div class="rmc-val" id="res-payback">—</div>
+            <div class="rmc-label">Payback</div>
+            <div class="rmc-sub" id="res-mult-sub">—</div>
+          </div>
+        </div>
+
+        <!-- Section 3: Two-column chart row -->
+        <div class="res-chart-row">
+          <div class="res-chart-card">
+            <div class="rcc-title">Revenue waterfall</div>
+            <div style="position:relative;height:220px">
+              <canvas id="chart-waterfall"></canvas>
+            </div>
+          </div>
+          <div class="res-chart-card">
+            <div class="rcc-title">Break-even vs actual occupancy</div>
+            <div class="gauge-wrap">
+              <canvas id="chart-gauge" width="220" height="130"></canvas>
+            </div>
+            <div class="gauge-legend" id="gauge-legend"></div>
+            <div class="rcc-title" style="margin-top:14px">Scenario outcomes</div>
+            <div style="position:relative;height:80px">
+              <canvas id="chart-scenarios"></canvas>
+            </div>
+          </div>
+        </div>
+
+        <!-- Section 4: Monthly cash flow -->
+        <div class="res-chart-card">
+          <div class="rcc-title">Estimated monthly cash flow</div>
+          <div style="position:relative;height:140px">
+            <canvas id="chart-monthly"></canvas>
+          </div>
+          <div class="rcc-footnote" id="monthly-footnote"></div>
+          <div class="rcc-market-note" id="market-note"></div>
+        </div>
+
+        <!-- Section 5: ROI curve -->
+        <div class="res-chart-card">
+          <div class="rcc-title">Cumulative ROI — 24-month payback curve</div>
+          <div style="position:relative;height:140px">
+            <canvas id="chart-roi"></canvas>
+          </div>
+          <div class="rcc-footnote" id="roi-footnote"></div>
+        </div>
+
+        <!-- Risk flags (collapsible) -->
+        <details class="res-collapsible">
+          <summary class="res-coll-hd">
+            <span>Risk Assessment</span>
+            <svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
+          </summary>
+          <div class="res-coll-body">
+            <div class="risk-flags" id="risk-flags">
+              <div class="risk-flag ok"><span class="risk-flag-icon">✓</span>No risk flags triggered.</div>
+            </div>
+          </div>
+        </details>
+
+        <!-- Cleaning pass-through (collapsible) -->
+        <details class="res-collapsible">
+          <summary class="res-coll-hd">
+            <span>Cleaning — Pass-Through</span>
+            <svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
+          </summary>
+          <div class="res-coll-body">
+            <div class="passthrough-note">Revenue collected from guest = cost paid to cleaner. Net P&amp;L impact = $0.</div>
+            <div class="metric-row"><span class="metric-label">Stays / Month</span><span class="metric-value" id="out-stays">—</span></div>
+            <div class="metric-row"><span class="metric-label">Cleaning Collected</span><span class="metric-value" id="out-cleaning-collected">—</span></div>
+            <div class="metric-row"><span class="metric-label">Cleaning Paid</span><span class="metric-value" id="out-cleaning-paid">—</span></div>
+            <div class="metric-row"><span class="metric-label">Net P&amp;L Impact</span><span class="metric-value green">$0</span></div>
+          </div>
+        </details>
 
         <!-- Actions -->
         <div class="calc-actions">
@@ -553,13 +603,30 @@
 </div>
 
 <script>
+  import { Chart } from 'chart.js/auto';
   import { fmt, fmtPct, fmtX, colorClass } from '@lib/formatters';
   import { calcAll, calcMaintenance, getRiskFlags } from '@lib/calculations';
   import type { AnalysisInputs } from '@lib/calculations';
   import { supabase } from '@lib/supabase';
   import { requireAuth } from '@lib/auth';
 
-  // ── DOM helpers ──────────────────────────────────────────────────────────────
+  // ── Color palette ─────────────────────────────────────────────────────────
+  const C = { green: '#1D9E75', blue: '#378ADD', red: '#E24B4A' };
+  const isDark = () => window.matchMedia('(prefers-color-scheme: dark)').matches;
+  const gridColor = () => isDark() ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.06)';
+  const tickColor = () => isDark() ? '#a0a09a' : '#5f5e5a';
+  const fmtK = (v: number) => {
+    const a = Math.abs(v);
+    return (v < 0 ? '-' : '') + '$' + (a >= 1000 ? (a / 1000).toFixed(1) + 'k' : Math.round(a).toLocaleString());
+  };
+
+  // ── Chart instances ───────────────────────────────────────────────────────
+  let chartWaterfall: Chart | null = null;
+  let chartScenarios: Chart | null = null;
+  let chartMonthly:   Chart | null = null;
+  let chartRoi:       Chart | null = null;
+
+  // ── DOM helpers ──────────────────────────────────────────────────────────
 
   function setOut(id: string, text: string, cls?: string) {
     const el = document.getElementById(id);
@@ -587,14 +654,14 @@
   function show(id: string) { const el = document.getElementById(id); if (el) el.style.display = ''; }
   function hide(id: string) { const el = document.getElementById(id); if (el) el.style.display = 'none'; }
 
-  // ── State ─────────────────────────────────────────────────────────────────────
+  // ── State ─────────────────────────────────────────────────────────────────
 
   let currentAnalysisId: string | null = null;
   let selectedPropertyId: string | null = null;
   let propertiesList: any[] = [];
   let lastResults: ReturnType<typeof calcAll> | null = null;
 
-  // ── Accordion ────────────────────────────────────────────────────────────────
+  // ── Accordion ────────────────────────────────────────────────────────────
 
   document.querySelectorAll<HTMLButtonElement>('.calc-section-toggle').forEach(btn => {
     btn.addEventListener('click', () => {
@@ -606,7 +673,261 @@
     });
   });
 
-  // ── Calculations ─────────────────────────────────────────────────────────────
+  // ── Monthly occupancy profiles ────────────────────────────────────────────
+  function getMonthlyProfile(driver: string, occPct: number) {
+    const b = occPct / 100;
+    const clamp = (v: number) => Math.min(1, Math.max(0, v));
+    const profiles: Record<string, { marketType: string; note: string; factors: number[] }> = {
+      'Military TDY': {
+        marketType: 'year-round',
+        note: 'Seasonal factors estimated from typical military TDY patterns — near-flat year-round. Verify against your own PMS data before relying on monthly projections.',
+        factors: [0.95, 0.96, 0.98, 1.01, 1.02, 1.03, 1.04, 1.03, 1.02, 1.01, 0.98, 0.97],
+      },
+      'University Events': {
+        marketType: 'vacational',
+        note: 'Seasonal factors estimated from typical university demand curves — peaks in fall/spring semesters, significant summer drop. Verify against AirDNA seasonality data.',
+        factors: [1.10, 1.08, 0.95, 0.88, 0.80, 0.70, 0.68, 0.75, 1.12, 1.15, 1.10, 0.90],
+      },
+      'Corporate/Contractor': {
+        marketType: 'year-round',
+        note: 'Seasonal factors estimated from typical corporate travel patterns — consistent with minor summer slowdown. Verify against your own PMS data.',
+        factors: [1.02, 1.02, 1.03, 1.02, 1.01, 0.96, 0.94, 0.95, 1.01, 1.02, 1.02, 0.98],
+      },
+      'Mixed': {
+        marketType: 'mixed',
+        note: 'Seasonal factors estimated from a blended demand profile — moderate variance year-round. Verify against AirDNA seasonality data for this market.',
+        factors: [0.97, 0.96, 0.98, 1.00, 1.01, 1.02, 1.03, 1.02, 1.01, 1.02, 1.00, 0.98],
+      },
+    };
+    const p = profiles[driver] ?? profiles['Mixed'];
+    return { marketType: p.marketType, note: p.note, occs: p.factors.map(f => clamp(b * f)) };
+  }
+
+  // ── Gauge (canvas 2D semicircle) ──────────────────────────────────────────
+  function drawGauge(breakEvenPct: number, actualPct: number) {
+    const canvas = document.getElementById('chart-gauge') as HTMLCanvasElement | null;
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d')!;
+    const W = canvas.width, H = canvas.height;
+    ctx.clearRect(0, 0, W, H);
+    const cx = W / 2, cy = H - 8;
+    const r  = Math.min(cx - 12, cy - 6);
+    const lw = 13;
+    // angle: 0% → π (left/9 o'clock), 100% → 2π (right/3 o'clock), clockwise through top
+    const toAngle = (pct: number) => Math.PI + (Math.min(Math.max(pct, 0), 100) / 100) * Math.PI;
+    // background
+    ctx.beginPath(); ctx.arc(cx, cy, r, Math.PI, 2 * Math.PI, false);
+    ctx.strokeStyle = isDark() ? '#333' : '#e0ddd8'; ctx.lineWidth = lw; ctx.lineCap = 'butt'; ctx.stroke();
+    // red: 0 → breakEven
+    ctx.beginPath(); ctx.arc(cx, cy, r, Math.PI, toAngle(breakEvenPct), false);
+    ctx.strokeStyle = C.red; ctx.lineWidth = lw; ctx.stroke();
+    // green: breakEven → actual
+    if (actualPct > breakEvenPct) {
+      ctx.beginPath(); ctx.arc(cx, cy, r, toAngle(breakEvenPct), toAngle(actualPct), false);
+      ctx.strokeStyle = C.green; ctx.lineWidth = lw; ctx.stroke();
+    }
+    // text
+    const midY = cy - r * 0.46;
+    ctx.textAlign = 'center';
+    ctx.fillStyle = isDark() ? '#e8e6e2' : '#0f1f2e';
+    ctx.font = 'bold 19px "DM Sans", system-ui'; ctx.textBaseline = 'middle';
+    ctx.fillText(Math.round(actualPct) + '%', cx, midY);
+    ctx.fillStyle = isDark() ? '#a0a09a' : '#7a6e65';
+    ctx.font = '11px "DM Sans", system-ui';
+    ctx.fillText('occupancy', cx, midY + 20);
+  }
+
+  // ── Zero dashed line plugin ───────────────────────────────────────────────
+  const zeroLinePlugin = {
+    id: 'zeroLine',
+    beforeDraw(chart: any) {
+      const { ctx, chartArea, scales } = chart;
+      if (!scales.y) return;
+      const yZero = scales.y.getPixelForValue(0);
+      if (yZero < chartArea.top || yZero > chartArea.bottom) return;
+      ctx.save();
+      ctx.beginPath(); ctx.setLineDash([4, 4]);
+      ctx.strokeStyle = isDark() ? 'rgba(255,255,255,0.28)' : 'rgba(0,0,0,0.2)';
+      ctx.lineWidth = 1;
+      ctx.moveTo(chartArea.left, yZero); ctx.lineTo(chartArea.right, yZero); ctx.stroke();
+      ctx.restore();
+    },
+  };
+
+  // ── Visual results rendering ──────────────────────────────────────────────
+  function renderVisuals(inputs: AnalysisInputs, r: ReturnType<typeof calcAll>) {
+
+    // 1: Property header
+    const prop = propertiesList.find(p => p.id === selectedPropertyId);
+    document.getElementById('res-address')!.textContent = prop?.address_line1 || inpStr('inp-address') || '—';
+    const br = inpStr('inp-bedrooms') || '—', ba = inpStr('inp-bathrooms') || '—', type = inpStr('inp-type') || '—';
+    document.getElementById('res-subline')!.textContent = `${br} BR · ${ba} BA · ${type}${inputs.isHOA ? ' · HOA' : ''}`;
+
+    const bufferPP = Math.round(inputs.occ - r.breakEvenOcc);
+    const bufEl = document.getElementById('res-buffer')!;
+    bufEl.textContent = (bufferPP >= 0 ? '+' : '') + bufferPP + 'pp';
+    (bufEl as HTMLElement).style.color = bufferPP >= 0 ? C.green : C.red;
+
+    const walkAway = inp('inp-walk-away');
+    const badge = document.getElementById('res-badge')!;
+    if (walkAway > 0 && inputs.rentNeg > walkAway) {
+      const over = Math.round(inputs.rentNeg - walkAway);
+      badge.className = 'res-badge res-badge--warn'; badge.style.display = '';
+      badge.textContent = `⚠ Rent $${over.toLocaleString()} above walk-away threshold`;
+    } else if (walkAway > 0) {
+      badge.className = 'res-badge res-badge--ok'; badge.style.display = '';
+      badge.textContent = '✓ Within target range';
+    } else {
+      badge.style.display = 'none';
+    }
+
+    // 2: Metric cards
+    document.getElementById('res-net-monthly')!.textContent = '$' + Math.round(r.netMonthly).toLocaleString();
+    document.getElementById('rmc-net-monthly')!.className = 'res-metric ' + (r.netMonthly > 700 ? 'rmc--green' : r.netMonthly >= 200 ? 'rmc--amber' : 'rmc--red');
+    document.getElementById('res-margin-sub')!.textContent = Math.round(r.margin) + '% margin';
+
+    document.getElementById('res-net-annual')!.textContent = '$' + Math.round(r.netAnnual).toLocaleString();
+    document.getElementById('rmc-net-annual')!.className = 'res-metric ' + (r.netAnnual > 8400 ? 'rmc--green' : r.netAnnual >= 2400 ? 'rmc--amber' : 'rmc--red');
+
+    document.getElementById('res-roi12')!.textContent = Math.round(r.roi12) + '%';
+    document.getElementById('res-roi-sub')!.textContent = 'on $' + Math.round(r.totalInvest).toLocaleString() + ' invested';
+
+    document.getElementById('res-payback')!.textContent = isFinite(r.payback) ? r.payback.toFixed(1) + ' mo' : '—';
+    document.getElementById('res-mult-sub')!.textContent = r.multiple.toFixed(2) + 'x rent/rev';
+
+    // 3a: Waterfall chart
+    let floor = r.grossRevenue;
+    const costItems = [
+      { label: 'Rent',       val: inputs.rentNeg },
+      { label: 'Utils',      val: inputs.utilities },
+      { label: 'Internet',   val: inputs.internet },
+      { label: 'Insurance',  val: inputs.insurance },
+      { label: 'Supplies',   val: inputs.supplies },
+      { label: 'Hospitable', val: inputs.pms + inputs.pricing },
+      { label: 'Maint.',     val: r.maintenance },
+      { label: 'Airbnb',     val: r.airbnbFee },
+    ];
+    const wfLabels: string[] = ['Gross'];
+    const wfData: [number, number][] = [[0, r.grossRevenue]];
+    const wfColors: string[] = [C.blue];
+    costItems.forEach(({ label, val }) => {
+      wfLabels.push(label);
+      wfData.push([Math.max(0, floor - val), floor]);
+      wfColors.push(C.red);
+      floor -= val;
+    });
+    wfLabels.push('Net');
+    wfColors.push(r.netMonthly >= 0 ? C.green : C.red);
+    wfData.push(r.netMonthly >= 0 ? [0, r.netMonthly] : [r.netMonthly, 0]);
+
+    if (!chartWaterfall) {
+      const ctx2 = (document.getElementById('chart-waterfall') as HTMLCanvasElement).getContext('2d')!;
+      chartWaterfall = new Chart(ctx2, {
+        type: 'bar',
+        data: { labels: wfLabels, datasets: [{ data: wfData as any, backgroundColor: wfColors, borderWidth: 0, borderRadius: 2 }] },
+        options: {
+          responsive: true, maintainAspectRatio: false,
+          plugins: { legend: { display: false }, tooltip: { callbacks: { label: (c: any) => {
+            const [mn, mx] = c.raw as [number, number];
+            return '$' + Math.round(Math.abs(mx - mn)).toLocaleString();
+          }}}},
+          scales: {
+            x: { grid: { color: gridColor() }, ticks: { color: tickColor(), font: { size: 10 } } },
+            y: { grid: { color: gridColor() }, ticks: { color: tickColor(), font: { size: 10 }, callback: (v: any) => fmtK(v) } },
+          },
+        },
+      });
+    } else {
+      const ds = chartWaterfall.data.datasets[0];
+      ds.data = wfData as any; (ds as any).backgroundColor = wfColors;
+      chartWaterfall.update();
+    }
+
+    // 3b: Gauge
+    drawGauge(r.breakEvenOcc, inputs.occ);
+    document.getElementById('gauge-legend')!.innerHTML =
+      `<span class="gauge-dot" style="background:${C.red}"></span>Break-even ${Math.round(r.breakEvenOcc)}%` +
+      `&emsp;<span class="gauge-dot" style="background:${C.green}"></span>Actual ${Math.round(inputs.occ)}%`;
+
+    // 3c: Scenario bars
+    const scData   = r.scenarioData.map(s => s.netAnnual);
+    const scColors = [C.green, C.blue, C.red];
+    if (!chartScenarios) {
+      const ctx2 = (document.getElementById('chart-scenarios') as HTMLCanvasElement).getContext('2d')!;
+      chartScenarios = new Chart(ctx2, {
+        type: 'bar',
+        data: { labels: ['Best', 'Base', 'Worst'], datasets: [{ data: scData, backgroundColor: scColors, borderWidth: 0, borderRadius: 2 }] },
+        options: {
+          indexAxis: 'y', responsive: true, maintainAspectRatio: false,
+          plugins: { legend: { display: false } },
+          scales: {
+            x: { grid: { color: gridColor() }, ticks: { color: tickColor(), font: { size: 10 }, callback: (v: any) => fmtK(v) } },
+            y: { grid: { display: false }, ticks: { color: tickColor(), font: { size: 10 } } },
+          },
+        },
+      });
+    } else {
+      chartScenarios.data.datasets[0].data = scData; chartScenarios.update();
+    }
+
+    // 4: Monthly cash flow
+    const driver  = inpStr('inp-demand');
+    const profile = getMonthlyProfile(driver, inputs.occ);
+    const months  = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+    const monthlyNets   = profile.occs.map(occ => occ * inputs.adr * 30 * 0.97 - r.fixed);
+    const monthlyColors = monthlyNets.map(v => v >= 0 ? C.green : C.red);
+
+    if (!chartMonthly) {
+      const ctx2 = (document.getElementById('chart-monthly') as HTMLCanvasElement).getContext('2d')!;
+      chartMonthly = new Chart(ctx2, {
+        type: 'bar',
+        data: { labels: months, datasets: [{ data: monthlyNets, backgroundColor: monthlyColors, borderWidth: 0, borderRadius: 2 }] },
+        options: {
+          responsive: true, maintainAspectRatio: false,
+          plugins: { legend: { display: false } },
+          scales: {
+            x: { grid: { color: gridColor() }, ticks: { color: tickColor(), font: { size: 10 } } },
+            y: { grid: { color: gridColor() }, ticks: { color: tickColor(), font: { size: 10 }, callback: (v: any) => fmtK(v) } },
+          },
+        },
+        plugins: [zeroLinePlugin],
+      });
+    } else {
+      const ds = chartMonthly.data.datasets[0];
+      ds.data = monthlyNets; (ds as any).backgroundColor = monthlyColors;
+      chartMonthly.update();
+    }
+    const occRange = Math.round((Math.max(...profile.occs) - Math.min(...profile.occs)) * 100);
+    document.getElementById('monthly-footnote')!.textContent =
+      `Based on ${profile.marketType} demand profile (${driver}). ±${occRange}pp occupancy variance applied monthly. Dashed line = break-even at $0.`;
+    document.getElementById('market-note')!.textContent = profile.note;
+
+    // 5: ROI curve
+    const roiPoints = Array.from({ length: 25 }, (_, i) => -r.totalInvest + i * r.netMonthly);
+    const roiLabels = Array.from({ length: 25 }, (_, i) => i % 2 === 0 ? `M${i}` : '');
+    if (!chartRoi) {
+      const ctx2 = (document.getElementById('chart-roi') as HTMLCanvasElement).getContext('2d')!;
+      chartRoi = new Chart(ctx2, {
+        type: 'line',
+        data: { labels: roiLabels, datasets: [{ data: roiPoints, borderColor: C.blue, backgroundColor: 'rgba(55,138,221,0.12)', fill: true, tension: 0, pointRadius: 0, borderWidth: 2 }] },
+        options: {
+          responsive: true, maintainAspectRatio: false,
+          plugins: { legend: { display: false } },
+          scales: {
+            x: { grid: { color: gridColor() }, ticks: { color: tickColor(), font: { size: 10 } } },
+            y: { grid: { color: gridColor() }, ticks: { color: tickColor(), font: { size: 10 }, callback: (v: any) => fmtK(v) } },
+          },
+        },
+        plugins: [zeroLinePlugin],
+      });
+    } else {
+      chartRoi.data.datasets[0].data = roiPoints; chartRoi.update();
+    }
+    document.getElementById('roi-footnote')!.textContent =
+      `Dashed line = initial investment ($${Math.round(r.totalInvest).toLocaleString()}). Crossover = payback month. Base case assumptions.`;
+  }
+
+  // ── Calculations ─────────────────────────────────────────────────────────
 
   function gatherInputs(): AnalysisInputs {
     return {
@@ -634,15 +955,14 @@
 
   function runCalc() {
     const inputs = gatherInputs();
-    const isHOA = inputs.isHOA;
+    const isHOA  = inputs.isHOA;
 
     document.getElementById('hoa-block')?.classList.toggle('visible', isHOA);
     document.getElementById('hoa-save-block')?.classList.toggle('visible', isHOA);
 
-    const saveBtn   = document.getElementById('btn-save') as HTMLButtonElement;
+    const saveBtn   = document.getElementById('btn-save')   as HTMLButtonElement;
     const updateBtn = document.getElementById('btn-update') as HTMLButtonElement;
     const exportBtn = document.getElementById('btn-export') as HTMLButtonElement;
-
     saveBtn.disabled   = isHOA || !selectedPropertyId;
     updateBtn.disabled = isHOA;
     exportBtn.disabled = isHOA;
@@ -654,67 +974,28 @@
     const r = calcAll(inputs);
     lastResults = r;
 
-    const totalCosts     = r.airbnbFee + r.fixed;
-    const staysPerMonth  = r.staysPerMonth;
-    const cleaningTotal  = staysPerMonth * inputs.cleaning;
-
-    setOut('out-gross',            fmt(r.grossRevenue));
-    setOut('out-cost-rent',        fmt(inputs.rentNeg));
-    setOut('out-cost-utilities',   fmt(inputs.utilities));
-    const internetRow = document.getElementById('row-cost-internet');
-    if (internetRow) internetRow.style.display = inputs.internet > 0 ? '' : 'none';
-    setOut('out-cost-internet',    fmt(inputs.internet));
-    setOut('out-cost-insurance',   fmt(inputs.insurance));
-    setOut('out-cost-supplies',    fmt(inputs.supplies));
-    setOut('out-cost-pms',         fmt(inputs.pms));
-    setOut('out-cost-pricing',     fmt(inputs.pricing));
-    setOut('out-cost-maintenance', fmt(r.maintenance));
-    setOut('out-airbnb-fee',       fmt(r.airbnbFee));
-    setOut('out-total-costs',      fmt(totalCosts));
-    setOut('out-net-monthly',  fmt(r.netMonthly), colorClass(r.netMonthly, { greenAbove: 0, redBelow: 0 }));
-    setOut('out-net-annual',   fmt(r.netAnnual),  colorClass(r.netAnnual,  { greenAbove: 0, redBelow: 0 }));
-    setOut('out-breakeven',    fmtPct(r.breakEvenOcc), r.breakEvenOcc > 65 ? 'amber' : 'green');
-    setOut('out-margin',       fmtPct(r.margin),  colorClass(r.margin,  { greenAbove: 15, redBelow: 0 }));
-    setOut('out-multiple',     fmtX(r.multiple),  colorClass(r.multiple, { greenAbove: 2, redBelow: 1.8 }));
-    setOut('out-stays',            staysPerMonth.toFixed(1));
+    const staysPerMonth = r.staysPerMonth;
+    const cleaningTotal = staysPerMonth * inputs.cleaning;
+    setOut('out-stays',              staysPerMonth.toFixed(1));
     setOut('out-cleaning-collected', fmt(cleaningTotal));
-    setOut('out-cleaning-paid',    fmt(cleaningTotal));
+    setOut('out-cleaning-paid',      fmt(cleaningTotal));
 
-    const tbody = document.getElementById('scenario-tbody')!;
-    tbody.innerHTML = r.scenarioData.map(s => {
-      const cls = s.netMonthly < 0 ? ' class="worst-negative"' : (s.label === 'best' ? ' class="scenario-best"' : '');
-      return `<tr${cls}>
-        <td>${s.label.charAt(0).toUpperCase() + s.label.slice(1)}</td>
-        <td>${fmtPct(s.occ)}</td>
-        <td>${fmt(s.adr)}</td>
-        <td>${fmt(s.netMonthly)}</td>
-        <td>${fmt(s.netAnnual)}</td>
-      </tr>`;
-    }).join('');
+    const flags  = getRiskFlags(inputs, r);
+    const riskEl = document.getElementById('risk-flags')!;
+    riskEl.innerHTML = flags.length === 0
+      ? '<div class="risk-flag ok"><span class="risk-flag-icon">✓</span>No risk flags triggered.</div>'
+      : flags.map(f => `<div class="risk-flag ${f.type}"><span class="risk-flag-icon">${f.icon}</span>${f.text}</div>`).join('');
 
-    setOut('out-total-invest', fmt(r.totalInvest));
-    setOut('out-payback',      isFinite(r.payback) ? r.payback.toFixed(1) + ' months' : '—');
-    setOut('out-roi-12',       fmtPct(r.roi12), colorClass(r.roi12, { greenAbove: 20, redBelow: 0 }));
-    setOut('out-roi-24',       fmtPct(r.roi24), colorClass(r.roi24, { greenAbove: 40, redBelow: 0 }));
-
-    const flags = getRiskFlags(inputs, r);
-    const container = document.getElementById('risk-flags')!;
-    if (flags.length === 0) {
-      container.innerHTML = '<div class="risk-flag ok"><span class="risk-flag-icon">✓</span>No risk flags triggered.</div>';
-    } else {
-      container.innerHTML = flags.map(f =>
-        `<div class="risk-flag ${f.type}"><span class="risk-flag-icon">${f.icon}</span>${f.text}</div>`
-      ).join('');
-    }
+    renderVisuals(inputs, r);
   }
 
   const inputIds = [
-    'inp-name','inp-address',
-    'inp-rent-ask','inp-rent-neg','inp-deposit','inp-hoa',
-    'inp-adr','inp-occ','inp-stay','inp-demand',
-    'inp-utilities','inp-internet','inp-insurance','inp-supplies','inp-pms','inp-pricing',
+    'inp-name', 'inp-address',
+    'inp-rent-ask', 'inp-rent-neg', 'inp-deposit', 'inp-hoa', 'inp-walk-away',
+    'inp-adr', 'inp-occ', 'inp-stay', 'inp-demand',
+    'inp-utilities', 'inp-internet', 'inp-insurance', 'inp-supplies', 'inp-pms', 'inp-pricing',
     'inp-cleaning',
-    'inp-furniture','inp-photo','inp-lock','inp-legal','inp-misc',
+    'inp-furniture', 'inp-photo', 'inp-lock', 'inp-legal', 'inp-misc',
     'inp-notes',
   ];
   inputIds.forEach(id => {
@@ -935,6 +1216,7 @@
       'inp-name': 'New Analysis', 'inp-address': '',
       'inp-rent-ask': '1400', 'inp-rent-neg': '1200', 'inp-deposit': '1400', 'inp-hoa': 'No',
       'inp-adr': '167', 'inp-occ': '77', 'inp-stay': '3.2', 'inp-demand': 'Military TDY',
+      'inp-walk-away': '1750',
       'inp-utilities': '185', 'inp-internet': '80', 'inp-insurance': '100',
       'inp-supplies': '120', 'inp-pms': '39', 'inp-pricing': '0',
       'inp-cleaning': '120',
@@ -1339,7 +1621,7 @@ ${inpStr('inp-notes') || 'None.'}
   .hot-info p { font-size: .88rem; color: #7a6e65; line-height: 1.65; }
   .hot-info strong { color: rgba(15,31,46,.7); font-weight: 400; }
 
-  .output-panel { background: #ffffff; border: 1px solid rgba(15,31,46,.1); box-shadow: 0 1px 4px rgba(15,31,46,.06); padding: 32px 28px; display: flex; flex-direction: column; gap: 24px; position: sticky; top: 20px; }
+  .output-panel { background: #ffffff; border: 1px solid rgba(15,31,46,.1); box-shadow: 0 1px 4px rgba(15,31,46,.06); padding: 24px 22px; display: flex; flex-direction: column; gap: 18px; }
   .out-section-title { font-family: 'DM Sans', system-ui, sans-serif; font-size: .65rem; font-weight: 500; letter-spacing: .18em; text-transform: uppercase; color: #a8885a; margin-bottom: 14px; padding-bottom: 8px; border-bottom: 1px solid rgba(201,169,110,.08); }
   .metric-row { display: flex; justify-content: space-between; align-items: baseline; padding: 5px 0; border-bottom: 1px solid rgba(15,31,46,.06); font-size: .83rem; gap: 8px; }
   .metric-row:last-child { border-bottom: none; }
@@ -1417,6 +1699,50 @@ ${inpStr('inp-notes') || 'None.'}
   .footer-brand span { color: #a8885a; }
   .footer-meta { font-size: .72rem; color: #7a6e65; letter-spacing: .06em; }
 
-  @media (max-width: 1024px) { .calc-layout { grid-template-columns: 1fr; } .output-panel { position: static; } }
-  @media (max-width: 600px) { .portal-content { padding: 32px 5vw 60px; } .field-row { grid-template-columns: 1fr; } .calc-panel, .output-panel { padding: 22px 16px; } }
+  /* ── Visual results panel ──────────────────────────────────────────────── */
+  .res-header { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; padding-bottom: 14px; border-bottom: 1px solid rgba(15,31,46,.08); }
+  .res-header-main { min-width: 0; }
+  .res-address { font-family: 'DM Sans', system-ui, sans-serif; font-size: .95rem; font-weight: 500; color: #0f1f2e; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .res-subline { font-size: .72rem; color: #7a6e65; margin-top: 3px; letter-spacing: .02em; }
+  .res-header-side { text-align: right; flex-shrink: 0; }
+  .res-buffer-label { font-size: .62rem; letter-spacing: .14em; text-transform: uppercase; color: #a8885a; font-weight: 500; }
+  .res-buffer-val { font-size: 1.15rem; font-weight: 500; letter-spacing: -.01em; margin-top: 2px; }
+
+  .res-badge { font-size: .75rem; padding: 6px 12px; border-radius: 2px; line-height: 1.4; font-weight: 400; }
+  .res-badge--ok   { background: #EAF3DE; color: #27500A; border: 1px solid rgba(39,80,10,.2); }
+  .res-badge--warn { background: #FAEEDA; color: #633806; border: 1px solid rgba(99,56,6,.2); }
+
+  .res-metrics { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+  .res-metric { background: rgba(15,31,46,.03); border: 1px solid rgba(15,31,46,.08); border-radius: 2px; padding: 12px 10px 10px; text-align: center; transition: border-color .2s; }
+  .res-metric.rmc--green { background: rgba(29,158,117,.06); border-color: rgba(29,158,117,.2); }
+  .res-metric.rmc--amber { background: rgba(212,163,42,.06); border-color: rgba(212,163,42,.2); }
+  .res-metric.rmc--red   { background: rgba(226,75,74,.06);  border-color: rgba(226,75,74,.2); }
+  .rmc-val   { font-size: .98rem; font-weight: 500; color: #0f1f2e; letter-spacing: -.01em; }
+  .rmc-label { font-size: .6rem; letter-spacing: .12em; text-transform: uppercase; color: #a8885a; margin-top: 4px; font-weight: 500; }
+  .rmc-sub   { font-size: .65rem; color: #7a6e65; margin-top: 3px; }
+  .res-metric.rmc--green .rmc-val { color: #1D9E75; }
+  .res-metric.rmc--amber .rmc-val { color: #b07a10; }
+  .res-metric.rmc--red   .rmc-val { color: #E24B4A; }
+
+  .res-chart-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .res-chart-card { background: rgba(15,31,46,.02); border: 1px solid rgba(15,31,46,.08); border-radius: 2px; padding: 14px; }
+  .rcc-title { font-size: .62rem; letter-spacing: .14em; text-transform: uppercase; color: #a8885a; font-weight: 500; margin-bottom: 10px; }
+  .rcc-footnote { font-size: .67rem; color: #7a6e65; font-style: italic; margin-top: 8px; line-height: 1.5; }
+  .rcc-market-note { font-size: .67rem; color: rgba(15,31,46,.45); background: rgba(201,169,110,.06); border: 1px solid rgba(201,169,110,.15); border-radius: 2px; padding: 7px 10px; margin-top: 6px; line-height: 1.5; }
+
+  .gauge-wrap { display: flex; justify-content: center; }
+  .gauge-legend { display: flex; align-items: center; gap: 4px; font-size: .68rem; color: #7a6e65; justify-content: center; margin-top: 6px; flex-wrap: wrap; }
+  .gauge-dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+
+  .res-collapsible { border: 1px solid rgba(15,31,46,.08); border-radius: 2px; }
+  .res-collapsible + .res-collapsible { margin-top: 0; }
+  .res-coll-hd { display: flex; align-items: center; justify-content: space-between; padding: 10px 14px; cursor: pointer; list-style: none; font-size: .65rem; font-weight: 500; letter-spacing: .14em; text-transform: uppercase; color: #a8885a; user-select: none; }
+  .res-coll-hd::-webkit-details-marker { display: none; }
+  .res-coll-hd svg { width: 14px; height: 14px; stroke: currentColor; fill: none; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; transition: transform .2s; flex-shrink: 0; }
+  .res-collapsible[open] > .res-coll-hd svg { transform: rotate(180deg); }
+  .res-coll-body { padding: 0 14px 14px; border-top: 1px solid rgba(15,31,46,.06); }
+
+  @media (max-width: 1024px) { .calc-layout { grid-template-columns: 1fr; } }
+  @media (max-width: 800px)  { .res-metrics { grid-template-columns: repeat(2, 1fr); } .res-chart-row { grid-template-columns: 1fr; } }
+  @media (max-width: 600px)  { .portal-content { padding: 32px 5vw 60px; } .field-row { grid-template-columns: 1fr; } .calc-panel, .output-panel { padding: 18px 14px; } .res-metrics { grid-template-columns: repeat(2, 1fr); } }
 </style>
