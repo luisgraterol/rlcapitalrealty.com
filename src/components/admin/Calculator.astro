@@ -1613,12 +1613,13 @@ ${inpStr('inp-notes') || 'None.'}
   .scenario-table tr.worst-negative td { background: rgba(201,74,74,.08); color: #c94a4a; }
   .scenario-table tr.scenario-best td:not(:first-child) { color: #4caf81; }
 
-  .risk-flags { display: flex; flex-direction: column; gap: 7px; }
-  .risk-flag { display: flex; align-items: flex-start; gap: 10px; padding: 10px 12px; border-radius: 2px; font-size: .8rem; line-height: 1.5; }
-  .risk-flag.warn   { background: rgba(212,163,42,.1); border: 1px solid rgba(212,163,42,.25); color: rgba(212,163,42,.9); }
-  .risk-flag.danger { background: rgba(201,74,74,.1); border: 1px solid rgba(201,74,74,.3); color: rgba(201,74,74,.9); }
-  .risk-flag.ok     { background: rgba(76,175,129,.1); border: 1px solid rgba(76,175,129,.2); color: rgba(76,175,129,.9); font-size: .68rem; padding: 7px 12px; }
-  .risk-flag-icon { flex-shrink: 0; font-size: .75rem; line-height: 1; }
+  /* :global() required — these elements are created via innerHTML in JS and don't receive Astro's scope attribute */
+  :global(.risk-flags) { display: flex; flex-direction: column; gap: 7px; }
+  :global(.risk-flag) { display: flex; align-items: center; gap: 8px; padding: 7px 12px; border-radius: 2px; font-size: .72rem; line-height: 1.4; font-family: 'DM Sans', system-ui, sans-serif; }
+  :global(.risk-flag.warn)   { background: rgba(212,163,42,.1); border: 1px solid rgba(212,163,42,.25); color: rgba(150,115,20,.9); }
+  :global(.risk-flag.danger) { background: rgba(201,74,74,.1); border: 1px solid rgba(201,74,74,.3); color: rgba(180,55,55,.9); }
+  :global(.risk-flag.ok)     { background: rgba(76,175,129,.08); border: 1px solid rgba(76,175,129,.18); color: rgba(29,130,95,.9); font-size: .68rem; }
+  :global(.risk-flag-icon) { flex-shrink: 0; font-size: .7rem; line-height: 1; }
 
   .calc-actions { display: flex; gap: 10px; flex-wrap: wrap; padding-top: 16px; border-top: 1px solid rgba(201,169,110,.1); }
   .btn { display: inline-flex; align-items: center; gap: 8px; padding: 10px 20px; border-radius: 2px; cursor: pointer; font-family: 'DM Sans', system-ui, sans-serif; font-size: .75rem; font-weight: 400; letter-spacing: .1em; text-transform: uppercase; transition: all .35s; border: 1px solid; }
