@@ -682,9 +682,9 @@
     const cx = W / 2, cy = H - 8;
     const r  = Math.min(cx - 12, cy - 6);
     const lw = 13;
-    // background
+    // background — fixed grey (app has no dark mode CSS so system preference is irrelevant)
     ctx.beginPath(); ctx.arc(cx, cy, r, Math.PI, 2 * Math.PI, false);
-    ctx.strokeStyle = isDark() ? '#333' : '#e0ddd8'; ctx.lineWidth = lw; ctx.lineCap = 'butt'; ctx.stroke();
+    ctx.strokeStyle = '#d0cdc8'; ctx.lineWidth = lw; ctx.lineCap = 'butt'; ctx.stroke();
     // red: 0 → breakEven
     ctx.beginPath(); ctx.arc(cx, cy, r, Math.PI, gaugeAngle(breakEvenPct), false);
     ctx.strokeStyle = C.red; ctx.lineWidth = lw; ctx.stroke();
@@ -693,15 +693,15 @@
       ctx.beginPath(); ctx.arc(cx, cy, r, gaugeAngle(breakEvenPct), gaugeAngle(actualPct), false);
       ctx.strokeStyle = C.green; ctx.lineWidth = lw; ctx.stroke();
     }
-    // text
+    // text — fixed dark ink for legibility on light background
     const midY = cy - r * 0.46;
     ctx.textAlign = 'center';
-    ctx.fillStyle = isDark() ? '#e8e6e2' : '#0f1f2e';
-    ctx.font = 'bold 19px "DM Sans", system-ui'; ctx.textBaseline = 'middle';
+    ctx.fillStyle = '#0f1f2e';
+    ctx.font = 'bold 22px "DM Sans", system-ui'; ctx.textBaseline = 'middle';
     ctx.fillText(Math.round(actualPct) + '%', cx, midY);
-    ctx.fillStyle = isDark() ? '#a0a09a' : '#7a6e65';
+    ctx.fillStyle = '#7a6e65';
     ctx.font = '11px "DM Sans", system-ui';
-    ctx.fillText('occupancy', cx, midY + 20);
+    ctx.fillText('occupancy', cx, midY + 22);
   }
 
   // ── Zero dashed line plugin ───────────────────────────────────────────────
@@ -1617,8 +1617,8 @@ ${inpStr('inp-notes') || 'None.'}
   .risk-flag { display: flex; align-items: flex-start; gap: 10px; padding: 10px 12px; border-radius: 2px; font-size: .8rem; line-height: 1.5; }
   .risk-flag.warn   { background: rgba(212,163,42,.1); border: 1px solid rgba(212,163,42,.25); color: rgba(212,163,42,.9); }
   .risk-flag.danger { background: rgba(201,74,74,.1); border: 1px solid rgba(201,74,74,.3); color: rgba(201,74,74,.9); }
-  .risk-flag.ok     { background: rgba(76,175,129,.1); border: 1px solid rgba(76,175,129,.2); color: rgba(76,175,129,.9); font-size: .75rem; }
-  .risk-flag-icon { flex-shrink: 0; font-size: 1rem; line-height: 1; }
+  .risk-flag.ok     { background: rgba(76,175,129,.1); border: 1px solid rgba(76,175,129,.2); color: rgba(76,175,129,.9); font-size: .68rem; padding: 7px 12px; }
+  .risk-flag-icon { flex-shrink: 0; font-size: .75rem; line-height: 1; }
 
   .calc-actions { display: flex; gap: 10px; flex-wrap: wrap; padding-top: 16px; border-top: 1px solid rgba(201,169,110,.1); }
   .btn { display: inline-flex; align-items: center; gap: 8px; padding: 10px 20px; border-radius: 2px; cursor: pointer; font-family: 'DM Sans', system-ui, sans-serif; font-size: .75rem; font-weight: 400; letter-spacing: .1em; text-transform: uppercase; transition: all .35s; border: 1px solid; }
