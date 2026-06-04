@@ -238,4 +238,56 @@ export function renderVisuals(inputs: AnalysisInputs, r: AnalysisResults, ctx: R
   }
   document.getElementById('roi-footnote')!.textContent =
     `Dashed line = initial investment ($${Math.round(r.totalInvest).toLocaleString()}). Crossover = payback month. Base case assumptions.`;
+
+  // 6: P&L Statement
+  const fmtAmt  = (v: number) => '$' + Math.round(Math.abs(v)).toLocaleString();
+  const fmtCost = (v: number) => v === 0 ? '$0' : '($' + Math.round(v).toLocaleString() + ')';
+  const fmtPct  = (v: number) => Math.round(v) + '%';
+
+  const lawnCostPL = inputs.hasYard ? inputs.lawnCare : 0;
+  const totalCosts = r.airbnbFee + r.fixed;
+  const airbnbLabel = inputs.airbnbFeeType === '15.5%' ? 'Airbnb Host Fee (15.5%)' : 'Airbnb Host Fee (3%)';
+
+  function setText(id: string, text: string) {
+    const el = document.getElementById(id); if (el) el.textContent = text;
+  }
+  function setColor(id: string, cls: string) {
+    const el = document.getElementById(id); if (el) { el.classList.remove('pl-green','pl-red'); if (cls) el.classList.add(cls); }
+  }
+
+  setText('pl-airbnb-label', airbnbLabel);
+  setText('pl-gross-revenue',          fmtAmt(r.grossRevenue));
+  setText('pl-airbnb-fee',             fmtCost(r.airbnbFee));
+  setText('pl-net-platform',           fmtAmt(r.netPlatform));
+  setText('pl-rent',                   fmtCost(inputs.rentNeg));
+  setText('pl-electricity',            fmtCost(inputs.electricity));
+  setText('pl-water',                  fmtCost(inputs.water));
+  setText('pl-sewer',                  fmtCost(inputs.sewer));
+  setText('pl-garbage',                fmtCost(inputs.garbage));
+  setText('pl-internet',               fmtCost(inputs.internet));
+  setText('pl-insurance',              fmtCost(inputs.insurance));
+  setText('pl-supplies',               fmtCost(inputs.supplies));
+  setText('pl-linens',                 fmtCost(inputs.linens));
+  setText('pl-pms',                    fmtCost(inputs.pms));
+  setText('pl-pricing',                fmtCost(inputs.pricing));
+  setText('pl-minut',                  fmtCost(inputs.minutSubscription));
+  setText('pl-streaming',              fmtCost(inputs.streaming));
+  setText('pl-lawn-care',              fmtCost(lawnCostPL));
+  setText('pl-pest-control',           fmtCost(inputs.pestControl));
+  setText('pl-bulk-pickup',            fmtCost(inputs.bulkPickup));
+  setText('pl-maintenance',            fmtCost(r.maintenance));
+  setText('pl-preventive-inspection',  fmtCost(inputs.preventiveInspection));
+  setText('pl-hvac-filters',           fmtCost(inputs.hvacFilters));
+  setText('pl-cpa',                    fmtCost(inputs.cpa));
+  setText('pl-total-costs',            fmtCost(totalCosts));
+
+  const netMonthlyStr = (r.netMonthly >= 0 ? '$' : '($') + Math.round(Math.abs(r.netMonthly)).toLocaleString() + (r.netMonthly < 0 ? ')' : '');
+  const netAnnualStr  = (r.netAnnual  >= 0 ? '$' : '($') + Math.round(Math.abs(r.netAnnual)).toLocaleString()  + (r.netAnnual  < 0 ? ')' : '');
+  setText('pl-net-monthly', netMonthlyStr);
+  setText('pl-net-annual',  netAnnualStr);
+  setColor('pl-net-monthly', r.netMonthly >= 0 ? 'pl-green' : 'pl-red');
+  setColor('pl-net-annual',  r.netAnnual  >= 0 ? 'pl-green' : 'pl-red');
+
+  setText('pl-breakeven', fmtPct(r.breakEvenOcc));
+  setText('pl-margin',    fmtPct(r.margin));
 }
