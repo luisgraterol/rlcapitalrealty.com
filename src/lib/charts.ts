@@ -336,6 +336,15 @@ export function renderVisuals(inputs: AnalysisInputs, r: AnalysisResults, ctx: R
     setSeg('rule-seg-rent', rentW, rentColor);
     setSeg('rule-seg-ops',  opsW,  opsColor);
     setSeg('rule-seg-net',  netW,  netColor);
+
+    function setTooltip(id: string, val: string) {
+      const el = document.getElementById(id);
+      if (el) el.setAttribute('data-tooltip', val);
+    }
+    const netTooltip = (r.netMonthly >= 0 ? '$' : '($') + Math.round(Math.abs(r.netMonthly)).toLocaleString() + (r.netMonthly < 0 ? ')' : '');
+    setTooltip('rule-seg-rent', '$' + Math.round(inputs.rentNeg).toLocaleString());
+    setTooltip('rule-seg-ops',  '$' + Math.round(opsCost).toLocaleString());
+    setTooltip('rule-seg-net',  netTooltip);
     setSwatch('rule-swatch-rent', rentColor);
     setSwatch('rule-swatch-ops',  opsColor);
     setSwatch('rule-swatch-net',  netColor);
