@@ -290,4 +290,20 @@ export function renderVisuals(inputs: AnalysisInputs, r: AnalysisResults, ctx: R
 
   setText('pl-breakeven', fmtPct(r.breakEvenOcc));
   setText('pl-margin',    fmtPct(r.margin));
+
+  // 7: Initial Investment breakdown
+  setText('ii-deposit',       fmtCost(inputs.deposit));
+  setText('ii-furniture',     fmtCost(inputs.furniture));
+  setText('ii-photo',         fmtCost(inputs.photo));
+  setText('ii-lock',          fmtCost(inputs.lock));
+  setText('ii-minut-hardware',fmtCost(inputs.minutHardware));
+  setText('ii-wifi-router',   fmtCost(inputs.wifiRouter));
+  setText('ii-welcome-kits',  fmtCost(inputs.welcomeKits));
+  setText('ii-legal',         fmtCost(inputs.legal));
+  setText('ii-misc',          fmtCost(inputs.misc));
+  setText('ii-total',         fmtCost(r.totalInvest));
+
+  setText('ii-payback', isFinite(r.payback) ? r.payback.toFixed(1) + ' mo' : '—');
+  setText('ii-roi12',   fmtPct(r.roi12));
+  setText('ii-roi24',   fmtPct(r.roi24));
 }

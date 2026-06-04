@@ -568,6 +568,41 @@
           </table>
         </div>
 
+        <!-- Initial Investment -->
+        <div class="res-chart-card">
+          <div class="rcc-title">Initial Investment</div>
+          <table class="pl-table">
+            <tbody>
+              <tr class="pl-section-hd"><td colspan="2">Capital Required</td></tr>
+              <tr><td>Security Deposit</td><td id="ii-deposit" class="pl-amount pl-cost"></td></tr>
+              <tr><td>Furniture &amp; Décor</td><td id="ii-furniture" class="pl-amount pl-cost"></td></tr>
+              <tr><td>Photography</td><td id="ii-photo" class="pl-amount pl-cost"></td></tr>
+              <tr><td>Smart Lock</td><td id="ii-lock" class="pl-amount pl-cost"></td></tr>
+              <tr><td>Minut Hardware</td><td id="ii-minut-hardware" class="pl-amount pl-cost"></td></tr>
+              <tr><td>WiFi Router</td><td id="ii-wifi-router" class="pl-amount pl-cost"></td></tr>
+              <tr><td>Welcome Kits</td><td id="ii-welcome-kits" class="pl-amount pl-cost"></td></tr>
+              <tr><td>Legal</td><td id="ii-legal" class="pl-amount pl-cost"></td></tr>
+              <tr><td>Miscellaneous</td><td id="ii-misc" class="pl-amount pl-cost"></td></tr>
+              <tr class="pl-divider pl-divider--thick"><td colspan="2"></td></tr>
+              <tr class="pl-subtotal"><td>Total Initial Investment</td><td id="ii-total" class="pl-amount pl-cost"></td></tr>
+            </tbody>
+          </table>
+          <div class="ii-metrics">
+            <div class="res-metric">
+              <div class="rmc-val" id="ii-payback">—</div>
+              <div class="rmc-label">Payback Period</div>
+            </div>
+            <div class="res-metric">
+              <div class="rmc-val" id="ii-roi12">—</div>
+              <div class="rmc-label">12-Month ROI</div>
+            </div>
+            <div class="res-metric">
+              <div class="rmc-val" id="ii-roi24">—</div>
+              <div class="rmc-label">24-Month ROI</div>
+            </div>
+          </div>
+        </div>
+
         <!-- Risk flags (collapsible) -->
         <details class="res-collapsible">
           <summary class="res-coll-hd">
@@ -1480,6 +1515,7 @@
 
   /* ── P&L Statement table ─────────────────────────────────────────────────── */
   .pl-table { width: 100%; border-collapse: collapse; font-size: .8rem; font-family: 'DM Sans', system-ui, sans-serif; }
+  .pl-table tr { border-bottom: 1px solid rgba(15,31,46,.05); }
   .pl-table td { padding: 4px 6px; color: #0f1f2e; vertical-align: middle; }
   .pl-table td:first-child { color: rgba(15,31,46,.7); }
   .pl-amount { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; min-width: 80px; }
@@ -1492,6 +1528,7 @@
   .pl-kpi td { color: rgba(15,31,46,.6) !important; font-size: .78rem; }
   .pl-green { color: #1D9E75 !important; }
   .pl-red   { color: #E24B4A !important; }
+  .ii-metrics { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 12px; }
 
   @media (max-width: 1100px) { .calc-layout { grid-template-columns: 1fr; } .calc-panel { position: static; max-height: none; overflow-y: visible; } }
   @media (max-width: 800px)  { .res-metrics { grid-template-columns: repeat(2, 1fr); } .res-chart-row { grid-template-columns: 1fr; } }
