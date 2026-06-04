@@ -24,8 +24,8 @@ export function exportMarkdown(
   const mdTotalCosts  = r.airbnbFee + r.fixed;
   const mdStays       = r.staysPerMonth;
   const mdClean       = mdStays * inputs.cleaning;
-  const mdInternetLine = inputs.internet > 0
-    ? `| Internet | ${fmt(inputs.internet)} |\n` : '';
+  const airbnbFeeLabel = inputs.airbnbFeeType === '15.5%' ? '15.5% (Hospitable API)' : '3% (Direct)';
+  const lawnVal = inputs.hasYard ? inputs.lawnCare : 0;
 
   const md = `# Property Analysis — ${name}
 **R&L Capital Realty LLC** | Abilene, TX | Generated: ${date}
@@ -46,13 +46,31 @@ export function exportMarkdown(
 | Gross Revenue | ${fmt(r.grossRevenue)} |
 | **Monthly Costs** | |
 | Rent | ${fmt(inputs.rentNeg)} |
-| Utilities | ${fmt(inputs.utilities)} |
-${mdInternetLine}| Insurance (Proper STR) | ${fmt(inputs.insurance)} |
+| *Utilities* | |
+| Electricity | ${fmt(inputs.electricity)} |
+| Water | ${fmt(inputs.water)} |
+| Sewer | ${fmt(inputs.sewer)} |
+| Garbage | ${fmt(inputs.garbage)} |
+| Internet | ${fmt(inputs.internet)} |
+| STR Insurance (Proper) | ${fmt(inputs.insurance)} |
+| *Supplies* | |
 | Supplies & Amenities | ${fmt(inputs.supplies)} |
+| Linens & Towels | ${fmt(inputs.linens)} |
+| *Tech & Platforms* | |
 | Hospitable PMS | ${fmt(inputs.pms)} |
 | PriceLabs | ${fmt(inputs.pricing)} |
+| Minut Subscription | ${fmt(inputs.minutSubscription)} |
+| Streaming | ${fmt(inputs.streaming)} |
+| *Property Services* | |
+| Lawn Care | ${fmt(lawnVal)} |
+| Pest Control | ${fmt(inputs.pestControl)} |
+| Bulk Pickup | ${fmt(inputs.bulkPickup)} |
+| *Maintenance & Admin* | |
 | Maintenance Reserve | ${fmt(r.maintenance)} |
-| Airbnb Fee (3%) | ${fmt(r.airbnbFee)} |
+| Preventive Inspection | ${fmt(inputs.preventiveInspection)} |
+| HVAC Filters | ${fmt(inputs.hvacFilters)} |
+| CPA / Taxes | ${fmt(inputs.cpa)} |
+| Airbnb Fee (${airbnbFeeLabel}) | ${fmt(r.airbnbFee)} |
 | STR Permit | $0 |
 | **Total Costs** | **${fmt(mdTotalCosts)}** |
 | Net Monthly Profit | ${fmt(r.netMonthly)} |
@@ -75,9 +93,21 @@ ${mdInternetLine}| Insurance (Proper STR) | ${fmt(inputs.insurance)} |
 ${r.scenarioData.map(s => `| ${s.label.charAt(0).toUpperCase() + s.label.slice(1)} | ${fmtPct(s.occ)} | ${fmt(s.adr)} | ${fmt(s.netMonthly)} | ${fmt(s.netAnnual)} |`).join('\n')}
 
 ## Investment Summary
+| Item | Amount |
+|------|--------|
+| Security Deposit | ${fmt(inputs.deposit)} |
+| Furniture & Décor | ${fmt(inputs.furniture)} |
+| Photography | ${fmt(inputs.photo)} |
+| Smart Lock | ${fmt(inputs.lock)} |
+| Minut Hardware | ${fmt(inputs.minutHardware)} |
+| WiFi Router | ${fmt(inputs.wifiRouter)} |
+| Welcome Kits | ${fmt(inputs.welcomeKits)} |
+| Legal | ${fmt(inputs.legal)} |
+| Miscellaneous | ${fmt(inputs.misc)} |
+| **Total Initial Investment** | **${fmt(r.totalInvest)}** |
+
 | Metric | Value |
 |--------|-------|
-| Total Initial Investment | ${fmt(r.totalInvest)} |
 | Payback Period | ${isFinite(r.payback) ? r.payback.toFixed(1) + ' months' : '—'} |
 | 12-Month ROI | ${fmtPct(r.roi12)} |
 | 24-Month ROI | ${fmtPct(r.roi24)} |
@@ -90,7 +120,7 @@ ${flagLines.length ? flagLines.join('\n') : 'No risk flags triggered.'}
 - HOT tax: Collected and remitted by Airbnb — no operator action required
 - Primary demand driver: Dyess Air Force Base (TDY military) + ACU / Hardin-Simmons / McMurry
 - Insurance: Proper Insurance STR policy (~$98–103/mo), landlord named as additional insured
-- Sublease: Requires explicit addendum — Texas RE attorney review recommended (~$300)
+- Sublease: Requires explicit addendum — Texas RE attorney review recommended (~$400)
 
 ## Notes
 ${meta.notes || 'None.'}

@@ -162,27 +162,60 @@
             <svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
           </button>
           <div class="calc-section-body open" id="sec-fixed">
+
+            <div class="calc-subsection-title">Utilities</div>
             <div class="field-row">
               <div class="field-group">
-                <label for="inp-utilities">Utilities (elec/water/gas)</label>
-                <input type="number" id="inp-utilities" value="185" min="0" step="5" />
+                <label for="inp-electricity">Electricity (AEP Texas)</label>
+                <input type="number" id="inp-electricity" value="130" min="0" step="1" />
+                <span class="field-note">$120–$140 (2BR) · $145–$170 (3BR)</span>
               </div>
+              <div class="field-group">
+                <label for="inp-water">Water</label>
+                <input type="number" id="inp-water" value="45" min="0" step="1" />
+                <span class="field-note">$40–$50 (2BR) · $50–$60 (3BR) · confirm if landlord-included</span>
+              </div>
+            </div>
+            <div class="field-row">
+              <div class="field-group">
+                <label for="inp-sewer">Sewer</label>
+                <input type="number" id="inp-sewer" value="50" min="0" step="1" />
+                <span class="field-note">$45–$55 (2BR) · $55–$65 (3BR) · confirm if landlord-included</span>
+              </div>
+              <div class="field-group">
+                <label for="inp-garbage">Garbage (City of Abilene)</label>
+                <input type="number" id="inp-garbage" value="24" min="0" step="1" />
+                <span class="field-note">$24 flat · confirm if landlord-included</span>
+              </div>
+            </div>
+
+            <div class="calc-subsection-title">Internet &amp; Insurance</div>
+            <div class="field-row">
               <div class="field-group">
                 <label for="inp-internet">Internet (fiber)</label>
                 <input type="number" id="inp-internet" value="80" min="0" step="1" />
               </div>
-            </div>
-            <div class="field-row">
               <div class="field-group">
                 <label for="inp-insurance">STR Insurance (Proper)</label>
                 <input type="number" id="inp-insurance" value="100" min="0" step="1" />
                 <span class="field-note">Quote in hand: $98–103/mo</span>
               </div>
+            </div>
+
+            <div class="calc-subsection-title">Supplies</div>
+            <div class="field-row">
               <div class="field-group">
                 <label for="inp-supplies">Supplies &amp; Amenities</label>
                 <input type="number" id="inp-supplies" value="120" min="0" step="5" />
               </div>
+              <div class="field-group">
+                <label for="inp-linens">Linens &amp; Towels (reserve)</label>
+                <input type="number" id="inp-linens" value="41" min="0" step="1" />
+                <span class="field-note">$35 (2BR) · $48 (3BR)</span>
+              </div>
             </div>
+
+            <div class="calc-subsection-title">Tech &amp; Platforms</div>
             <div class="field-row">
               <div class="field-group">
                 <label for="inp-pms">PMS Software (Hospitable)</label>
@@ -195,14 +228,85 @@
             </div>
             <div class="field-row">
               <div class="field-group">
+                <label for="inp-minut-subscription">Minut (noise sensor)</label>
+                <input type="number" id="inp-minut-subscription" value="10" min="0" step="1" />
+                <span class="field-note">$10 flat</span>
+              </div>
+              <div class="field-group">
+                <label for="inp-streaming">Streaming (Netflix/Hulu)</label>
+                <input type="number" id="inp-streaming" value="8" min="0" step="1" />
+                <span class="field-note">$8 flat · guest profile</span>
+              </div>
+            </div>
+
+            <div class="calc-subsection-title">Maintenance &amp; Admin</div>
+            <div class="field-row">
+              <div class="field-group">
                 <label>Maintenance Reserve</label>
                 <input type="number" id="inp-maintenance" readonly />
                 <span class="field-note">Auto: 1.5% of negotiated rent (min $75, max $150)</span>
               </div>
               <div class="field-group">
+                <label for="inp-preventive-inspection">Preventive Inspection</label>
+                <input type="number" id="inp-preventive-inspection" value="50" min="0" step="1" />
+                <span class="field-note">$50 · handyman · every 2 mo (6x/yr) · prorated</span>
+              </div>
+            </div>
+            <div class="field-row">
+              <div class="field-group">
+                <label for="inp-hvac-filters">HVAC Filters</label>
+                <input type="number" id="inp-hvac-filters" value="10" min="0" step="1" />
+                <span class="field-note">$8 (2BR) · $12 (3BR) · every 45–60 days · prorated</span>
+              </div>
+              <div class="field-group">
+                <label for="inp-cpa">CPA / Taxes</label>
+                <input type="number" id="inp-cpa" value="42" min="0" step="1" />
+                <span class="field-note">~$500/yr billed Q1 · prorated</span>
+              </div>
+            </div>
+            <div class="field-row">
+              <div class="field-group">
                 <label>STR Permit</label>
                 <input type="number" value="0" readonly disabled />
                 <span class="field-note"><span class="field-badge">No permit required — City of Abilene (2026)</span></span>
+              </div>
+              <div class="field-group"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Section 3b: Property Services -->
+        <div class="calc-section">
+          <button class="calc-section-toggle" data-target="sec-property-services" type="button">
+            Property Services
+            <svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
+          </button>
+          <div class="calc-section-body" id="sec-property-services">
+            <div class="field-row">
+              <div class="field-group">
+                <label for="inp-has-yard">Has Yard?</label>
+                <select id="inp-has-yard">
+                  <option value="No" selected>No</option>
+                  <option value="Yes">Yes</option>
+                </select>
+                <span class="field-note">Enables lawn care cost when Yes</span>
+              </div>
+              <div class="field-group">
+                <label for="inp-lawn-care">Lawn Care</label>
+                <input type="number" id="inp-lawn-care" value="0" min="0" step="1" readonly />
+                <span class="field-note">$75 (2BR) · $82 (3BR) · Apr–Oct 2x/mo, Nov–Mar 1x/mo · prorated</span>
+              </div>
+            </div>
+            <div class="field-row">
+              <div class="field-group">
+                <label for="inp-pest-control">Pest Control</label>
+                <input type="number" id="inp-pest-control" value="51" min="0" step="1" />
+                <span class="field-note">$50 (2BR) · $53 (3BR) · quarterly · prorated</span>
+              </div>
+              <div class="field-group">
+                <label for="inp-bulk-pickup">Bulk Pickup</label>
+                <input type="number" id="inp-bulk-pickup" value="8" min="0" step="1" />
+                <span class="field-note">~2x/yr · prorated</span>
               </div>
             </div>
           </div>
@@ -222,9 +326,12 @@
                 <span class="field-note">Pass-through: charged to guest = paid to cleaner. Net P&amp;L impact = $0.</span>
               </div>
               <div class="field-group">
-                <label>Airbnb Host Fee</label>
-                <input type="number" value="3" readonly disabled />
-                <span class="field-note">Standard 3% — not editable</span>
+                <label for="inp-airbnb-fee-type">Airbnb Host Fee</label>
+                <select id="inp-airbnb-fee-type">
+                  <option value="3%">3% — Direct (no API)</option>
+                  <option value="15.5%">15.5% — Hospitable API</option>
+                </select>
+                <span class="field-note">Verify in Airbnb → Payments &amp; Payouts. API-connected = 15.5%.</span>
               </div>
             </div>
           </div>
@@ -245,30 +352,52 @@
               </div>
               <div class="field-group">
                 <label for="inp-photo">Photography</label>
-                <input type="number" id="inp-photo" value="200" min="0" step="50" />
+                <input type="number" id="inp-photo" value="205" min="0" step="50" />
+                <span class="field-note">$180–$230 (2BR)</span>
               </div>
             </div>
             <div class="field-row">
               <div class="field-group">
                 <label for="inp-lock">Smart Lock</label>
-                <input type="number" id="inp-lock" value="150" min="0" step="10" />
+                <input type="number" id="inp-lock" value="180" min="0" step="10" />
+                <span class="field-note">Schlage/Yale</span>
               </div>
+              <div class="field-group">
+                <label for="inp-minut-hardware">Minut Hardware</label>
+                <input type="number" id="inp-minut-hardware" value="100" min="0" step="10" />
+                <span class="field-note">$100 flat</span>
+              </div>
+            </div>
+            <div class="field-row">
+              <div class="field-group">
+                <label for="inp-wifi-router">WiFi Router (premium)</label>
+                <input type="number" id="inp-wifi-router" value="100" min="0" step="10" />
+                <span class="field-note">$80 (2BR) · $120 (3BR)</span>
+              </div>
+              <div class="field-group">
+                <label for="inp-welcome-kits">Welcome Kits (2-mo supply)</label>
+                <input type="number" id="inp-welcome-kits" value="195" min="0" step="5" />
+                <span class="field-note">$170 (2BR) · $220 (3BR)</span>
+              </div>
+            </div>
+            <div class="field-row">
               <div class="field-group">
                 <label>LLC Formation</label>
                 <input type="number" value="0" readonly disabled />
                 <span class="field-note">Already registered — locked at $0</span>
               </div>
-            </div>
-            <div class="field-row">
               <div class="field-group">
                 <label for="inp-legal">Legal (Sublease Addendum)</label>
-                <input type="number" id="inp-legal" value="300" min="0" step="50" />
-                <span class="field-note">Texas RE attorney review</span>
+                <input type="number" id="inp-legal" value="400" min="0" step="50" />
+                <span class="field-note">TX attorney quote</span>
               </div>
+            </div>
+            <div class="field-row">
               <div class="field-group">
                 <label for="inp-misc">Miscellaneous Buffer</label>
                 <input type="number" id="inp-misc" value="500" min="0" step="50" />
               </div>
+              <div class="field-group"></div>
             </div>
           </div>
         </div>
@@ -664,25 +793,43 @@
 
   function gatherInputs(): AnalysisInputs {
     return {
-      rentNeg:   inp('inp-rent-neg'),
-      rentAsk:   inp('inp-rent-ask'),
-      deposit:   inp('inp-deposit'),
-      adr:       inp('inp-adr'),
-      occ:       inp('inp-occ'),
-      avgStay:   inp('inp-stay'),
-      cleaning:  inp('inp-cleaning'),
-      utilities: inp('inp-utilities'),
-      internet:  inp('inp-internet'),
-      insurance: inp('inp-insurance'),
-      supplies:  inp('inp-supplies'),
-      pms:       inp('inp-pms'),
-      pricing:   inp('inp-pricing'),
-      furniture: inp('inp-furniture'),
-      photo:     inp('inp-photo'),
-      lock:      inp('inp-lock'),
-      legal:     inp('inp-legal'),
-      misc:      inp('inp-misc'),
-      isHOA:     inpStr('inp-hoa') === 'Yes',
+      rentNeg:              inp('inp-rent-neg'),
+      rentAsk:              inp('inp-rent-ask'),
+      deposit:              inp('inp-deposit'),
+      adr:                  inp('inp-adr'),
+      occ:                  inp('inp-occ'),
+      avgStay:              inp('inp-stay'),
+      cleaning:             inp('inp-cleaning'),
+      utilities:            0,
+      electricity:          inp('inp-electricity'),
+      water:                inp('inp-water'),
+      sewer:                inp('inp-sewer'),
+      garbage:              inp('inp-garbage'),
+      internet:             inp('inp-internet'),
+      insurance:            inp('inp-insurance'),
+      supplies:             inp('inp-supplies'),
+      linens:               inp('inp-linens'),
+      pms:                  inp('inp-pms'),
+      pricing:              inp('inp-pricing'),
+      minutSubscription:    inp('inp-minut-subscription'),
+      streaming:            inp('inp-streaming'),
+      airbnbFeeType:        (inpStr('inp-airbnb-fee-type') as '3%' | '15.5%') || '3%',
+      hasYard:              inpStr('inp-has-yard') === 'Yes',
+      lawnCare:             inp('inp-lawn-care'),
+      pestControl:          inp('inp-pest-control'),
+      bulkPickup:           inp('inp-bulk-pickup'),
+      preventiveInspection: inp('inp-preventive-inspection'),
+      hvacFilters:          inp('inp-hvac-filters'),
+      cpa:                  inp('inp-cpa'),
+      furniture:            inp('inp-furniture'),
+      photo:                inp('inp-photo'),
+      lock:                 inp('inp-lock'),
+      legal:                inp('inp-legal'),
+      misc:                 inp('inp-misc'),
+      minutHardware:        inp('inp-minut-hardware'),
+      wifiRouter:           inp('inp-wifi-router'),
+      welcomeKits:          inp('inp-welcome-kits'),
+      isHOA:                inpStr('inp-hoa') === 'Yes',
     };
   }
 
@@ -737,13 +884,35 @@
     'inp-name', 'inp-address',
     'inp-rent-ask', 'inp-rent-neg', 'inp-deposit', 'inp-hoa', 'inp-walk-away',
     'inp-adr', 'inp-occ', 'inp-stay', 'inp-demand',
-    'inp-utilities', 'inp-internet', 'inp-insurance', 'inp-supplies', 'inp-pms', 'inp-pricing',
+    'inp-electricity', 'inp-water', 'inp-sewer', 'inp-garbage',
+    'inp-internet', 'inp-insurance',
+    'inp-supplies', 'inp-linens',
+    'inp-pms', 'inp-pricing', 'inp-minut-subscription', 'inp-streaming', 'inp-airbnb-fee-type',
+    'inp-has-yard', 'inp-lawn-care', 'inp-pest-control', 'inp-bulk-pickup',
+    'inp-preventive-inspection', 'inp-hvac-filters', 'inp-cpa',
     'inp-cleaning',
     'inp-furniture', 'inp-photo', 'inp-lock', 'inp-legal', 'inp-misc',
+    'inp-minut-hardware', 'inp-wifi-router', 'inp-welcome-kits',
     'inp-notes',
   ];
   inputIds.forEach(id => {
     document.getElementById(id)?.addEventListener('input', runCalc);
+  });
+
+  // ── Has Yard toggle ───────────────────────────────────────────────────────────
+
+  document.getElementById('inp-has-yard')?.addEventListener('change', () => {
+    const hasYard = inpStr('inp-has-yard') === 'Yes';
+    const lawnEl = document.getElementById('inp-lawn-care') as HTMLInputElement;
+    if (!lawnEl) return;
+    if (hasYard) {
+      lawnEl.readOnly = false;
+      lawnEl.value = '78';
+    } else {
+      lawnEl.value = '0';
+      lawnEl.readOnly = true;
+    }
+    runCalc();
   });
 
   // ── Property picker ──────────────────────────────────────────────────────────
@@ -961,11 +1130,17 @@
       'inp-rent-ask': '1400', 'inp-rent-neg': '1200', 'inp-deposit': '1400', 'inp-hoa': 'No',
       'inp-adr': '167', 'inp-occ': '77', 'inp-stay': '3.2', 'inp-demand': 'Military TDY',
       'inp-walk-away': '1750',
-      'inp-utilities': '185', 'inp-internet': '80', 'inp-insurance': '100',
-      'inp-supplies': '120', 'inp-pms': '39', 'inp-pricing': '0',
+      'inp-electricity': '130', 'inp-water': '45', 'inp-sewer': '50', 'inp-garbage': '24',
+      'inp-internet': '80', 'inp-insurance': '100',
+      'inp-supplies': '120', 'inp-linens': '41',
+      'inp-pms': '39', 'inp-pricing': '0',
+      'inp-minut-subscription': '10', 'inp-streaming': '8', 'inp-airbnb-fee-type': '3%',
+      'inp-has-yard': 'No', 'inp-lawn-care': '0', 'inp-pest-control': '51', 'inp-bulk-pickup': '8',
+      'inp-preventive-inspection': '50', 'inp-hvac-filters': '10', 'inp-cpa': '42',
       'inp-cleaning': '120',
-      'inp-furniture': '6500', 'inp-photo': '200', 'inp-lock': '150',
-      'inp-legal': '300', 'inp-misc': '500', 'inp-notes': '',
+      'inp-furniture': '6500', 'inp-photo': '205', 'inp-lock': '180', 'inp-legal': '400',
+      'inp-misc': '500', 'inp-minut-hardware': '100', 'inp-wifi-router': '100', 'inp-welcome-kits': '195',
+      'inp-notes': '',
     };
     Object.entries(defaults).forEach(([id, val]) => {
       const el = document.getElementById(id) as HTMLInputElement | null;
@@ -1111,6 +1286,8 @@
   .calc-section-toggle.open svg { transform: rotate(180deg); }
   .calc-section-body { display: none; padding-bottom: 16px; }
   .calc-section-body.open { display: block; }
+  .calc-subsection-title { font-size: .64rem; font-weight: 500; letter-spacing: .16em; text-transform: uppercase; color: rgba(15,31,46,.35); padding: 12px 0 4px; border-top: 1px solid rgba(15,31,46,.06); margin-top: 4px; }
+  .calc-subsection-title:first-child { border-top: none; margin-top: 0; padding-top: 6px; }
 
   .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px; }
   .field-row.full { grid-template-columns: 1fr; }
