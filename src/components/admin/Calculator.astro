@@ -524,6 +524,50 @@
           <div class="rcc-footnote" id="roi-footnote"></div>
         </div>
 
+        <!-- P&L Statement -->
+        <div class="res-chart-card">
+          <div class="rcc-title">Monthly P&amp;L Statement — Base Case</div>
+          <table class="pl-table">
+            <tbody>
+              <tr class="pl-section-hd"><td colspan="2">Revenue</td></tr>
+              <tr><td>Gross Revenue (ADR × Occ × 30 nights)</td><td id="pl-gross-revenue" class="pl-amount"></td></tr>
+              <tr class="pl-section-hd"><td colspan="2">Cost of Revenue</td></tr>
+              <tr><td id="pl-airbnb-label">Airbnb Host Fee (3%)</td><td id="pl-airbnb-fee" class="pl-amount pl-cost"></td></tr>
+              <tr class="pl-divider"><td colspan="2"></td></tr>
+              <tr class="pl-subtotal"><td>Net Platform Revenue</td><td id="pl-net-platform" class="pl-amount"></td></tr>
+              <tr class="pl-section-hd"><td colspan="2">Fixed Costs</td></tr>
+              <tr><td>Rent</td><td id="pl-rent" class="pl-amount pl-cost"></td></tr>
+              <tr><td>Electricity</td><td id="pl-electricity" class="pl-amount pl-cost"></td></tr>
+              <tr><td>Water</td><td id="pl-water" class="pl-amount pl-cost"></td></tr>
+              <tr><td>Sewer</td><td id="pl-sewer" class="pl-amount pl-cost"></td></tr>
+              <tr><td>Garbage</td><td id="pl-garbage" class="pl-amount pl-cost"></td></tr>
+              <tr><td>Internet</td><td id="pl-internet" class="pl-amount pl-cost"></td></tr>
+              <tr><td>STR Insurance (Proper)</td><td id="pl-insurance" class="pl-amount pl-cost"></td></tr>
+              <tr><td>Supplies &amp; Amenities</td><td id="pl-supplies" class="pl-amount pl-cost"></td></tr>
+              <tr><td>Linens &amp; Towels</td><td id="pl-linens" class="pl-amount pl-cost"></td></tr>
+              <tr><td>Hospitable PMS</td><td id="pl-pms" class="pl-amount pl-cost"></td></tr>
+              <tr><td>PriceLabs</td><td id="pl-pricing" class="pl-amount pl-cost"></td></tr>
+              <tr><td>Minut Subscription</td><td id="pl-minut" class="pl-amount pl-cost"></td></tr>
+              <tr><td>Streaming</td><td id="pl-streaming" class="pl-amount pl-cost"></td></tr>
+              <tr><td>Lawn Care</td><td id="pl-lawn-care" class="pl-amount pl-cost"></td></tr>
+              <tr><td>Pest Control</td><td id="pl-pest-control" class="pl-amount pl-cost"></td></tr>
+              <tr><td>Bulk Pickup</td><td id="pl-bulk-pickup" class="pl-amount pl-cost"></td></tr>
+              <tr><td>Maintenance Reserve</td><td id="pl-maintenance" class="pl-amount pl-cost"></td></tr>
+              <tr><td>Preventive Inspection</td><td id="pl-preventive-inspection" class="pl-amount pl-cost"></td></tr>
+              <tr><td>HVAC Filters</td><td id="pl-hvac-filters" class="pl-amount pl-cost"></td></tr>
+              <tr><td>CPA / Taxes</td><td id="pl-cpa" class="pl-amount pl-cost"></td></tr>
+              <tr class="pl-divider"><td colspan="2"></td></tr>
+              <tr class="pl-subtotal"><td>Total Monthly Costs</td><td id="pl-total-costs" class="pl-amount pl-cost"></td></tr>
+              <tr class="pl-divider pl-divider--thick"><td colspan="2"></td></tr>
+              <tr class="pl-net"><td>Net Monthly Profit</td><td id="pl-net-monthly" class="pl-amount"></td></tr>
+              <tr class="pl-net"><td>Net Annual Profit</td><td id="pl-net-annual" class="pl-amount"></td></tr>
+              <tr class="pl-divider"><td colspan="2"></td></tr>
+              <tr class="pl-kpi"><td>Break-Even Occupancy</td><td id="pl-breakeven" class="pl-amount"></td></tr>
+              <tr class="pl-kpi"><td>Profit Margin</td><td id="pl-margin" class="pl-amount"></td></tr>
+            </tbody>
+          </table>
+        </div>
+
         <!-- Risk flags (collapsible) -->
         <details class="res-collapsible">
           <summary class="res-coll-hd">
@@ -1254,8 +1298,8 @@
   .section-label { font-family: 'DM Sans', system-ui, sans-serif; font-size: .65rem; font-weight: 500; letter-spacing: .22em; text-transform: uppercase; color: #a8885a; display: flex; align-items: center; gap: 12px; margin-bottom: 32px; }
   .section-label::before { content: ''; display: block; width: 28px; height: 1px; background: #a8885a; }
 
-  .calc-layout { display: grid; grid-template-columns: 1.25fr 1fr; gap: 16px; align-items: start; }
-  .calc-panel { background: #ffffff; border: 1px solid rgba(15,31,46,.1); box-shadow: 0 1px 4px rgba(15,31,46,.06); padding: 32px 28px; }
+  .calc-layout { display: grid; grid-template-columns: 460px 1fr; gap: 16px; align-items: start; }
+  .calc-panel { background: #ffffff; border: 1px solid rgba(15,31,46,.1); box-shadow: 0 1px 4px rgba(15,31,46,.06); padding: 32px 28px; position: sticky; top: 20px; max-height: calc(100vh - 40px); overflow-y: auto; }
   .calc-panel-title { font-family: 'Cormorant Garamond', Georgia, serif; font-size: 1.15rem; font-weight: 500; color: #0f1f2e; margin-bottom: 24px; letter-spacing: .01em; padding-bottom: 14px; border-bottom: 1px solid rgba(15,31,46,.08); display: flex; justify-content: space-between; align-items: center; }
 
   /* Property Association */
@@ -1280,7 +1324,7 @@
 
   .calc-section { border-bottom: 1px solid rgba(15,31,46,.08); }
   .calc-section:last-child { border-bottom: none; }
-  .calc-section-toggle { width: 100%; display: flex; align-items: center; justify-content: space-between; padding: 14px 0; background: rgba(15,31,46,.02); border: none; cursor: pointer; font-family: 'DM Sans', system-ui, sans-serif; font-size: .72rem; font-weight: 500; letter-spacing: .14em; text-transform: uppercase; color: #a8885a; transition: color .35s; }
+  .calc-section-toggle { width: 100%; display: flex; align-items: center; justify-content: space-between; padding: 14px 0; background: transparent; border: none; cursor: pointer; font-family: 'DM Sans', system-ui, sans-serif; font-size: .72rem; font-weight: 500; letter-spacing: .14em; text-transform: uppercase; color: #a8885a; transition: color .35s; }
   .calc-section-toggle:hover { color: #c9a96e; }
   .calc-section-toggle svg { width: 14px; height: 14px; stroke: currentColor; fill: none; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; transition: transform .25s ease; flex-shrink: 0; }
   .calc-section-toggle.open svg { transform: rotate(180deg); }
@@ -1434,7 +1478,22 @@
   .res-collapsible[open] > .res-coll-hd svg { transform: rotate(180deg); }
   .res-coll-body { padding: 0 14px 14px; border-top: 1px solid rgba(15,31,46,.06); }
 
-  @media (max-width: 1024px) { .calc-layout { grid-template-columns: 1fr; } }
+  /* ── P&L Statement table ─────────────────────────────────────────────────── */
+  .pl-table { width: 100%; border-collapse: collapse; font-size: .8rem; font-family: 'DM Sans', system-ui, sans-serif; }
+  .pl-table td { padding: 4px 6px; color: #0f1f2e; vertical-align: middle; }
+  .pl-table td:first-child { color: rgba(15,31,46,.7); }
+  .pl-amount { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; min-width: 80px; }
+  .pl-cost { color: #b32020 !important; }
+  .pl-section-hd td { font-size: .63rem; font-weight: 500; letter-spacing: .15em; text-transform: uppercase; color: rgba(15,31,46,.35) !important; padding-top: 14px; padding-bottom: 3px; }
+  .pl-divider td { border-top: 1px solid rgba(15,31,46,.08); padding: 0; height: 1px; }
+  .pl-divider--thick td { border-top-width: 2px; border-top-color: rgba(15,31,46,.15); }
+  .pl-subtotal td { font-weight: 500; color: #0f1f2e !important; }
+  .pl-net td { font-weight: 600; font-size: .88rem; padding: 5px 6px; }
+  .pl-kpi td { color: rgba(15,31,46,.6) !important; font-size: .78rem; }
+  .pl-green { color: #1D9E75 !important; }
+  .pl-red   { color: #E24B4A !important; }
+
+  @media (max-width: 1100px) { .calc-layout { grid-template-columns: 1fr; } .calc-panel { position: static; max-height: none; overflow-y: visible; } }
   @media (max-width: 800px)  { .res-metrics { grid-template-columns: repeat(2, 1fr); } .res-chart-row { grid-template-columns: 1fr; } }
   @media (max-width: 600px)  { .portal-content { padding: 32px 5vw 60px; } .field-row { grid-template-columns: 1fr; } .calc-panel, .output-panel { padding: 18px 14px; } .res-metrics { grid-template-columns: repeat(2, 1fr); } }
 </style>
