@@ -306,4 +306,62 @@ export function renderVisuals(inputs: AnalysisInputs, r: AnalysisResults, ctx: R
   setText('ii-payback', isFinite(r.payback) ? r.payback.toFixed(1) + ' mo' : '—');
   setText('ii-roi12',   fmtPct(r.roi12));
   setText('ii-roi24',   fmtPct(r.roi24));
+
+  // 8: 1/3 Rule Validator
+  const gross = r.grossRevenue;
+  if (gross > 0) {
+    const rentPct = (inputs.rentNeg / gross) * 100;
+    const opsCost = r.airbnbFee + r.fixed - inputs.rentNeg;
+    const opsPct  = (opsCost / gross) * 100;
+    const netPct  = (r.netMonthly / gross) * 100;
+
+    // Bar widths — clamp so segments never exceed 100% total
+    const rentW = Math.min(Math.max(rentPct, 0), 100);
+    const opsW  = Math.min(Math.max(opsPct,  0), Math.max(0, 100 - rentW));
+    const netW  = Math.max(0, 100 - rentW - opsW);
+
+    const rentColor = rentPct <= 33 ? '#1D9E75' : rentPct <= 45 ? '#d4a32a' : '#b32020';
+    const opsColor  = opsPct  <= 33 ? '#1D9E75' : opsPct  <= 40 ? '#d4a32a' : '#b32020';
+    const netColor  = netPct  >= 33 ? '#1D9E75' : netPct  >= 20 ? '#d4a32a' : '#b32020';
+
+    function setSeg(id: string, width: number, color: string) {
+      const el = document.getElementById(id) as HTMLElement | null;
+      if (el) { el.style.width = width + '%'; el.style.backgroundColor = color; el.style.flexShrink = '0'; }
+    }
+    function setSwatch(id: string, color: string) {
+      const el = document.getElementById(id) as HTMLElement | null;
+      if (el) el.style.backgroundColor = color;
+    }
+
+    setSeg('rule-seg-rent', rentW, rentColor);
+    setSeg('rule-seg-ops',  opsW,  opsColor);
+    setSeg('rule-seg-net',  netW,  netColor);
+    setSwatch('rule-swatch-rent', rentColor);
+    setSwatch('rule-swatch-ops',  opsColor);
+    setSwatch('rule-swatch-net',  netColor);
+
+    setText('rule-rent-pct', Math.round(rentPct) + '%');
+    setText('rule-ops-pct',  Math.round(opsPct)  + '%');
+    setText('rule-net-pct',  Math.round(netPct)  + '%');
+
+    const verdictEl = document.getElementById('rule-verdict');
+    if (verdictEl) {
+      verdictEl.classList.remove('rule-verdict--healthy', 'rule-verdict--marginal', 'rule-verdict--walkaway');
+      if (rentPct < 33) {
+        verdictEl.textContent = 'Healthy';
+        verdictEl.classList.add('rule-verdict--healthy');
+      } else if (rentPct <= 45) {
+        verdictEl.textContent = 'Marginal';
+        verdictEl.classList.add('rule-verdict--marginal');
+      } else {
+        verdictEl.textContent = 'Walk Away';
+        verdictEl.classList.add('rule-verdict--walkaway');
+      }
+    }
+  } else {
+    setText('rule-rent-pct', '—');
+    setText('rule-ops-pct',  '—');
+    setText('rule-net-pct',  '—');
+    setText('rule-verdict',  '—');
+  }
 }
