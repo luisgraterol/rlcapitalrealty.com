@@ -19,16 +19,34 @@ const BASE_INPUTS: AnalysisInputs = {
   avgStay: 3.2,
   cleaning: 120,
   utilities: 185,
+  electricity: 0,
+  water: 0,
+  sewer: 0,
+  garbage: 0,
   internet: 80,
   insurance: 100,
   supplies: 120,
+  linens: 0,
   pms: 39,
   pricing: 20,
+  minutSubscription: 0,
+  streaming: 0,
+  airbnbFeeType: '3%',
+  hasYard: false,
+  lawnCare: 0,
+  pestControl: 0,
+  bulkPickup: 0,
+  preventiveInspection: 0,
+  hvacFilters: 0,
+  cpa: 0,
   furniture: 6500,
   photo: 200,
   lock: 150,
   legal: 300,
   misc: 500,
+  minutHardware: 0,
+  wifiRouter: 0,
+  welcomeKits: 0,
   isHOA: false,
 };
 
@@ -57,6 +75,7 @@ describe('calcMaintenance', () => {
 describe('calcFixedCosts', () => {
   it('sums all cost lines including computed maintenance', () => {
     const maintenance = calcMaintenance(BASE_INPUTS.rentNeg); // 75 (floor)
+    // BASE_INPUTS zeros out all new fields so only legacy fields contribute
     const expected =
       BASE_INPUTS.rentNeg +
       BASE_INPUTS.utilities +
@@ -197,7 +216,7 @@ describe('getScenariosData', () => {
     expect(rows[0].occ).toBeLessThanOrEqual(110); // label occ is raw, sOcc is clamped
     const sOccBest = Math.min(Math.max((95 + 15) / 100, 0), 1);
     const expectedGross = rows[0].adr * sOccBest * 30;
-    expect(rows[0].netMonthly).toBeCloseTo(expectedGross * 0.97 - 1819, 0);
+    expect(rows[0].netMonthly).toBeCloseTo(expectedGross * (1 - 0.03) - 1819, 0);
   });
 });
 

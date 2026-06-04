@@ -6,17 +6,41 @@ export interface AnalysisInputs {
   occ: number; // 0–100
   avgStay: number;
   cleaning: number;
+  // Legacy combined field — kept for backward compat; new analyses set to 0
   utilities: number;
+  // Utility breakdown (replaces utilities)
+  electricity: number;
+  water: number;
+  sewer: number;
+  garbage: number;
   internet: number;
   insurance: number;
   supplies: number;
+  linens: number;
   pms: number;
   pricing: number;
+  // Tech & platforms
+  minutSubscription: number;
+  streaming: number;
+  airbnbFeeType: '3%' | '15.5%';
+  // Property services
+  hasYard: boolean;
+  lawnCare: number;
+  pestControl: number;
+  bulkPickup: number;
+  // Maintenance & admin
+  preventiveInspection: number;
+  hvacFilters: number;
+  cpa: number;
+  // One-time setup
   furniture: number;
   photo: number;
   lock: number;
   legal: number;
   misc: number;
+  minutHardware: number;
+  wifiRouter: number;
+  welcomeKits: number;
   isHOA: boolean;
 }
 
@@ -59,14 +83,28 @@ export function calcMaintenance(rentNeg: number): number {
 
 export function calcFixedCosts(inputs: AnalysisInputs): number {
   const maintenance = calcMaintenance(inputs.rentNeg);
+  const yardCosts = inputs.hasYard ? inputs.lawnCare : 0;
   return (
     inputs.rentNeg +
     inputs.utilities +
+    inputs.electricity +
+    inputs.water +
+    inputs.sewer +
+    inputs.garbage +
     inputs.internet +
     inputs.insurance +
     inputs.supplies +
+    inputs.linens +
     inputs.pms +
     inputs.pricing +
+    inputs.minutSubscription +
+    inputs.streaming +
+    yardCosts +
+    inputs.pestControl +
+    inputs.bulkPickup +
+    inputs.preventiveInspection +
+    inputs.hvacFilters +
+    inputs.cpa +
     maintenance
   );
 }
@@ -78,24 +116,26 @@ export function calcAll(inputs: AnalysisInputs): AnalysisResults {
   const maintenance = calcMaintenance(inputs.rentNeg);
   const fixed = calcFixedCosts(inputs);
 
+  const airbnbRate = inputs.airbnbFeeType === '15.5%' ? 0.155 : 0.03;
   const grossRevenue = inputs.adr * occ * 30;
-  const airbnbFee = grossRevenue * 0.03;
+  const airbnbFee = grossRevenue * airbnbRate;
   const netPlatform = grossRevenue - airbnbFee;
   const staysPerMonth = (occ * 30) / avgStay;
   const netMonthly = netPlatform - fixed;
   const netAnnual = netMonthly * 12;
-  const breakEvenOcc = fixed / (inputs.adr * 30 * 0.97) * 100;
+  const breakEvenOcc = fixed / (inputs.adr * 30 * (1 - airbnbRate)) * 100;
   const margin = grossRevenue > 0 ? (netMonthly / grossRevenue) * 100 : 0;
   const multiple = inputs.rentNeg > 0 ? grossRevenue / inputs.rentNeg : 0;
 
   const totalInvest =
     inputs.deposit + inputs.furniture + inputs.photo +
-    inputs.lock + inputs.legal + inputs.misc;
+    inputs.lock + inputs.legal + inputs.misc +
+    inputs.minutHardware + inputs.wifiRouter + inputs.welcomeKits;
   const payback = netMonthly > 0 ? totalInvest / netMonthly : Infinity;
   const roi12 = totalInvest > 0 ? (netAnnual / totalInvest) * 100 : 0;
   const roi24 = totalInvest > 0 ? ((netAnnual * 2) / totalInvest) * 100 : 0;
 
-  const scenarioData = getScenariosData(inputs.adr, inputs.occ, fixed);
+  const scenarioData = getScenariosData(inputs.adr, inputs.occ, fixed, airbnbRate);
 
   return {
     grossRevenue, airbnbFee, netPlatform, fixed, maintenance, staysPerMonth,
@@ -104,7 +144,7 @@ export function calcAll(inputs: AnalysisInputs): AnalysisResults {
   };
 }
 
-export function getScenariosData(adr: number, occPct: number, fixed: number): ScenarioRow[] {
+export function getScenariosData(adr: number, occPct: number, fixed: number, airbnbRate = 0.03): ScenarioRow[] {
   const labels: Array<'best' | 'base' | 'worst'> = ['best', 'base', 'worst'];
   const dOccs = [15, 0, -15];
   const dAdrs = [0.15, 0, -0.15];
@@ -113,7 +153,7 @@ export function getScenariosData(adr: number, occPct: number, fixed: number): Sc
     const sOcc = Math.min(Math.max((occPct + dOccs[i]) / 100, 0), 1);
     const sAdr = adr * (1 + dAdrs[i]);
     const sGross = sAdr * sOcc * 30;
-    const sNet = sGross * 0.97 - fixed;
+    const sNet = sGross * (1 - airbnbRate) - fixed;
     return {
       label,
       occ: occPct + dOccs[i],
@@ -133,14 +173,22 @@ export function getRiskFlags(
   if (inputs.isHOA) {
     flags.push({ type: 'danger', icon: '🔴', text: 'HOA detected — this property is disqualified.' });
   }
+  if (inputs.airbnbFeeType === '15.5%') {
+    const feeOnBase = Math.round(results.airbnbFee);
+    flags.push({
+      type: 'warn', icon: '⚠️',
+      text: `Airbnb fee is set to 15.5% (Hospitable API). Fee on base-case gross is ~$${feeOnBase}/mo — confirm in Airbnb → Payments & Payouts.`,
+    });
+  }
   if (results.breakEvenOcc > 65) {
     flags.push({ type: 'warn', icon: '⚠️', text: 'High break-even. Market avg is 77% — margin of safety is narrow.' });
   }
 
+  const airbnbRate = inputs.airbnbFeeType === '15.5%' ? 0.155 : 0.03;
   const worstOcc = Math.max(inputs.occ - 15, 0) / 100;
   const worstAdr = inputs.adr * 0.85;
   const worstGross = worstAdr * worstOcc * 30;
-  const worstNet = worstGross * 0.97 - results.fixed;
+  const worstNet = worstGross * (1 - airbnbRate) - results.fixed;
   if (worstNet < 0) {
     flags.push({
       type: 'danger', icon: '🔴',

@@ -106,14 +106,17 @@ export function renderVisuals(inputs: AnalysisInputs, r: AnalysisResults, ctx: R
 
   // 3a: Waterfall chart
   let floor = r.grossRevenue;
+  const lawnVal = inputs.hasYard ? inputs.lawnCare : 0;
   const costItems = [
     { label: 'Rent',       val: inputs.rentNeg },
-    { label: 'Utils',      val: inputs.utilities },
+    { label: 'Elec',       val: inputs.electricity },
+    { label: 'Water/Swr',  val: inputs.water + inputs.sewer + inputs.garbage },
     { label: 'Internet',   val: inputs.internet },
     { label: 'Insurance',  val: inputs.insurance },
-    { label: 'Supplies',   val: inputs.supplies },
-    { label: 'Hospitable', val: inputs.pms + inputs.pricing },
-    { label: 'Maint.',     val: r.maintenance },
+    { label: 'Supplies',   val: inputs.supplies + inputs.linens },
+    { label: 'Tech',       val: inputs.pms + inputs.pricing + inputs.minutSubscription + inputs.streaming },
+    { label: 'Yard/Pest',  val: lawnVal + inputs.pestControl + inputs.bulkPickup },
+    { label: 'Maint.',     val: r.maintenance + inputs.preventiveInspection + inputs.hvacFilters + inputs.cpa },
     { label: 'Airbnb',     val: r.airbnbFee },
   ];
   const wfLabels: string[] = ['Gross'];
@@ -181,9 +184,10 @@ export function renderVisuals(inputs: AnalysisInputs, r: AnalysisResults, ctx: R
   }
 
   // 4: Monthly cash flow
+  const airbnbRate = inputs.airbnbFeeType === '15.5%' ? 0.155 : 0.03;
   const profile = getMonthlyProfile(ctx.driver, inputs.occ);
   const months  = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-  const monthlyNets   = profile.occs.map(occ => occ * inputs.adr * 30 * 0.97 - r.fixed);
+  const monthlyNets   = profile.occs.map(occ => occ * inputs.adr * 30 * (1 - airbnbRate) - r.fixed);
   const monthlyColors = monthlyNets.map(v => v >= 0 ? C.green : C.red);
 
   if (!chartMonthly) {
