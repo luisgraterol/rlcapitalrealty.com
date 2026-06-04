@@ -1573,7 +1573,9 @@
   .rule-legend-label { font-size: .68rem; color: rgba(15,31,46,.55); }
   .rule-legend-pct { font-size: .72rem; font-weight: 600; color: #0f1f2e; font-variant-numeric: tabular-nums; }
   .rule-bar { display: flex; height: 22px; border-radius: 3px; overflow: hidden; background: rgba(15,31,46,.06); gap: 2px; }
-  .rule-segment { height: 100%; transition: width .3s ease, background-color .3s ease; }
+  .rule-segment { position: relative; height: 100%; transition: width .3s ease, background-color .3s ease; cursor: default; }
+  .rule-segment::after { content: attr(data-tooltip); position: absolute; bottom: calc(100% + 6px); left: 50%; transform: translateX(-50%); background: #0f1f2e; color: #fff; font-size: .68rem; font-family: 'DM Sans', system-ui, sans-serif; font-variant-numeric: tabular-nums; padding: 3px 8px; border-radius: 3px; white-space: nowrap; pointer-events: none; opacity: 0; transition: opacity .15s; z-index: 10; }
+  .rule-segment:hover::after { opacity: 1; }
   .rule-verdict-row { display: flex; justify-content: flex-end; margin-top: 8px; }
   .rule-verdict { font-size: .68rem; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; padding: 3px 10px; border-radius: 2px; }
   .rule-verdict--healthy   { background: rgba(29,158,117,.12); color: #1D9E75; }
