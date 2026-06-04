@@ -603,25 +603,15 @@
 </div>
 
 <script>
-  import { Chart } from 'chart.js/auto';
-  import { fmt, fmtPct, fmtX, colorClass } from '@lib/formatters';
+  import { fmt } from '@lib/formatters';
   import { calcAll, calcMaintenance, getRiskFlags } from '@lib/calculations';
   import type { AnalysisInputs } from '@lib/calculations';
-  import { fmtK, gaugeAngle, metricCardClass, badgeState, getMonthlyProfile } from '@lib/visualLogic';
   import { supabase } from '@lib/supabase';
   import { requireAuth } from '@lib/auth';
-
-  // ── Color palette ─────────────────────────────────────────────────────────
-  const C = { green: '#1D9E75', blue: '#378ADD', red: '#E24B4A' };
-  const isDark = () => window.matchMedia('(prefers-color-scheme: dark)').matches;
-  const gridColor = () => isDark() ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.06)';
-  const tickColor = () => isDark() ? '#a0a09a' : '#5f5e5a';
-
-  // ── Chart instances ───────────────────────────────────────────────────────
-  let chartWaterfall: Chart | null = null;
-  let chartScenarios: Chart | null = null;
-  let chartMonthly:   Chart | null = null;
-  let chartRoi:       Chart | null = null;
+  import { renderVisuals } from '@lib/charts';
+  import type { RenderContext } from '@lib/charts';
+  import { exportMarkdown } from '@lib/exportMarkdown';
+  import { initPropertyModal } from '@lib/propertyModal';
 
   // ── DOM helpers ──────────────────────────────────────────────────────────
 
@@ -669,227 +659,6 @@
       btn.classList.toggle('open', !open);
     });
   });
-
-  // getMonthlyProfile, fmtK, gaugeAngle, metricCardClass, badgeState imported from @lib/visualLogic
-
-  // ── Gauge (canvas 2D semicircle) ──────────────────────────────────────────
-  function drawGauge(breakEvenPct: number, actualPct: number) {
-    const canvas = document.getElementById('chart-gauge') as HTMLCanvasElement | null;
-    if (!canvas) return;
-    const ctx = canvas.getContext('2d')!;
-    const W = canvas.width, H = canvas.height;
-    ctx.clearRect(0, 0, W, H);
-    const cx = W / 2, cy = H - 8;
-    const r  = Math.min(cx - 12, cy - 6);
-    const lw = 13;
-    // background — fixed grey (app has no dark mode CSS so system preference is irrelevant)
-    ctx.beginPath(); ctx.arc(cx, cy, r, Math.PI, 2 * Math.PI, false);
-    ctx.strokeStyle = '#d0cdc8'; ctx.lineWidth = lw; ctx.lineCap = 'butt'; ctx.stroke();
-    // red: 0 → breakEven
-    ctx.beginPath(); ctx.arc(cx, cy, r, Math.PI, gaugeAngle(breakEvenPct), false);
-    ctx.strokeStyle = C.red; ctx.lineWidth = lw; ctx.stroke();
-    // green: breakEven → actual
-    if (actualPct > breakEvenPct) {
-      ctx.beginPath(); ctx.arc(cx, cy, r, gaugeAngle(breakEvenPct), gaugeAngle(actualPct), false);
-      ctx.strokeStyle = C.green; ctx.lineWidth = lw; ctx.stroke();
-    }
-    // text — fixed dark ink for legibility on light background
-    const midY = cy - r * 0.46;
-    ctx.textAlign = 'center';
-    ctx.fillStyle = '#0f1f2e';
-    ctx.font = 'bold 22px "DM Sans", system-ui'; ctx.textBaseline = 'middle';
-    ctx.fillText(Math.round(actualPct) + '%', cx, midY);
-    ctx.fillStyle = '#7a6e65';
-    ctx.font = '11px "DM Sans", system-ui';
-    ctx.fillText('occupancy', cx, midY + 22);
-  }
-
-  // ── Zero dashed line plugin ───────────────────────────────────────────────
-  const zeroLinePlugin = {
-    id: 'zeroLine',
-    beforeDraw(chart: any) {
-      const { ctx, chartArea, scales } = chart;
-      if (!scales.y) return;
-      const yZero = scales.y.getPixelForValue(0);
-      if (yZero < chartArea.top || yZero > chartArea.bottom) return;
-      ctx.save();
-      ctx.beginPath(); ctx.setLineDash([4, 4]);
-      ctx.strokeStyle = isDark() ? 'rgba(255,255,255,0.28)' : 'rgba(0,0,0,0.2)';
-      ctx.lineWidth = 1;
-      ctx.moveTo(chartArea.left, yZero); ctx.lineTo(chartArea.right, yZero); ctx.stroke();
-      ctx.restore();
-    },
-  };
-
-  // ── Visual results rendering ──────────────────────────────────────────────
-  function renderVisuals(inputs: AnalysisInputs, r: ReturnType<typeof calcAll>) {
-
-    // 1: Property header
-    const prop = propertiesList.find(p => p.id === selectedPropertyId);
-    document.getElementById('res-address')!.textContent = prop?.address_line1 || inpStr('inp-address') || '—';
-    const br = inpStr('inp-bedrooms') || '—', ba = inpStr('inp-bathrooms') || '—', type = inpStr('inp-type') || '—';
-    document.getElementById('res-subline')!.textContent = `${br} BR · ${ba} BA · ${type}${inputs.isHOA ? ' · HOA' : ''}`;
-
-    const bufferPP = Math.round(inputs.occ - r.breakEvenOcc);
-    const bufEl = document.getElementById('res-buffer')!;
-    bufEl.textContent = (bufferPP >= 0 ? '+' : '') + bufferPP + 'pp';
-    (bufEl as HTMLElement).style.color = bufferPP >= 0 ? C.green : C.red;
-
-    const walkAway = inp('inp-walk-away');
-    const bState = badgeState(inputs.rentNeg, walkAway);
-    const badge = document.getElementById('res-badge')!;
-    if (bState.show) {
-      badge.className = `res-badge res-badge--${bState.type}`; badge.style.display = '';
-      badge.textContent = bState.text;
-    } else {
-      badge.style.display = 'none';
-    }
-
-    // 2: Metric cards
-    document.getElementById('res-net-monthly')!.textContent = '$' + Math.round(r.netMonthly).toLocaleString();
-    document.getElementById('rmc-net-monthly')!.className = 'res-metric ' + metricCardClass(r.netMonthly, 700, 200);
-    document.getElementById('res-margin-sub')!.textContent = Math.round(r.margin) + '% margin';
-
-    document.getElementById('res-net-annual')!.textContent = '$' + Math.round(r.netAnnual).toLocaleString();
-    document.getElementById('rmc-net-annual')!.className = 'res-metric ' + metricCardClass(r.netAnnual, 8400, 2400);
-
-    document.getElementById('res-roi12')!.textContent = Math.round(r.roi12) + '%';
-    document.getElementById('res-roi-sub')!.textContent = 'on $' + Math.round(r.totalInvest).toLocaleString() + ' invested';
-
-    document.getElementById('res-payback')!.textContent = isFinite(r.payback) ? r.payback.toFixed(1) + ' mo' : '—';
-    document.getElementById('res-mult-sub')!.textContent = r.multiple.toFixed(2) + 'x rent/rev';
-
-    // 3a: Waterfall chart
-    let floor = r.grossRevenue;
-    const costItems = [
-      { label: 'Rent',       val: inputs.rentNeg },
-      { label: 'Utils',      val: inputs.utilities },
-      { label: 'Internet',   val: inputs.internet },
-      { label: 'Insurance',  val: inputs.insurance },
-      { label: 'Supplies',   val: inputs.supplies },
-      { label: 'Hospitable', val: inputs.pms + inputs.pricing },
-      { label: 'Maint.',     val: r.maintenance },
-      { label: 'Airbnb',     val: r.airbnbFee },
-    ];
-    const wfLabels: string[] = ['Gross'];
-    const wfData: [number, number][] = [[0, r.grossRevenue]];
-    const wfColors: string[] = [C.blue];
-    costItems.forEach(({ label, val }) => {
-      wfLabels.push(label);
-      wfData.push([Math.max(0, floor - val), floor]);
-      wfColors.push(C.red);
-      floor -= val;
-    });
-    wfLabels.push('Net');
-    wfColors.push(r.netMonthly >= 0 ? C.green : C.red);
-    wfData.push(r.netMonthly >= 0 ? [0, r.netMonthly] : [r.netMonthly, 0]);
-
-    if (!chartWaterfall) {
-      const ctx2 = (document.getElementById('chart-waterfall') as HTMLCanvasElement).getContext('2d')!;
-      chartWaterfall = new Chart(ctx2, {
-        type: 'bar',
-        data: { labels: wfLabels, datasets: [{ data: wfData as any, backgroundColor: wfColors, borderWidth: 0, borderRadius: 2 }] },
-        options: {
-          responsive: true, maintainAspectRatio: false,
-          plugins: { legend: { display: false }, tooltip: { callbacks: { label: (c: any) => {
-            const [mn, mx] = c.raw as [number, number];
-            return '$' + Math.round(Math.abs(mx - mn)).toLocaleString();
-          }}}},
-          scales: {
-            x: { grid: { color: gridColor() }, ticks: { color: tickColor(), font: { size: 10 } } },
-            y: { grid: { color: gridColor() }, ticks: { color: tickColor(), font: { size: 10 }, callback: (v: any) => fmtK(v) } },
-          },
-        },
-      });
-    } else {
-      const ds = chartWaterfall.data.datasets[0];
-      ds.data = wfData as any; (ds as any).backgroundColor = wfColors;
-      chartWaterfall.update();
-    }
-
-    // 3b: Gauge
-    drawGauge(r.breakEvenOcc, inputs.occ);
-    document.getElementById('gauge-legend')!.innerHTML =
-      `<span class="gauge-dot" style="background:${C.red}"></span>Break-even ${Math.round(r.breakEvenOcc)}%` +
-      `&emsp;<span class="gauge-dot" style="background:${C.green}"></span>Actual ${Math.round(inputs.occ)}%`;
-
-    // 3c: Scenario bars
-    const scData   = r.scenarioData.map(s => s.netAnnual);
-    const scColors = [C.green, C.blue, C.red];
-    if (!chartScenarios) {
-      const ctx2 = (document.getElementById('chart-scenarios') as HTMLCanvasElement).getContext('2d')!;
-      chartScenarios = new Chart(ctx2, {
-        type: 'bar',
-        data: { labels: ['Best', 'Base', 'Worst'], datasets: [{ data: scData, backgroundColor: scColors, borderWidth: 0, borderRadius: 2 }] },
-        options: {
-          indexAxis: 'y', responsive: true, maintainAspectRatio: false,
-          plugins: { legend: { display: false } },
-          scales: {
-            x: { grid: { color: gridColor() }, ticks: { color: tickColor(), font: { size: 10 }, callback: (v: any) => fmtK(v) } },
-            y: { grid: { display: false }, ticks: { color: tickColor(), font: { size: 10 } } },
-          },
-        },
-      });
-    } else {
-      chartScenarios.data.datasets[0].data = scData; chartScenarios.update();
-    }
-
-    // 4: Monthly cash flow
-    const driver  = inpStr('inp-demand');
-    const profile = getMonthlyProfile(driver, inputs.occ);
-    const months  = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-    const monthlyNets   = profile.occs.map(occ => occ * inputs.adr * 30 * 0.97 - r.fixed);
-    const monthlyColors = monthlyNets.map(v => v >= 0 ? C.green : C.red);
-
-    if (!chartMonthly) {
-      const ctx2 = (document.getElementById('chart-monthly') as HTMLCanvasElement).getContext('2d')!;
-      chartMonthly = new Chart(ctx2, {
-        type: 'bar',
-        data: { labels: months, datasets: [{ data: monthlyNets, backgroundColor: monthlyColors, borderWidth: 0, borderRadius: 2 }] },
-        options: {
-          responsive: true, maintainAspectRatio: false,
-          plugins: { legend: { display: false } },
-          scales: {
-            x: { grid: { color: gridColor() }, ticks: { color: tickColor(), font: { size: 10 } } },
-            y: { grid: { color: gridColor() }, ticks: { color: tickColor(), font: { size: 10 }, callback: (v: any) => fmtK(v) } },
-          },
-        },
-        plugins: [zeroLinePlugin],
-      });
-    } else {
-      const ds = chartMonthly.data.datasets[0];
-      ds.data = monthlyNets; (ds as any).backgroundColor = monthlyColors;
-      chartMonthly.update();
-    }
-    const occRange = Math.round((Math.max(...profile.occs) - Math.min(...profile.occs)) * 100);
-    document.getElementById('monthly-footnote')!.textContent =
-      `Based on ${profile.marketType} demand profile (${driver}). ±${occRange}pp occupancy variance applied monthly. Dashed line = break-even at $0.`;
-    document.getElementById('market-note')!.textContent = profile.note;
-
-    // 5: ROI curve
-    const roiPoints = Array.from({ length: 25 }, (_, i) => -r.totalInvest + i * r.netMonthly);
-    const roiLabels = Array.from({ length: 25 }, (_, i) => i % 2 === 0 ? `M${i}` : '');
-    if (!chartRoi) {
-      const ctx2 = (document.getElementById('chart-roi') as HTMLCanvasElement).getContext('2d')!;
-      chartRoi = new Chart(ctx2, {
-        type: 'line',
-        data: { labels: roiLabels, datasets: [{ data: roiPoints, borderColor: C.blue, backgroundColor: 'rgba(55,138,221,0.12)', fill: true, tension: 0, pointRadius: 0, borderWidth: 2 }] },
-        options: {
-          responsive: true, maintainAspectRatio: false,
-          plugins: { legend: { display: false } },
-          scales: {
-            x: { grid: { color: gridColor() }, ticks: { color: tickColor(), font: { size: 10 } } },
-            y: { grid: { color: gridColor() }, ticks: { color: tickColor(), font: { size: 10 }, callback: (v: any) => fmtK(v) } },
-          },
-        },
-        plugins: [zeroLinePlugin],
-      });
-    } else {
-      chartRoi.data.datasets[0].data = roiPoints; chartRoi.update();
-    }
-    document.getElementById('roi-footnote')!.textContent =
-      `Dashed line = initial investment ($${Math.round(r.totalInvest).toLocaleString()}). Crossover = payback month. Base case assumptions.`;
-  }
 
   // ── Calculations ─────────────────────────────────────────────────────────
 
@@ -950,7 +719,18 @@
       ? '<div class="risk-flag ok"><span class="risk-flag-icon">✓</span>No risk flags triggered.</div>'
       : flags.map(f => `<div class="risk-flag ${f.type}"><span class="risk-flag-icon">${f.icon}</span>${f.text}</div>`).join('');
 
-    renderVisuals(inputs, r);
+    const ctx: RenderContext = {
+      propertiesList,
+      selectedPropertyId,
+      walkAway: inp('inp-walk-away'),
+      driver:   inpStr('inp-demand'),
+      address:  inpStr('inp-address'),
+      bedrooms: inpStr('inp-bedrooms'),
+      bathrooms: inpStr('inp-bathrooms'),
+      propertyType: inpStr('inp-type'),
+      isHOA,
+    };
+    renderVisuals(inputs, r, ctx);
   }
 
   const inputIds = [
@@ -1203,111 +983,23 @@
     runCalc();
   }
 
-  // ── Export to Markdown ───────────────────────────────────────────────────────
-
-  function exportMarkdown() {
-    if (!lastResults) return;
-    const r = lastResults;
-    const name  = inpStr('inp-name') || 'New Analysis';
-    const date  = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
-    const flags = Array.from(document.querySelectorAll('#risk-flags .risk-flag'))
-      .map(f => f.textContent?.trim() ?? '')
-      .filter(t => !t.startsWith('✓'))
-      .map(t => '- ' + t);
-
-    const mdTotalCosts  = r.airbnbFee + r.fixed;
-    const mdStays       = r.staysPerMonth;
-    const mdClean       = mdStays * inp('inp-cleaning');
-    const mdInternetLine = inp('inp-internet') > 0
-      ? `| Internet | ${fmt(inp('inp-internet'))} |\n` : '';
-
-    const md = `# Property Analysis — ${name}
-**R&L Capital Realty LLC** | Abilene, TX | Generated: ${date}
-
-## Property Details
-- Address: ${inpStr('inp-address') || 'N/A'}
-- Bedrooms: ${inpStr('inp-bedrooms')} | Bathrooms: ${inpStr('inp-bathrooms')}
-- Property Type: ${inpStr('inp-type')}
-- Negotiated Rent: ${fmt(inp('inp-rent-neg'))}
-
-## Revenue Assumptions
-- ADR: ${fmt(inp('inp-adr'))} | Occupancy: ${inp('inp-occ')}% | Avg Stay: ${inp('inp-stay')} nights
-- Estimated stays/month: ${mdStays.toFixed(1)}
-
-## Monthly P&L — Base Case
-| Metric | Amount |
-|--------|--------|
-| Gross Revenue | ${fmt(r.grossRevenue)} |
-| **Monthly Costs** | |
-| Rent | ${fmt(inp('inp-rent-neg'))} |
-| Utilities | ${fmt(inp('inp-utilities'))} |
-${mdInternetLine}| Insurance (Proper STR) | ${fmt(inp('inp-insurance'))} |
-| Supplies & Amenities | ${fmt(inp('inp-supplies'))} |
-| Hospitable PMS | ${fmt(inp('inp-pms'))} |
-| PriceLabs | ${fmt(inp('inp-pricing'))} |
-| Maintenance Reserve | ${fmt(r.maintenance)} |
-| Airbnb Fee (3%) | ${fmt(r.airbnbFee)} |
-| STR Permit | $0 |
-| **Total Costs** | **${fmt(mdTotalCosts)}** |
-| Net Monthly Profit | ${fmt(r.netMonthly)} |
-| Net Annual Profit | ${fmt(r.netAnnual)} |
-| Break-Even Occupancy | ${fmtPct(r.breakEvenOcc)} |
-| Margin % | ${fmtPct(r.margin)} |
-| Rent-to-Revenue Multiple | ${fmtX(r.multiple)} |
-
-## Cleaning — Pass-Through
-| | |
-|-|-|
-| Stays / Month | ${mdStays.toFixed(1)} |
-| Cleaning Collected (from guest) | ${fmt(mdClean)} |
-| Cleaning Paid (to cleaner) | ${fmt(mdClean)} |
-| Net P&L Impact | $0 |
-
-## Scenario Analysis
-| Scenario | Occ% | ADR | Net/mo | Net/yr |
-|----------|------|-----|--------|--------|
-${r.scenarioData.map(s => `| ${s.label.charAt(0).toUpperCase() + s.label.slice(1)} | ${fmtPct(s.occ)} | ${fmt(s.adr)} | ${fmt(s.netMonthly)} | ${fmt(s.netAnnual)} |`).join('\n')}
-
-## Investment Summary
-| Metric | Value |
-|--------|-------|
-| Total Initial Investment | ${fmt(r.totalInvest)} |
-| Payback Period | ${isFinite(r.payback) ? r.payback.toFixed(1) + ' months' : '—'} |
-| 12-Month ROI | ${fmtPct(r.roi12)} |
-| 24-Month ROI | ${fmtPct(r.roi24)} |
-
-## Risk Assessment
-${flags.length ? flags.join('\n') : 'No risk flags triggered.'}
-
-## Abilene Market Notes
-- STR permit: Not required (City of Abilene, 2026)
-- HOT tax: Collected and remitted by Airbnb — no operator action required
-- Primary demand driver: Dyess Air Force Base (TDY military) + ACU / Hardin-Simmons / McMurry
-- Insurance: Proper Insurance STR policy (~$98–103/mo), landlord named as additional insured
-- Sublease: Requires explicit addendum — Texas RE attorney review recommended (~$300)
-
-## Notes
-${inpStr('inp-notes') || 'None.'}
-`;
-    const blob = new Blob([md], { type: 'text/markdown' });
-    const url  = URL.createObjectURL(blob);
-    const a    = document.createElement('a');
-    a.href = url;
-    const _ts  = new Date();
-    const _pad = (n: number) => String(n).padStart(2, '0');
-    const _stamp = `${_ts.getFullYear()}${_pad(_ts.getMonth()+1)}${_pad(_ts.getDate())}_${_pad(_ts.getHours())}${_pad(_ts.getMinutes())}${_pad(_ts.getSeconds())}`;
-    a.download = (name.replace(/[^a-z0-9]/gi, '_').toLowerCase() || 'analysis') + '-' + _stamp + '.md';
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
-  }
-
   // ── Button wiring ────────────────────────────────────────────────────────────
 
   document.getElementById('btn-save')!.addEventListener('click', saveAnalysis);
   document.getElementById('btn-update')!.addEventListener('click', updateAnalysis);
-  document.getElementById('btn-export')!.addEventListener('click', exportMarkdown);
+  document.getElementById('btn-export')!.addEventListener('click', () => {
+    if (!lastResults) return;
+    const inputs = gatherInputs();
+    exportMarkdown(inputs, lastResults, {
+      name:         inpStr('inp-name'),
+      address:      inpStr('inp-address'),
+      bedrooms:     inpStr('inp-bedrooms'),
+      bathrooms:    inpStr('inp-bathrooms'),
+      propertyType: inpStr('inp-type'),
+      notes:        inpStr('inp-notes'),
+      riskFlags:    getRiskFlags(inputs, lastResults),
+    });
+  });
   document.getElementById('btn-new')!.addEventListener('click', () => {
     resetForm();
     loadProperties();
@@ -1315,171 +1007,29 @@ ${inpStr('inp-notes') || 'None.'}
 
   // ── New Property Modal ────────────────────────────────────────────────────────
 
-  let landlordsList: any[] = [];
-
-  async function loadLandlordsForModal() {
-    const { data } = await supabase.from('landlords').select('id, name').order('name');
-    landlordsList = data || [];
-    const sel = document.getElementById('np-landlord') as HTMLSelectElement;
-    if (!landlordsList.length) {
-      sel.innerHTML = '<option value="">— No landlords —</option>';
-      show('no-landlords-msg');
-    } else {
-      hide('no-landlords-msg');
-      sel.innerHTML = '<option value="">— Select landlord —</option>' +
-        landlordsList.map(l => `<option value="${esc(l.id)}">${esc(l.name)}</option>`).join('');
-    }
-  }
-
-  function openModal() {
-    // Clear form
-    ['np-addr1','np-addr2','np-city','np-zip','np-neighborhood','np-notes'].forEach(id => {
-      (document.getElementById(id) as HTMLInputElement).value = '';
-    });
-    (document.getElementById('np-landlord') as HTMLSelectElement).value = '';
-    hide('modal-error');
-    hide('quick-landlord-form');
-    (document.getElementById('btn-toggle-ql') as HTMLButtonElement).textContent = '';
-    const qlToggle = document.getElementById('btn-toggle-ql')!;
-    qlToggle.innerHTML = `<svg viewBox="0 0 24 24" width="12" height="12" stroke="currentColor" fill="none" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg> Quick-create landlord`;
-
-    loadLandlordsForModal();
-
-    document.getElementById('modal-backdrop')!.style.display = '';
-    document.getElementById('modal-new-property')!.style.display = '';
-  }
-
-  function closeModal() {
-    hide('modal-backdrop');
-    hide('modal-new-property');
-  }
-
-  document.getElementById('btn-new-property')?.addEventListener('click', openModal);
-  document.getElementById('modal-close')?.addEventListener('click', closeModal);
-  document.getElementById('btn-modal-cancel')?.addEventListener('click', closeModal);
-  document.getElementById('modal-backdrop')?.addEventListener('click', closeModal);
-
-  // Quick-create landlord toggle
-  let qlVisible = false;
-  document.getElementById('btn-toggle-ql')?.addEventListener('click', () => {
-    qlVisible = !qlVisible;
-    const form = document.getElementById('quick-landlord-form')!;
-    form.style.display = qlVisible ? '' : 'none';
-    const btn = document.getElementById('btn-toggle-ql')!;
-    btn.innerHTML = qlVisible
-      ? `<svg viewBox="0 0 24 24" width="12" height="12" stroke="currentColor" fill="none" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/></svg> Cancel`
-      : `<svg viewBox="0 0 24 24" width="12" height="12" stroke="currentColor" fill="none" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg> Quick-create landlord`;
-  });
-
-  document.getElementById('btn-create-landlord')?.addEventListener('click', async () => {
-    const name  = (document.getElementById('ql-name')  as HTMLInputElement).value.trim();
-    const phone = (document.getElementById('ql-phone') as HTMLInputElement).value.trim();
-    const email = (document.getElementById('ql-email') as HTMLInputElement).value.trim();
-    const type  = (document.getElementById('ql-type')  as HTMLSelectElement).value;
-    if (!name || !phone || !email || !type) { alert('Fill in all required landlord fields.'); return; }
-
-    const btn = document.getElementById('btn-create-landlord') as HTMLButtonElement;
-    btn.disabled = true; btn.textContent = 'Creating…';
-
-    const { data: { session } } = await supabase.auth.getSession();
-    const { data, error } = await supabase
-      .from('landlords')
-      .insert([{ name, phone, email, type, user_id: session?.user.id }])
-      .select().single();
-
-    btn.disabled = false; btn.textContent = 'Create Landlord';
-    if (error) { alert('Failed to create landlord: ' + error.message); return; }
-
-    landlordsList.push(data);
-    const sel = document.getElementById('np-landlord') as HTMLSelectElement;
-    sel.innerHTML = '<option value="">— Select landlord —</option>' +
-      landlordsList.map(l => `<option value="${esc(l.id)}">${esc(l.name)}</option>`).join('');
-    sel.value = data.id;
-    hide('no-landlords-msg');
-
-    // Reset quick-create form and hide it
-    ['ql-name','ql-phone','ql-email'].forEach(id => (document.getElementById(id) as HTMLInputElement).value = '');
-    (document.getElementById('ql-type') as HTMLSelectElement).value = '';
-    qlVisible = false;
-    hide('quick-landlord-form');
-    const toggleBtn = document.getElementById('btn-toggle-ql')!;
-    toggleBtn.innerHTML = `<svg viewBox="0 0 24 24" width="12" height="12" stroke="currentColor" fill="none" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg> Quick-create landlord`;
-  });
-
-  document.getElementById('btn-modal-save')?.addEventListener('click', async () => {
-    const addr1        = (document.getElementById('np-addr1')        as HTMLInputElement).value.trim();
-    const addr2        = (document.getElementById('np-addr2')        as HTMLInputElement).value.trim();
-    const city         = (document.getElementById('np-city')         as HTMLInputElement).value.trim();
-    const zip          = (document.getElementById('np-zip')          as HTMLInputElement).value.trim();
-    const neighborhood = (document.getElementById('np-neighborhood') as HTMLInputElement).value.trim();
-    const notes        = (document.getElementById('np-notes')        as HTMLTextAreaElement).value.trim();
-    const landlordId   = (document.getElementById('np-landlord')     as HTMLSelectElement).value;
-    const npBedrooms   = (document.getElementById('np-bedrooms')     as HTMLSelectElement).value;
-    const npBathrooms  = (document.getElementById('np-bathrooms')    as HTMLSelectElement).value;
-    const npType       = (document.getElementById('np-type')         as HTMLSelectElement).value;
-
-    const errEl = document.getElementById('modal-error')!;
-    if (!addr1 || !city || !zip || !landlordId) {
-      errEl.textContent = 'Address line 1, city, zip code, and landlord are required.';
-      errEl.style.display = '';
-      return;
-    }
-    hide('modal-error');
-
-    const btn = document.getElementById('btn-modal-save') as HTMLButtonElement;
-    btn.disabled = true; btn.textContent = 'Creating…';
-
-    const { data: { session } } = await supabase.auth.getSession();
-    const { data, error } = await supabase
-      .from('properties')
-      .insert([{
-        address_line1: addr1,
-        address_line2: addr2 || null,
-        city,
-        zip_code: zip,
-        neighborhood: neighborhood || null,
-        notes: notes || null,
-        landlord_id: landlordId,
-        user_id: session?.user.id,
-        bedrooms:      npBedrooms  ? parseInt(npBedrooms)       : null,
-        bathrooms:     npBathrooms ? parseFloat(npBathrooms)    : null,
-        property_type: npType      || null,
-      }])
-      .select('*, landlord:landlords(id, name)')
-      .single();
-
-    btn.disabled = false; btn.textContent = 'Create Property';
-
-    if (error) {
-      errEl.textContent = 'Failed to create property: ' + error.message;
-      errEl.style.display = '';
-      return;
-    }
-
-    closeModal();
-    propertiesList.unshift(data);
-
-    const select = document.getElementById('inp-property') as HTMLSelectElement;
-    hide('no-properties-hint');
-    select.innerHTML = '<option value="">— Select a property —</option>' +
-      propertiesList.map(p =>
-        `<option value="${esc(p.id)}">${esc(p.address_line1)}, ${esc(p.city)}</option>`
-      ).join('');
-
-    // Auto-select the newly created property
-    select.value = data.id;
-    selectedPropertyId = data.id;
-    const addrEl = document.getElementById('inp-address') as HTMLInputElement;
-    if (addrEl) {
-      const parts = [data.address_line1];
-      if (data.address_line2) parts.push(data.address_line2);
-      parts.push(data.city);
-      addrEl.value = parts.join(', ');
-    }
-    applyPropertyMeta(data);
-    hide('orphan-warning');
-    hide('no-property-hint');
-    runCalc();
+  initPropertyModal({
+    onPropertyCreated(property) {
+      propertiesList.unshift(property);
+      const select = document.getElementById('inp-property') as HTMLSelectElement;
+      hide('no-properties-hint');
+      select.innerHTML = '<option value="">— Select a property —</option>' +
+        propertiesList.map(p =>
+          `<option value="${esc(p.id)}">${esc(p.address_line1)}, ${esc(p.city)}</option>`
+        ).join('');
+      select.value = property.id;
+      selectedPropertyId = property.id;
+      const addrEl = document.getElementById('inp-address') as HTMLInputElement;
+      if (addrEl) {
+        const parts = [property.address_line1];
+        if (property.address_line2) parts.push(property.address_line2);
+        parts.push(property.city);
+        addrEl.value = parts.join(', ');
+      }
+      applyPropertyMeta(property);
+      hide('orphan-warning');
+      hide('no-property-hint');
+      runCalc();
+    },
   });
 
   // ── Init ─────────────────────────────────────────────────────────────────────
